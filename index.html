@@ -53,8 +53,13 @@
       max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .logo { display: flex; align-items: center; height: 28px; }
-    .logo img { height: 28px; width: auto; }
+    .logo {
+      display: flex; align-items: center; height: 32px;
+      font-size: 1.25rem; font-weight: 800; letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .logo .raise { color: #00FF84; }
+    .logo .hq { color: #fafafa; }
     .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
     .nav-links a { font-size: 0.875rem; color: var(--text-muted); transition: color 0.2s; }
     .nav-links a:hover { color: var(--text); }
@@ -323,7 +328,7 @@
   <nav class="nav" id="nav">
     <div class="nav-inner">
       <a href="#" class="logo" aria-label="Raise HQ home">
-        <img src="raisehq-logo-on-black.png" alt="Raise HQ" width="140" height="28" />
+        <span class="raise">RAISE</span><span class="hq">HQ</span>
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="#journey">Product</a></li>
@@ -515,7 +520,7 @@
       <div class="how-steps">
         <div class="how-step">
           <div class="how-icon">1</div>
-          <h3>Intake &amp; context</h3>
+          <h3>Intake & context</h3>
           <p>Company, round details, materials, and any existing investor list. The system uses this as the basis for scoring and drafting.</p>
         </div>
         <div class="how-step">
@@ -545,7 +550,7 @@
           <div class="price-amount">$27<span>/mo</span></div>
           <p class="price-desc">Investor CRM, fit scoring, manual outreach</p>
           <ul class="price-features">
-            <li>Investor database &amp; CRM</li>
+            <li>Investor database & CRM</li>
             <li>AI fit scoring (1–10) + rationale</li>
             <li>T1 / T2 / T3 prioritisation</li>
             <li>Manual outreach tools</li>
@@ -559,8 +564,8 @@
           <ul class="price-features">
             <li>Everything in Basic</li>
             <li>AI-drafted outreach (email, LinkedIn, X)</li>
-            <li>Sequences &amp; graduated trust model</li>
-            <li>Reply classification &amp; routing</li>
+            <li>Sequences & graduated trust model</li>
+            <li>Reply classification & routing</li>
             <li>Data room with view tracking</li>
           </ul>
           <a href="#trial" class="btn btn-primary" style="width:100%;">Start free trial</a>
@@ -669,7 +674,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="#" class="logo" aria-label="Raise HQ">
-          <img src="raisehq-logo-on-black.png" alt="Raise HQ" width="140" height="28" />
+          <span class="raise">RAISE</span><span class="hq">HQ</span>
         </a>
         <p>The raise operating system for founders actively raising capital. Pre-seed through Series A.</p>
       </div>
