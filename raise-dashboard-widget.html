@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:#E8E8E8;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;padding:20px;min-height:100vh}
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.header-left .company{font-size:22px;font-weight:800;color:#fff;letter-spacing:0.01em;text-transform:uppercase}
+.header-left .round{font-size:13px;color:#555;margin-top:3px}
+.header-right{text-align:right}
+.mode-badge{display:inline-block;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
+.mode-calibration{background:#1a1a1a;color:#555;border:1px solid #2a2a2a}
+.mode-exception{background:#0a1a0a;color:#00FF84;border:1px solid #00FF8430}
+.mode-auto{background:#00FF8415;color:#00FF84;border:1px solid #00FF8440}
+.updated{font-size:11px;color:#333;margin-top:4px}
+.section-title{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#444;margin-bottom:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+.stat{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:14px 16px}
+.stat.accent{border-color:#00FF8430}
+.stat.warn{border-color:#3a3a1a}
+.stat-label{font-size:11px;color:#555;margin-bottom:6px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+.stat-value{font-size:26px;font-weight:800;color:#E8E8E8;line-height:1}
+.stat-value.green{color:#00FF84}
+.stat-value.muted{color:#444}
+.stat-sub{font-size:11px;color:#444;margin-top:4px}
+.progress-section{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px;margin-bottom:20px}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.progress-label{font-size:13px;color:#E8E8E8;font-weight:600}
+.progress-count{font-size:13px;color:#00FF84;font-weight:800}
+.progress-track{height:4px;background:#1a1a1a;border-radius:2px;margin-bottom:16px}
+.progress-fill{height:4px;background:#00FF84;border-radius:2px;transition:width 0.6s ease}
+.progress-meta{font-size:12px;color:#444}
+.raise-row{display:flex;gap:12px;margin-bottom:20px}
+.raise-stat{flex:1;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:14px 16px;text-align:center}
+.raise-stat-value{font-size:28px;font-weight:800;color:#00FF84}
+.raise-stat-label{font-size:11px;color:#555;margin-top:4px;text-transform:uppercase;letter-spacing:0.05em;font-weight:600}
+.tier-row{display:flex;gap:8px;margin-bottom:20px}
+.tier-block{flex:1;background:#111;border-radius:8px;padding:12px;text-align:center}
+.tier-block.t1{border:1px solid #00FF84;background:#00FF8408}
+.tier-block.t2{border:1px solid #00FF8430}
+.tier-block.t3{border:1px solid #2a2a2a}
+.tier-num{font-size:24px;font-weight:800}
+.tier-block.t1 .tier-num{color:#00FF84}
+.tier-block.t2 .tier-num{color:#00FF8470}
+.tier-block.t3 .tier-num{color:#444}
+.tier-label{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-top:4px}
+.tier-block.t1 .tier-label{color:#00FF84}
+.tier-block.t2 .tier-label{color:#00FF8470}
+.tier-block.t3 .tier-label{color:#444}
+.divider{height:1px;background:#1a1a1a;margin:20px 0}
+.alert{background:#1a1000;border:1px solid #3a2a00;border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.alert-label{font-size:13px;color:#888}
+.alert-value{font-size:15px;font-weight:800;color:#aaa}
+.alert.hot .alert-label{color:#00FF84}
+.alert.hot .alert-value{color:#00FF84}
+.loading{text-align:center;padding:60px;color:#333;font-size:14px}
+.error{text-align:center;padding:40px;color:#444;font-size:13px;background:#111;border-radius:8px}
+</style>
+</head>
+<body>
+<div id="root"><div class="loading">Loading your raise dashboard…</div></div>
+<script>
+var LOC = '{{location.id}}';
+var TOKEN = '{{custom_values.n8n_webhook_base}}';
+var N8N = 'https://n8n.srv926257.hstgr.cloud/webhook/raise-dashboard';
+
+function fmt(n){ return isNaN(n)||n===null?'—':String(Math.round(Number(n))); }
+function pct(a,b){ return b>0?Math.round(a/b*100):0; }
+function ago(iso){ if(!iso)return ''; var d=new Date(iso); return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+
+fetch(N8N+'?loc='+encodeURIComponent(LOC)+'&token='+encodeURIComponent(TOKEN))
+  .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(render)
+  .catch(function(e){
+    document.getElementById('root').innerHTML='<div class="error">Could not load dashboard data.<br>Check that your account is fully onboarded and the n8n_webhook_base Custom Value is set.<br><br><small>'+e.message+'</small></div>';
+  });
+
+function render(d) {
+  var m = d.meta || {};
+  var r = d.raise || {};
+  var o = d.outreach || {};
+  var db = d.database || {};
+  var t = d.tiers || {};
+  var cal = d.calibration || {};
+  var modeLabel = (m.reviewMode||'calibration').charAt(0).toUpperCase()+(m.reviewMode||'calibration').slice(1);
+  var modeClass = 'mode-'+(m.reviewMode||'calibration');
+
+  var html = '';
+
+  // Header
+  html += '<div class="header">';
+  html += '<div class="header-left">';
+  html += '<div class="company">'+(m.companyName||'Your Raise')+'</div>';
+  html += '<div class="round">'+(m.roundName||'—')+' &nbsp;·&nbsp; Target: '+(m.raiseAmount||'—')+'</div>';
+  html += '</div>';
+  html += '<div class="header-right">';
+  html += '<span class="mode-badge '+modeClass+'">'+modeLabel+' mode</span>';
+  html += '<div class="updated">Updated '+ago(m.generatedAt)+'</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Raise progress
+  html += '<div class="section-title">Raise progress</div>';
+  html += '<div class="raise-row">';
+  html += '<div class="raise-stat"><div class="raise-stat-value">'+fmt(r.softCircled)+'</div><div class="raise-stat-label">Soft circled</div></div>';
+  html += '<div class="raise-stat"><div class="raise-stat-value">'+fmt(r.committed)+'</div><div class="raise-stat-label">Committed</div></div>';
+  html += '<div class="raise-stat"><div class="raise-stat-value">'+fmt(r.wired)+'</div><div class="raise-stat-label">Wired</div></div>';
+  html += '</div>';
+
+  // Outreach this week
+  html += '<div class="section-title">Outreach</div>';
+  html += '<div class="grid-4">';
+  html += '<div class="stat'+(o.awaitingApproval>0?' accent':'')+'"><div class="stat-label">Awaiting approval</div><div class="stat-value'+(o.awaitingApproval>0?' green':'')+'">'+fmt(o.awaitingApproval)+'</div></div>';
+  html += '<div class="stat"><div class="stat-label">Sent this week</div><div class="stat-value">'+fmt(o.sentThisWeek)+'</div><div class="stat-sub">'+fmt(o.outreachSent)+' total</div></div>';
+  html += '<div class="stat"><div class="stat-label">Replied this week</div><div class="stat-value">'+fmt(o.repliedThisWeek)+'</div><div class="stat-sub">'+fmt(o.replied)+' total</div></div>';
+  html += '<div class="stat"><div class="stat-label">Reply rate</div><div class="stat-value">'+pct(o.replied,o.outreachSent)+'%</div></div>';
+  html += '</div>';
+
+  // Investor tiers
+  html += '<div class="section-title">Priority tiers</div>';
+  html += '<div class="tier-row">';
+  html += '<div class="tier-block t1"><div class="tier-num">'+fmt(t.t1)+'</div><div class="tier-label">Tier 1</div></div>';
+  html += '<div class="tier-block t2"><div class="tier-num">'+fmt(t.t2)+'</div><div class="tier-label">Tier 2</div></div>';
+  html += '<div class="tier-block t3"><div class="tier-num">'+fmt(t.t3)+'</div><div class="tier-label">Tier 3</div></div>';
+  html += '</div>';
+
+  // Database health
+  html += '<div class="section-title">Investor database</div>';
+  html += '<div class="grid-4">';
+  html += '<div class="stat"><div class="stat-label">Total investors</div><div class="stat-value">'+fmt(db.total)+'</div></div>';
+  html += '<div class="stat"><div class="stat-label">Enriched</div><div class="stat-value">'+fmt(db.enriched)+'</div><div class="stat-sub">'+pct(db.enriched,db.total)+'% have email</div></div>';
+  html += '<div class="stat"><div class="stat-label">Profiled</div><div class="stat-value">'+fmt(db.profiled)+'</div><div class="stat-sub">'+pct(db.profiled,db.total)+'% scored</div></div>';
+  html += '<div class="stat'+(db.readyToSend>0?' accent':'')+'"><div class="stat-label">Ready to send</div><div class="stat-value'+(db.readyToSend>0?' green':'')+'">'+fmt(db.readyToSend)+'</div></div>';
+  html += '</div>';
+
+  // Calibration progress
+  html += '<div class="section-title">Calibration</div>';
+  html += '<div class="progress-section">';
+  html += '<div class="progress-row"><span class="progress-label">'+cal.sentCount+' of '+cal.threshold+' sends approved</span><span class="progress-count">'+cal.pct+'%</span></div>';
+  html += '<div class="progress-track"><div class="progress-fill" style="width:'+cal.pct+'%"></div></div>';
+  html += '<div class="progress-meta">'+(cal.pct>=100?'Calibration complete — ready to move to exception mode.':'Approve '+Math.max(0,cal.threshold-cal.sentCount)+' more sends to complete calibration and unlock exception mode.')+'</div>';
+  html += '</div>';
+
+  // Alerts
+  var hasAlerts = o.goingCold > 0 || o.revisitSoon > 0 || o.dnc > 0;
+  if (hasAlerts) {
+    html += '<div class="divider"></div>';
+    html += '<div class="section-title">Attention</div>';
+    if (o.goingCold > 0) {
+      html += '<div class="alert"><span class="alert-label">Going cold — no reply in 14+ days</span><span class="alert-value">'+fmt(o.goingCold)+'</span></div>';
+    }
+    if (o.revisitSoon > 0) {
+      html += '<div class="alert hot"><span class="alert-label">Revisit dates in next 30 days</span><span class="alert-value">'+fmt(o.revisitSoon)+'</span></div>';
+    }
+    if (o.dnc > 0) {
+      html += '<div class="alert"><span class="alert-label">Do not contact</span><span class="alert-value">'+fmt(o.dnc)+'</span></div>';
+    }
+  }
+
+  document.getElementById('root').innerHTML = html;
+}
+</script>
+</body>
+</html>
