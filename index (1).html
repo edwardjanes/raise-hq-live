@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raise HQ — The raise operating system for founders</title>
+  <meta name="description" content="Raise HQ is the raise operating system for startup founders actively raising capital. Discover, engage, close, manage and re-engage investors in one place." />
+  <meta name="theme-color" content="#09090b" />
+  <link rel="canonical" href="https://myraisehq.com/" />
+  <style>
+    :root {
+      --bg: #09090b;
+      --bg-elevated: #121214;
+      --bg-card: #18181b;
+      --border: #27272a;
+      --text: #fafafa;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent: #00FF84;
+      --accent-hover: #66FFB0;
+      --primary: #00FF84;
+      --primary-foreground: #09090b;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(9, 9, 11, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .nav.scrolled {
+      border-bottom-color: var(--border);
+      background: rgba(9, 9, 11, 0.95);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; height: 28px; }
+    .logo img { height: 28px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 0.875rem; color: var(--text-muted); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 20px; font-size: 0.875rem; font-weight: 500;
+      border-radius: var(--radius-sm); border: none; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .btn-primary { background: var(--primary); color: var(--primary-foreground); }
+    .btn-primary:hover { background: #00CC6A; transform: translateY(-1px); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { background: var(--bg-card); border-color: var(--text-dim); }
+    .btn-lg { padding: 14px 28px; font-size: 1rem; }
+
+    .mobile-toggle {
+      display: none; background: none; border: none; color: var(--text);
+      cursor: pointer; padding: 8px;
+    }
+
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      padding: 120px 24px 80px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ""; position: absolute; top: -20%; left: 50%;
+      transform: translateX(-50%); width: 800px; height: 600px;
+      background: radial-gradient(ellipse, rgba(0, 255, 132, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 999px; font-size: 0.8125rem; color: var(--text-muted);
+      margin-bottom: 32px; animation: fadeUp 0.8s ease both;
+    }
+    .hero-badge span { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
+    .hero h1 {
+      font-size: clamp(2.25rem, 6vw, 4rem); font-weight: 700;
+      letter-spacing: -0.04em; line-height: 1.1; max-width: 900px;
+      margin-bottom: 24px; animation: fadeUp 0.8s ease 0.1s both;
+    }
+    .hero h1 .accent {
+      background: linear-gradient(135deg, #00FF84, #66FFB0);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: var(--text-muted);
+      max-width: 620px; margin-bottom: 40px; animation: fadeUp 0.8s ease 0.2s both;
+    }
+    .hero-ctas {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.8s ease 0.3s both;
+    }
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      font-size: 0.8125rem; color: var(--text-dim);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      animation: bounce 2s infinite;
+    }
+    .scroll-hint svg { width: 20px; height: 20px; opacity: 0.6; }
+
+    section { padding: 100px 24px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 700;
+      letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 20px;
+    }
+    .section-desc {
+      font-size: 1.125rem; color: var(--text-muted); max-width: 580px; margin-bottom: 48px;
+    }
+
+    .problem-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;
+    }
+    .problem-text p { color: var(--text-muted); margin-bottom: 20px; font-size: 1.0625rem; }
+
+    .stages { display: flex; flex-direction: column; gap: 24px; }
+    .stage {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      display: grid; grid-template-columns: 80px 1fr; gap: 24px;
+      transition: border-color 0.2s;
+    }
+    .stage:hover { border-color: #3f3f46; }
+    .stage-num { font-size: 1.5rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+    .stage h3 { font-size: 1.35rem; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .stage .job { font-size: 0.9375rem; color: var(--text-muted); margin-bottom: 16px; }
+    .stage ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .stage li {
+      font-size: 0.9375rem; color: var(--text-muted);
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .stage li::before {
+      content: ""; width: 6px; height: 6px; background: var(--primary);
+      border-radius: 50%; flex-shrink: 0; margin-top: 8px;
+    }
+
+    .investor-chip {
+      margin-top: 28px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 16px 20px;
+      display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; max-width: 520px;
+    }
+    .chip-name { font-weight: 600; font-size: 0.9375rem; }
+    .chip-firm { font-size: 0.8125rem; color: var(--text-dim); }
+    .chip-score { font-size: 1.25rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+    .chip-score span { font-size: 0.75rem; font-weight: 500; color: var(--text-dim); }
+    .chip-tier {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(0, 255, 132, 0.15); color: var(--accent);
+    }
+    .chip-rationale { flex-basis: 100%; font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5; }
+
+    .diff-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;
+    }
+    .diff-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px; transition: border-color 0.2s;
+    }
+    .diff-card:hover { border-color: #3f3f46; }
+    .diff-card h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 10px; }
+    .diff-card p { font-size: 0.9375rem; color: var(--text-muted); }
+
+    .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .how-step {
+      text-align: center; padding: 32px 20px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .how-icon {
+      width: 48px; height: 48px; background: rgba(0, 255, 132, 0.12);
+      border-radius: 50%; display: grid; place-items: center;
+      margin: 0 auto 16px; font-size: 1.125rem; font-weight: 700; color: var(--accent);
+    }
+    .how-step h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 8px; }
+    .how-step p { font-size: 0.875rem; color: var(--text-muted); }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .price-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      display: flex; flex-direction: column;
+    }
+    .price-card.featured { border-color: var(--primary); position: relative; }
+    .price-card.featured::before {
+      content: "Most used"; position: absolute; top: -12px; left: 50%;
+      transform: translateX(-50%); background: var(--primary); color: #09090b;
+      font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 999px;
+    }
+    .price-name { font-size: 1.125rem; font-weight: 600; margin-bottom: 8px; }
+    .price-amount { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .price-amount span { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
+    .price-desc { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 24px; min-height: 40px; }
+    .price-features {
+      list-style: none; display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 28px; flex-grow: 1;
+    }
+    .price-features li {
+      font-size: 0.875rem; color: var(--text-muted);
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .price-features li::before { content: "✓"; color: var(--accent); font-weight: 600; flex-shrink: 0; }
+
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-question {
+      width: 100%; background: none; border: none; color: var(--text);
+      font-family: inherit; font-size: 1.0625rem; font-weight: 500;
+      text-align: left; padding: 24px 0; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      transition: color 0.2s;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-icon { width: 20px; height: 20px; flex-shrink: 0; transition: transform 0.3s; opacity: 0.6; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease; }
+    .faq-item.open .faq-answer { max-height: 320px; padding-bottom: 24px; }
+    .faq-answer p { color: var(--text-muted); font-size: 0.9375rem; line-height: 1.7; }
+
+    .cta-section {
+      text-align: center; padding: 120px 24px; position: relative;
+    }
+    .cta-section::before {
+      content: ""; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse, rgba(0, 255, 132, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700;
+      letter-spacing: -0.03em; max-width: 640px; margin: 0 auto 16px; line-height: 1.25;
+    }
+    .cta-section p {
+      color: var(--text-muted); font-size: 1.125rem; margin-bottom: 36px;
+      max-width: 480px; margin-left: auto; margin-right: auto;
+    }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 64px 24px 32px; background: var(--bg-elevated);
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+      max-width: 1200px; margin: 0 auto 48px;
+    }
+    .footer-brand p { color: var(--text-muted); font-size: 0.875rem; margin-top: 12px; max-width: 280px; }
+    .footer-col h4 {
+      font-size: 0.8125rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--text-dim); margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 0.875rem; color: var(--text-muted); transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto; padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px; font-size: 0.8125rem; color: var(--text-dim);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none; position: absolute; top: 64px; left: 0; right: 0;
+        background: var(--bg); border-bottom: 1px solid var(--border);
+        flex-direction: column; padding: 24px; gap: 16px;
+      }
+      .nav-links.open { display: flex; }
+      .mobile-toggle { display: block; }
+      .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stage { grid-template-columns: 1fr; gap: 12px; }
+      .how-steps { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-ctas { flex-direction: column; width: 100%; max-width: 280px; }
+      .btn-lg { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo" aria-label="Raise HQ home">
+        <img src="raisehq-logo-on-black.png" alt="Raise HQ" width="140" height="28" />
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#journey">Product</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="https://cal.com/edward-janes/60-min" target="_blank" rel="noopener" class="btn btn-outline">Book a walkthrough</a></li>
+        <li><a href="#trial" class="btn btn-primary">Start 14-day free trial</a></li>
+      </ul>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-badge">
+      <span></span>
+      For founders actively raising · Pre-seed to Series A
+    </div>
+    <h1>
+      The raise operating system<br />
+      for founders <span class="accent">actively raising</span>
+    </h1>
+    <p class="hero-sub">
+      Replace the spreadsheet, inbox, and memory with one system that runs
+      Discover → Engage → Close → Manage → Re-engage.
+    </p>
+    <div class="hero-ctas">
+      <a href="#trial" class="btn btn-primary btn-lg">Start 14-day free trial</a>
+      <a href="https://cal.com/edward-janes/60-min" target="_blank" rel="noopener" class="btn btn-outline btn-lg">Book a walkthrough</a>
+    </div>
+    <div class="scroll-hint">
+      Scroll to explore
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
+  </header>
+
+  <section id="problem">
+    <div class="container">
+      <div class="problem-grid">
+        <div class="problem-text">
+          <p class="section-label">The problem</p>
+          <h2 class="section-title">Most raises are still run on spreadsheets and memory</h2>
+          <p>
+            Investor lists live in one place, outreach drafts in another, replies scattered across inboxes, and the true state of the round only exists in the founder’s head.
+          </p>
+          <p>
+            Warm investors fall through the cracks. Follow-ups are late or generic. “Not now” never becomes a next-step plan.
+          </p>
+        </div>
+        <div>
+          <p class="section-label" style="margin-bottom: 12px;">What changes</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:14px;">
+            <li style="display:flex; gap:12px; align-items:flex-start; color:var(--text-muted); font-size:0.9375rem;">
+              <span style="color:var(--accent); font-weight:600;">→</span>
+              Know exactly where every conversation stands
+            </li>
+            <li style="display:flex; gap:12px; align-items:flex-start; color:var(--text-muted); font-size:0.9375rem;">
+              <span style="color:var(--accent); font-weight:600;">→</span>
+              Stop losing warm investors to bad follow-up
+            </li>
+            <li style="display:flex; gap:12px; align-items:flex-start; color:var(--text-muted); font-size:0.9375rem;">
+              <span style="color:var(--accent); font-weight:600;">→</span>
+              Run a tighter process from first outreach to wire
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="journey" style="background: var(--bg-elevated); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <p class="section-label">The investor journey</p>
+      <h2 class="section-title">Five stages. One continuous process.</h2>
+      <p class="section-desc">
+        Structure the entire raise around the stages that actually move capital.
+      </p>
+      <div class="stages">
+        <article class="stage">
+          <div class="stage-num">01</div>
+          <div>
+            <h3>Discover</h3>
+            <p class="job">Find the investors who actually back companies like yours, and know who to hit first.</p>
+            <ul>
+              <li>Investor CRM built for funds, partners, angels, syndicates and family offices — related properly, not orphan contacts</li>
+              <li>AI fit scoring (1–10) against your company and round, with written rationale and T1 / T2 / T3 priority</li>
+              <li>Warm intro mapping: who in your network can introduce you, and how strong the connection is</li>
+            </ul>
+            <div class="investor-chip" aria-label="Example investor record">
+              <div>
+                <div class="chip-name">Alex Rivera</div>
+                <div class="chip-firm">Northbridge Ventures · Partner</div>
+              </div>
+              <div class="chip-score">8.4 <span>/10</span></div>
+              <div class="chip-tier">T1</div>
+              <div class="chip-rationale">Strong thesis match on vertical SaaS + prior cheques at this stage. High response rate to warm intros.</div>
+            </div>
+          </div>
+        </article>
+        <article class="stage">
+          <div class="stage-num">02</div>
+          <div>
+            <h3>Engage</h3>
+            <p class="job">Open real conversations at volume without sounding automated.</p>
+            <ul>
+              <li>AI-drafted outreach (email, LinkedIn, X) written from your own company context — not templates</li>
+              <li>Graduated trust model: calibration (every message reviewed) → exception digests → optional auto for lower tiers. Top-tier always reviewed</li>
+              <li>Reply classification and routing: interested / not now / referral / auto-reply / no — pipeline and tasks update automatically</li>
+            </ul>
+          </div>
+        </article>
+        <article class="stage">
+          <div class="stage-num">03</div>
+          <div>
+            <h3>Close</h3>
+            <p class="job">Move from interest to signed to wired without losing the thread.</p>
+            <ul>
+              <li>Data room with per-investor access, revocation, and view tracking</li>
+              <li>SAFE and term-sheet documents, capital-call invoicing and pay links</li>
+              <li>Allocation dashboard: target vs soft-circled vs signed vs wired</li>
+            </ul>
+          </div>
+        </article>
+        <article class="stage">
+          <div class="stage-num">04</div>
+          <div>
+            <h3>Manage</h3>
+            <p class="job">Keep every investor informed, and keep the round’s true state visible.</p>
+            <ul>
+              <li>Recurring investor updates from a single source of truth</li>
+              <li>Clear view of commitments, outstanding docs, and open threads</li>
+            </ul>
+          </div>
+        </article>
+        <article class="stage">
+          <div class="stage-num">05</div>
+          <div>
+            <h3>Re-engage</h3>
+            <p class="job">Turn a “not now” into a cheque on the next milestone.</p>
+            <ul>
+              <li>Every “not now” captured with what would change their mind and a revisit date</li>
+              <li>Milestone triggers the follow-up automatically</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="container">
+      <p class="section-label">Why Raise HQ</p>
+      <h2 class="section-title">Built for the raise, not for selling services</h2>
+      <p class="section-desc">Every capability is described in founder-and-investor language.</p>
+      <div class="diff-grid">
+        <div class="diff-card">
+          <h3>Investor fit scoring</h3>
+          <p>1–10 score, written rationale, and priority tier against your specific company and round — not generic lead scoring.</p>
+        </div>
+        <div class="diff-card">
+          <h3>Graduated trust for sending</h3>
+          <p>Start in calibration. Move to exception digests. Optionally auto for lower tiers. Top-tier investors are always reviewed.</p>
+        </div>
+        <div class="diff-card">
+          <h3>One continuous pipeline</h3>
+          <p>From first discovery to wire and beyond. Know exactly where every conversation stands without opening three tools.</p>
+        </div>
+        <div class="diff-card">
+          <h3>Re-engagement that remembers</h3>
+          <p>Capture the reason for “not now” and the milestone that would change it. The system follows up when the moment arrives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="background: var(--bg-elevated); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <p class="section-label" style="text-align:center;">How it works</p>
+      <h2 class="section-title" style="text-align:center; margin-bottom:16px;">From intake to live in three steps</h2>
+      <p class="section-desc" style="text-align:center; margin-left:auto; margin-right:auto;">
+        Designed so a founder mid-raise can get productive without a long implementation project.
+      </p>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-icon">1</div>
+          <h3>Intake &amp; context</h3>
+          <p>Company, round details, materials, and any existing investor list. The system uses this as the basis for scoring and drafting.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon">2</div>
+          <h3>Calibration</h3>
+          <p>Every outbound message is reviewed by you until the system earns trust. Approve, edit or skip from the inbox.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon">3</div>
+          <h3>Live</h3>
+          <p>Exception digests with stated send times. Optional auto for lower tiers. Top-tier investors stay under human review.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <p class="section-label" style="text-align:center;">Pricing</p>
+      <h2 class="section-title" style="text-align:center; margin-bottom:16px;">Simple tiers for the stage you’re in</h2>
+      <p class="section-desc" style="text-align:center; margin-left:auto; margin-right:auto;">
+        Numbers are placeholders and will be confirmed. All plans include a 14-day free trial.
+      </p>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-name">Basic</div>
+          <div class="price-amount">$27<span>/mo</span></div>
+          <p class="price-desc">Investor CRM, fit scoring, manual outreach</p>
+          <ul class="price-features">
+            <li>Investor database &amp; CRM</li>
+            <li>AI fit scoring (1–10) + rationale</li>
+            <li>T1 / T2 / T3 prioritisation</li>
+            <li>Manual outreach tools</li>
+          </ul>
+          <a href="#trial" class="btn btn-outline" style="width:100%;">Start free trial</a>
+        </div>
+        <div class="price-card featured">
+          <div class="price-name">Premium</div>
+          <div class="price-amount">$97<span>/mo</span></div>
+          <p class="price-desc">Adds AI drafting, sequences, reply classification, data room</p>
+          <ul class="price-features">
+            <li>Everything in Basic</li>
+            <li>AI-drafted outreach (email, LinkedIn, X)</li>
+            <li>Sequences &amp; graduated trust model</li>
+            <li>Reply classification &amp; routing</li>
+            <li>Data room with view tracking</li>
+          </ul>
+          <a href="#trial" class="btn btn-primary" style="width:100%;">Start free trial</a>
+        </div>
+        <div class="price-card">
+          <div class="price-name">Pro</div>
+          <div class="price-amount">$197<span>/mo</span></div>
+          <p class="price-desc">Adds allocation dashboard, updates, intro mapping, priority support</p>
+          <ul class="price-features">
+            <li>Everything in Premium</li>
+            <li>Allocation dashboard</li>
+            <li>Recurring investor updates</li>
+            <li>Warm intro mapping</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="#trial" class="btn btn-outline" style="width:100%;">Start free trial</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" style="background: var(--bg-elevated); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container" style="max-width:720px; text-align:center;">
+      <p class="section-label">About</p>
+      <h2 class="section-title">Raise HQ</h2>
+      <p style="color:var(--text-muted); font-size:1.0625rem; margin-bottom:20px;">
+        Raise HQ is the raise operating system for founders actively raising capital from pre-seed through Series A.
+        It is included in Source Capital’s Accelerator and Velocity programmes, and is also available standalone.
+      </p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <p class="section-label" style="text-align:center;">FAQ</p>
+      <h2 class="section-title" style="text-align:center; margin-bottom:48px;">Common questions</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">
+            What is Raise HQ?
+            <svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Raise HQ is a raise operating system for startup founders who are actively raising capital. It brings investor discovery, outreach, pipeline, data room, allocations and re-engagement into one continuous process organised around Discover → Engage → Close → Manage → Re-engage.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            Who is it for?
+            <svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Founders raising from pre-seed through Series A who currently run their process on spreadsheets, inboxes and memory, and want a tighter system without turning the raise into a full-time CRM project.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            How does the graduated trust model work?
+            <svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>New accounts start in calibration: every message is reviewed before it goes. You can then move to exception mode, where drafts arrive in a morning digest with a stated send time and silence means send. Lower-priority tiers can later run on auto. Top-tier investors remain under human review in every mode.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            Is Raise HQ an investment adviser or placement agent?
+            <svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>No. Raise HQ is software that helps founders run their own process. It does not provide investment advice, act as a broker-dealer, or introduce investors to specific deals.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            What happens to my data if I cancel?
+            <svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>You can export your data before cancellation. After cancellation, account data is retained only as required for legal or operational purposes and then deleted according to our privacy policy. (Full policy to be linked once legal review is complete.)</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            Is there a free trial?
+            <svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. Every plan includes a 14-day free trial. No credit card required to start.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="trial" class="cta-section">
+    <h2>Run a tighter process. Stop losing warm investors to bad follow-up.</h2>
+    <p>Start with a 14-day free trial. Or book a walkthrough if you’d rather see it first.</p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a href="#trial" class="btn btn-primary btn-lg">Start 14-day free trial</a>
+      <a href="https://cal.com/edward-janes/60-min" target="_blank" rel="noopener" class="btn btn-outline btn-lg">Book a walkthrough</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo" aria-label="Raise HQ">
+          <img src="raisehq-logo-on-black.png" alt="Raise HQ" width="140" height="28" />
+        </a>
+        <p>The raise operating system for founders actively raising capital. Pre-seed through Series A.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#journey">Journey</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#how">How it works</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="https://cal.com/edward-janes/60-min" target="_blank" rel="noopener">Book a walkthrough</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#legal-privacy">Privacy</a></li>
+          <li><a href="#legal-terms">Terms</a></li>
+          <li><a href="#legal-cookies">Cookies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Raise HQ. All rights reserved.</span>
+      <span>myraisehq.com</span>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+    const toggle = document.getElementById('mobileToggle');
+    const links = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+    links.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => links.classList.remove('open'));
+    });
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+  </script>
+</body>
+</html>
