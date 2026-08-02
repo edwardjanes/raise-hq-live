@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:#E8E8E8;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;padding:20px}
+.header{margin-bottom:24px}
+.header-title{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:0.02em;color:#E8E8E8}
+.header-sub{font-size:13px;color:#555;margin-top:4px}
+.progress-bar-wrap{margin:16px 0 24px}
+.progress-track{height:4px;background:#1a1a1a;border-radius:2px}
+.progress-fill{height:4px;border-radius:2px;transition:width 0.6s ease}
+.progress-fill.ready{background:#00FF84}
+.progress-fill.partial{background:#00FF84}
+.progress-meta{display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:#444}
+.progress-meta .count{color:#00FF84;font-weight:700}
+.outreach-status{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:24px}
+.outreach-status.locked{background:#1a0a0a;border:1px solid #3a1a1a;color:#664444}
+.outreach-status.ready{background:#0a1a0a;border:1px solid #00FF8440;color:#00FF84}
+.outreach-status .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.outreach-status.locked .dot{background:#664444}
+.outreach-status.ready .dot{background:#00FF84}
+.fundamentals{display:flex;flex-direction:column;gap:10px}
+.fund-item{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.2s}
+.fund-item.complete{border-color:#00FF8420}
+.fund-item.in-progress{border-color:#00FF8450}
+.fund-item.blocked{border-color:#2a1a1a}
+.fund-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;margin-top:1px}
+.fund-icon.complete{background:#00FF8420;color:#00FF84}
+.fund-icon.in-progress{background:#00FF8410;color:#00FF84}
+.fund-icon.incomplete{background:#1a1a1a;color:#444}
+.fund-icon.blocked{background:#2a1000;color:#774400}
+.fund-body{flex:1;min-width:0}
+.fund-label{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.fund-name{font-size:14px;font-weight:700;color:#E8E8E8}
+.fund-badge{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px}
+.fund-badge.hard{background:#2a1000;color:#774400}
+.fund-badge.soft{background:#1a1a1a;color:#444}
+.fund-desc{font-size:12px;color:#555;margin-bottom:4px;line-height:1.5}
+.fund-detail{font-size:12px;line-height:1.5}
+.fund-detail.ok{color:#00FF84}
+.fund-detail.pending{color:#666;font-style:italic}
+.fund-detail.warn{color:#aa6600}
+.fund-action{margin-top:8px}
+.fund-action-text{font-size:12px;color:#666;line-height:1.5}
+.fund-upload{margin-top:10px}
+.upload-zone{border:1px dashed #2a2a2a;border-radius:6px;padding:12px 16px;text-align:center;cursor:pointer;transition:border-color 0.2s;background:#0a0a0a}
+.upload-zone:hover{border-color:#00FF8450}
+.upload-zone input{display:none}
+.upload-zone-label{font-size:12px;color:#555}
+.upload-zone-label strong{color:#00FF84;cursor:pointer}
+.upload-url-input{width:100%;background:#0a0a0a;border:1px solid #222;border-radius:5px;color:#E8E8E8;font-size:13px;padding:8px 12px;outline:none;margin-top:8px;font-family:inherit}
+.upload-url-input:focus{border-color:#00FF84}
+.upload-url-input::placeholder{color:#333}
+.upload-btn{display:inline-block;margin-top:8px;background:#00FF84;border:none;border-radius:5px;color:#000;font-size:12px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;padding:8px 18px;cursor:pointer;transition:opacity 0.2s}
+.upload-btn:hover{opacity:0.85}
+.upload-btn:disabled{opacity:0.35;cursor:not-allowed}
+.score-bar-wrap{margin-top:10px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.score-label{font-size:12px;color:#555}
+.score-num{font-size:18px;font-weight:800}
+.score-num.pass{color:#00FF84}
+.score-num.fail{color:#aa4400}
+.score-track{height:3px;background:#1a1a1a;border-radius:2px}
+.score-fill{height:3px;border-radius:2px}
+.score-fill.pass{background:#00FF84}
+.score-fill.fail{background:#aa4400}
+.spinning{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.loading{text-align:center;padding:48px;color:#333;font-size:14px}
+.error{text-align:center;padding:32px;color:#444;font-size:13px;background:#111;border-radius:8px}
+</style>
+</head>
+<body>
+<div id="root"><div class="loading">Loading your setup progress…</div></div>
+<script>
+var params = new URLSearchParams(window.location.search);
+var LOC = params.get('loc') || '';
+var TOKEN = params.get('token') || '';
+var COMPANY = params.get('company') || '';
+var N8N = 'https://n8n.srv926257.hstgr.cloud';
+var DECK_SUBMIT = N8N + '/webhook/raise-deck-submit';
+var STATUS_URL = N8N + '/webhook/raise-fundamentals-status';
+
+var state = { fundamentals: [], outreachReady: false, pct: 0, complete: 0, total: 6 };
+
+function load() {
+  fetch(STATUS_URL + '?loc=' + encodeURIComponent(LOC) + '&token=' + encodeURIComponent(TOKEN))
+    .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d) { state = d; render(); })
+    .catch(function(e) {
+      document.getElementById('root').innerHTML = '<div class="error">Could not load setup status.<br><small>' + e.message + '</small></div>';
+    });
+}
+
+function icon(f) {
+  if (f.complete) return '✓';
+  if (f.inProgress) return '<span class="spinning">◌</span>';
+  if (f.hardBlock) return '!';
+  return '○';
+}
+function iconClass(f) {
+  if (f.complete) return 'complete';
+  if (f.inProgress) return 'in-progress';
+  if (f.hardBlock) return 'blocked';
+  return 'incomplete';
+}
+function itemClass(f) {
+  if (f.complete) return 'complete';
+  if (f.inProgress) return 'in-progress';
+  if (f.hardBlock && !f.complete) return 'blocked';
+  return '';
+}
+function detailClass(f) {
+  if (f.complete) return 'ok';
+  if (f.inProgress) return 'pending';
+  if (f.hardBlock && !f.complete) return 'warn';
+  return 'pending';
+}
+
+function submitDeck() {
+  var urlInput = document.getElementById('deck-url');
+  var btn = document.getElementById('deck-btn');
+  var url = (urlInput && urlInput.value || '').trim();
+  if (!url) { alert('Paste a publicly accessible URL to your deck PDF.'); return; }
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  fetch(DECK_SUBMIT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ locationId: LOC, token: TOKEN, pdfUrl: url, companyName: COMPANY })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() { setTimeout(load, 3000); })
+  .catch(function(e) {
+    btn.disabled = false;
+    btn.textContent = 'Submit deck →';
+    alert('Submission failed: ' + e.message);
+  });
+}
+
+function render() {
+  var f = state.fundamentals || [];
+  var pct = state.completion_pct || 0;
+  var ready = state.outreach_ready;
+  var complete = state.complete_count || 0;
+  var total = state.total_count || 6;
+
+  var html = '';
+
+  // Header
+  html += '<div class="header">';
+  html += '<div class="header-title">Raise setup</div>';
+  html += '<div class="header-sub">Complete these steps to unlock investor outreach</div>';
+  html += '</div>';
+
+  // Progress bar
+  html += '<div class="progress-bar-wrap">';
+  html += '<div class="progress-track"><div class="progress-fill ' + (ready ? 'ready' : 'partial') + '" style="width:' + pct + '%"></div></div>';
+  html += '<div class="progress-meta"><span>' + pct + '% complete</span><span class="count">' + complete + ' / ' + total + ' done</span></div>';
+  html += '</div>';
+
+  // Outreach status
+  html += '<div class="outreach-status ' + (ready ? 'ready' : 'locked') + '">';
+  html += '<span class="dot"></span>';
+  html += ready ? 'Outreach unlocked' : 'Outreach locked — ' + (state.hard_blocks_remaining || []).length + ' step' + ((state.hard_blocks_remaining || []).length === 1 ? '' : 's') + ' remaining';
+  html += '</div>';
+
+  // Fundamentals list
+  html += '<div class="fundamentals">';
+  f.forEach(function(item) {
+    html += '<div class="fund-item ' + itemClass(item) + '">';
+    html += '<div class="fund-icon ' + iconClass(item) + '">' + icon(item) + '</div>';
+    html += '<div class="fund-body">';
+    html += '<div class="fund-label">';
+    html += '<span class="fund-name">' + item.label + '</span>';
+    html += '<span class="fund-badge ' + (item.hardBlock ? 'hard' : 'soft') + '">' + (item.hardBlock ? 'Required' : 'Recommended') + '</span>';
+    html += '</div>';
+    html += '<div class="fund-desc">' + item.description + '</div>';
+    html += '<div class="fund-detail ' + detailClass(item) + '">' + (item.detail || '') + '</div>';
+
+    // Deck upload UI
+    if (item.id === 'deck' && !item.complete && !item.inProgress) {
+      html += '<div class="fund-upload">';
+      html += '<div class="upload-zone"><label>';
+      html += '<div class="upload-zone-label">Paste a publicly accessible PDF URL or <strong>upload to your data room first</strong></div>';
+      html += '</label></div>';
+      html += '<input id="deck-url" class="upload-url-input" type="url" placeholder="https://drive.google.com/…/deck.pdf">';
+      html += '<button id="deck-btn" class="upload-btn" onclick="submitDeck()">Submit deck →</button>';
+      html += '</div>';
+    }
+
+    // Deck score bar
+    if (item.id === 'deck' && (item.complete || (item.detail && item.detail.includes('/100')))) {
+      var scoreStr = (item.detail || '').match(/(\d+)\/100/);
+      var score = scoreStr ? parseInt(scoreStr[1]) : null;
+      if (score !== null) {
+        var cls = score >= 70 ? 'pass' : 'fail';
+        html += '<div class="score-bar-wrap">';
+        html += '<div class="score-row"><span class="score-label">AI score</span><span class="score-num ' + cls + '">' + score + '<span style="font-size:11px;font-weight:400;color:#444"> /100</span></span></div>';
+        html += '<div class="score-track"><div class="score-fill ' + cls + '" style="width:' + score + '%"></div></div>';
+        html += '</div>';
+      }
+    }
+
+    // Action text
+    if (item.action && !item.complete && !item.inProgress) {
+      html += '<div class="fund-action"><div class="fund-action-text">' + item.action + '</div></div>';
+    }
+
+    html += '</div></div>';
+  });
+  html += '</div>';
+
+  document.getElementById('root').innerHTML = html;
+}
+
+load();
+// Refresh every 30s so deck status updates automatically
+setInterval(load, 30000);
+</script>
+</body>
+</html>
