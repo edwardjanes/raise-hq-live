@@ -1,0 +1,797 @@
+<div id="raisehq-unified">
+  <style>
+    #raisehq-unified {
+      --rhq-black: #000000;
+      --rhq-surface: #111111;
+      --rhq-green: #00FF84;
+      --rhq-text: #E8E8E8;
+      --rhq-muted: #A0A0A0;
+      --rhq-white: #FFFFFF;
+      --rhq-error: #FF4D4D;
+
+      font-family: 'Montserrat', sans-serif;
+      background: var(--rhq-black);
+      color: var(--rhq-text);
+      width: 100%;
+      margin: 0;
+      padding: 32px 28px 36px;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #raisehq-unified * { box-sizing: border-box; }
+    #raisehq-unified .rhq-eyebrow {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--rhq-muted); margin: 0 0 6px;
+    }
+    #raisehq-unified .rhq-h1 {
+      font-family: 'Inter', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1;
+      letter-spacing: 0.02em; text-transform: uppercase; color: var(--rhq-white); margin: 0 0 20px;
+    }
+
+    /* Tabs */
+    #raisehq-unified .rhq-tabs {
+      display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--rhq-surface);
+    }
+    #raisehq-unified .rhq-tab {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.02em;
+      background: none; border: none; color: var(--rhq-muted); cursor: pointer;
+      padding: 10px 16px 12px; border-bottom: 2px solid transparent; white-space: nowrap;
+    }
+    #raisehq-unified .rhq-tab.rhq-tab-active { color: var(--rhq-white); border-bottom-color: var(--rhq-green); }
+    #raisehq-unified .rhq-tab:hover:not(.rhq-tab-active) { color: var(--rhq-text); }
+
+    /* Credit meter (shared) */
+    #raisehq-unified .rhq-meter {
+      background: var(--rhq-surface); border-left: 2px solid var(--rhq-green);
+      padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    #raisehq-unified .rhq-meter-figure {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums;
+      font-size: 36px; line-height: 1; color: var(--rhq-green);
+    }
+    #raisehq-unified .rhq-meter-figure.rhq-zero { color: var(--rhq-muted); }
+    #raisehq-unified .rhq-meter-label { font-size: 13px; color: var(--rhq-muted); margin-top: 4px; }
+    #raisehq-unified .rhq-meter-client { font-size: 13px; color: var(--rhq-muted); text-align: right; }
+    #raisehq-unified .rhq-meter-client strong {
+      display: block; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--rhq-text); font-size: 15px;
+    }
+
+    /* Pull panel */
+    #raisehq-unified .rhq-pull-panel {
+      background: var(--rhq-surface); padding: 20px; border-radius: 3px; margin-bottom: 20px;
+    }
+    #raisehq-unified .rhq-pull-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    #raisehq-unified .rhq-pull-row label { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-unified .rhq-pull-input {
+      width: 90px; background: var(--rhq-black); border: 1px solid #222; color: var(--rhq-text);
+      font-family: 'Inter', sans-serif; font-size: 15px; padding: 8px 10px; border-radius: 3px;
+    }
+
+    /* Track select bar */
+    #raisehq-unified .rhq-track-select-bar {
+      background: var(--rhq-surface); border-left: 2px solid var(--rhq-green);
+      padding: 14px 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    #raisehq-unified .rhq-track-select-bar label {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--rhq-text); white-space: nowrap;
+    }
+    #raisehq-unified .rhq-track-select {
+      flex: 1; min-width: 220px; background: var(--rhq-black); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      padding: 9px 12px; border-radius: 3px;
+    }
+
+    /* Filters */
+    #raisehq-unified .rhq-filters { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    #raisehq-unified .rhq-search {
+      flex: 1; min-width: 160px; background: var(--rhq-surface); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      padding: 9px 12px; border-radius: 3px;
+    }
+    #raisehq-unified .rhq-search::placeholder { color: var(--rhq-muted); }
+    #raisehq-unified .rhq-status-filter {
+      background: var(--rhq-surface); border: 1px solid #222; color: var(--rhq-text);
+      font-family: 'Montserrat', sans-serif; font-size: 14px; padding: 9px 12px; border-radius: 3px;
+    }
+
+    #raisehq-unified .rhq-toolbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 12px; flex-wrap: wrap;
+    }
+    #raisehq-unified .rhq-toolbar-left { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-unified .rhq-link-btn {
+      font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: var(--rhq-green);
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    #raisehq-unified .rhq-link-btn:disabled { color: var(--rhq-muted); cursor: not-allowed; }
+
+    /* List */
+    #raisehq-unified .rhq-list {
+      max-height: 440px; overflow-y: auto; border: 1px solid var(--rhq-surface);
+      border-radius: 3px; margin-bottom: 20px;
+    }
+    #raisehq-unified .rhq-row {
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px;
+      border-bottom: 1px solid var(--rhq-surface);
+    }
+    #raisehq-unified .rhq-row:last-child { border-bottom: none; }
+    #raisehq-unified .rhq-row input[type="checkbox"] {
+      margin-top: 3px; width: 16px; height: 16px; accent-color: var(--rhq-green); cursor: pointer; flex-shrink: 0;
+    }
+    #raisehq-unified .rhq-row input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.4; }
+    #raisehq-unified .rhq-row-main { flex: 1; min-width: 0; }
+    #raisehq-unified .rhq-row-name {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: var(--rhq-white);
+    }
+    #raisehq-unified .rhq-row-email { font-size: 12px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-unified .rhq-row-meta { font-size: 11px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-unified .rhq-row-badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: 260px; }
+
+    #raisehq-unified .rhq-badge {
+      display: inline-block; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.02em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    #raisehq-unified .rhq-badge.rhq-muted { color: var(--rhq-muted); border: 1px solid var(--rhq-muted); background: transparent; }
+    #raisehq-unified .rhq-badge.rhq-outline { color: var(--rhq-green); border: 1px solid var(--rhq-green); background: transparent; }
+    #raisehq-unified .rhq-badge.rhq-filled { color: var(--rhq-black); background: var(--rhq-green); border: 1px solid var(--rhq-green); }
+
+    /* Profiled card (Profile tab) */
+    #raisehq-unified .rhq-card { padding: 16px 18px; border-bottom: 1px solid var(--rhq-surface); }
+    #raisehq-unified .rhq-card:last-child { border-bottom: none; }
+    #raisehq-unified .rhq-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    #raisehq-unified .rhq-card-name { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; color: var(--rhq-white); }
+    #raisehq-unified .rhq-card-firmrole { font-size: 13px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-unified .rhq-card-scorewrap { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+    #raisehq-unified .rhq-card-score {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums;
+      font-size: 22px; color: var(--rhq-green); line-height: 1;
+    }
+    #raisehq-unified .rhq-card-score-out { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-unified .rhq-tier-pill { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; border-radius: 999px; padding: 3px 11px; line-height: 1.4; }
+    #raisehq-unified .rhq-tier-pill.rhq-tier-t1 { background: var(--rhq-green); color: var(--rhq-black); }
+    #raisehq-unified .rhq-tier-pill.rhq-tier-t2 { border: 1px solid var(--rhq-green); color: var(--rhq-green); }
+    #raisehq-unified .rhq-tier-pill.rhq-tier-t3 { border: 1px solid var(--rhq-muted); color: var(--rhq-muted); }
+    #raisehq-unified .rhq-card-rationale { font-size: 13px; color: var(--rhq-muted); margin-top: 10px; line-height: 1.5; }
+    #raisehq-unified .rhq-card-justdone {
+      display: inline-block; margin-top: 8px; font-family: 'Inter', sans-serif; font-size: 11px;
+      font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--rhq-black);
+      background: var(--rhq-green); border-radius: 999px; padding: 3px 10px;
+    }
+
+    #raisehq-unified .rhq-empty { padding: 24px 16px; color: var(--rhq-muted); font-size: 14px; text-align: center; }
+
+    #raisehq-unified .rhq-submit {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.04em;
+      text-transform: uppercase; background: var(--rhq-green); color: var(--rhq-black); border: none;
+      padding: 14px 28px; border-radius: 3px; cursor: pointer; transition: opacity .15s ease;
+    }
+    #raisehq-unified .rhq-submit:hover { opacity: 0.88; }
+    #raisehq-unified .rhq-submit:disabled { background: var(--rhq-surface); color: var(--rhq-muted); cursor: not-allowed; }
+
+    #raisehq-unified .rhq-status { font-size: 14px; color: var(--rhq-muted); margin-top: 14px; }
+    #raisehq-unified .rhq-status.rhq-error { color: var(--rhq-error); }
+
+    #raisehq-unified .rhq-results { margin-top: 24px; border-top: 1px solid var(--rhq-surface); padding-top: 18px; }
+    #raisehq-unified .rhq-results-summary { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--rhq-white); margin-bottom: 6px; }
+    #raisehq-unified .rhq-results-detail { font-size: 13px; color: var(--rhq-muted); }
+
+    #raisehq-unified .rhq-pull-results { max-height: 260px; overflow-y: auto; border: 1px solid var(--rhq-surface); border-radius: 3px; margin-top: 16px; }
+    #raisehq-unified .rhq-pull-row-item { padding: 10px 16px; border-bottom: 1px solid var(--rhq-surface); }
+    #raisehq-unified .rhq-pull-row-item:last-child { border-bottom: none; }
+
+    #raisehq-unified .rhq-footer { font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--rhq-muted); margin-top: 28px; text-align: center; }
+
+    @media (max-width: 480px) {
+      #raisehq-unified .rhq-h1 { font-size: 20px; }
+      #raisehq-unified .rhq-meter-figure { font-size: 30px; }
+      #raisehq-unified .rhq-tabs { overflow-x: auto; }
+      #raisehq-unified .rhq-card-top { flex-direction: column; }
+      #raisehq-unified .rhq-row-badges { max-width: 140px; }
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <p class="rhq-eyebrow">Raise HQ · Investor Workflow</p>
+  <h1 class="rhq-h1" id="rhq-h1">Pull Investors</h1>
+
+  <div class="rhq-tabs">
+    <button type="button" class="rhq-tab rhq-tab-active" data-tab="pull">Pull</button>
+    <button type="button" class="rhq-tab" data-tab="profile">Profile</button>
+    <button type="button" class="rhq-tab" data-tab="message">Message</button>
+    <button type="button" class="rhq-tab" data-tab="track">Assign Track</button>
+  </div>
+
+  <div class="rhq-meter">
+    <div>
+      <div class="rhq-meter-figure" id="rhq-credits-figure">—</div>
+      <div class="rhq-meter-label" id="rhq-meter-label">credits available</div>
+    </div>
+    <div class="rhq-meter-client">
+      <strong id="rhq-client-name">—</strong>
+      <span id="rhq-meter-cost">1 credit per investor</span>
+    </div>
+  </div>
+
+  <!-- PULL PANEL -->
+  <div id="rhq-panel-pull">
+    <div class="rhq-pull-panel">
+      <div class="rhq-pull-row">
+        <label for="rhq-pull-count">Investors to pull</label>
+        <input class="rhq-pull-input" id="rhq-pull-count" type="number" min="1" value="10">
+        <button class="rhq-submit" id="rhq-pull-submit" type="button">Pull Investors</button>
+      </div>
+    </div>
+    <div class="rhq-status" id="rhq-pull-status"></div>
+    <div class="rhq-pull-results" id="rhq-pull-results" style="display:none;"></div>
+  </div>
+
+  <!-- TRACK SELECT BAR (track tab only) -->
+  <div id="rhq-track-bar" class="rhq-track-select-bar" style="display:none;">
+    <label for="rhq-track-select">Campaign</label>
+    <select class="rhq-track-select" id="rhq-track-select">
+      <option value="">Choose a track…</option>
+      <option value="Investor Email Warm Up Campaign">Investor Email Warm Up Campaign</option>
+      <option value="Angel Email Engagement Campaign">Angel Email Engagement Campaign</option>
+      <option value="VC Email Engagement Campaign">VC Email Engagement Campaign</option>
+      <option value="Angel Linkedin Engagement Campaign">Angel Linkedin Engagement Campaign</option>
+      <option value="VC Linkedin Engagement Campaign">VC Linkedin Engagement Campaign</option>
+    </select>
+  </div>
+
+  <!-- SHARED LIST PANEL (profile / message / track) -->
+  <div id="rhq-panel-list" style="display:none;">
+    <div class="rhq-filters">
+      <input class="rhq-search" id="rhq-search" type="text" placeholder="Search by name or email…">
+      <select class="rhq-status-filter" id="rhq-status-filter"></select>
+    </div>
+    <div class="rhq-toolbar">
+      <span class="rhq-toolbar-left" id="rhq-selected-count">0 selected</span>
+      <button type="button" class="rhq-link-btn" id="rhq-select-all">Select all eligible</button>
+    </div>
+    <div class="rhq-list" id="rhq-list">
+      <div class="rhq-empty" id="rhq-loading">Loading investors…</div>
+    </div>
+    <button class="rhq-submit" id="rhq-submit" disabled>Go</button>
+    <div class="rhq-status" id="rhq-status"></div>
+    <div class="rhq-results" id="rhq-results" style="display:none;">
+      <div class="rhq-results-summary" id="rhq-results-summary"></div>
+      <div class="rhq-results-detail" id="rhq-results-detail"></div>
+    </div>
+  </div>
+
+  <p class="rhq-footer">Raise HQ is a Source Capital product.</p>
+</div>
+
+<script>
+(function () {
+  var ROOT = document.getElementById('raisehq-unified');
+  if (!ROOT) return;
+
+  var DEFAULT_CLIENT = 'Test Client Co';
+  var BASE_URL = 'https://n8n.srv926257.hstgr.cloud/webhook';
+
+  var params = new URLSearchParams(window.location.search);
+  var clientName = params.get('client') || DEFAULT_CLIENT;
+
+  var currentTab = 'pull';
+  var currentCredits = 0;
+  var investors = [];
+  var investorsLoaded = false;
+  var selected = {};
+  var justProfiled = {};
+  var justMessaged = {};
+  var justTracked = {};
+  var searchTerm = '';
+  var statusFilter = 'all';
+
+  var h1 = ROOT.querySelector('#rhq-h1');
+  var tabs = ROOT.querySelectorAll('.rhq-tab');
+  var creditsFigure = ROOT.querySelector('#rhq-credits-figure');
+  var meterLabel = ROOT.querySelector('#rhq-meter-label');
+  var meterCost = ROOT.querySelector('#rhq-meter-cost');
+  var clientNameEl = ROOT.querySelector('#rhq-client-name');
+
+  var panelPull = ROOT.querySelector('#rhq-panel-pull');
+  var pullCountInput = ROOT.querySelector('#rhq-pull-count');
+  var pullSubmitBtn = ROOT.querySelector('#rhq-pull-submit');
+  var pullStatusEl = ROOT.querySelector('#rhq-pull-status');
+  var pullResultsEl = ROOT.querySelector('#rhq-pull-results');
+
+  var trackBar = ROOT.querySelector('#rhq-track-bar');
+  var trackSelect = ROOT.querySelector('#rhq-track-select');
+
+  var panelList = ROOT.querySelector('#rhq-panel-list');
+  var searchInput = ROOT.querySelector('#rhq-search');
+  var statusSelect = ROOT.querySelector('#rhq-status-filter');
+  var listEl = ROOT.querySelector('#rhq-list');
+  var loadingEl = ROOT.querySelector('#rhq-loading');
+  var selectedCountEl = ROOT.querySelector('#rhq-selected-count');
+  var selectAllBtn = ROOT.querySelector('#rhq-select-all');
+  var submitBtn = ROOT.querySelector('#rhq-submit');
+  var statusEl = ROOT.querySelector('#rhq-status');
+  var resultsEl = ROOT.querySelector('#rhq-results');
+  var resultsSummaryEl = ROOT.querySelector('#rhq-results-summary');
+  var resultsDetailEl = ROOT.querySelector('#rhq-results-detail');
+
+  var TAB_META = {
+    pull: { title: 'Pull Investors', cost: 'Central Investor Database' },
+    profile: { title: 'Profile Investors', cost: '1 credit per investor profiled' },
+    message: { title: 'Write Outreach Messages', cost: '1 credit per investor messaged' },
+    track: { title: 'Select Engagement Track', cost: 'No credit cost — routing only' }
+  };
+
+  var STATUS_OPTIONS = {
+    profile: [
+      { value: 'all', label: 'All investors' },
+      { value: 'pending', label: 'Not profiled' },
+      { value: 'profiled', label: 'Profiled' }
+    ],
+    message: [
+      { value: 'all', label: 'All investors' },
+      { value: 'ready', label: 'Ready to message' },
+      { value: 'needsprofile', label: 'Needs profiling first' },
+      { value: 'done', label: 'Already messaged' }
+    ],
+    track: [
+      { value: 'all', label: 'All investors' },
+      { value: 'none', label: 'No track assigned' },
+      { value: 'set', label: 'Track assigned' }
+    ]
+  };
+
+  function esc(s) { return s == null ? '' : String(s); }
+  function setStatus(el, msg, isError) {
+    el.textContent = msg || '';
+    el.className = 'rhq-status' + (isError ? ' rhq-error' : '');
+  }
+
+  function renderBalance(credits, client) {
+    currentCredits = credits;
+    creditsFigure.textContent = credits;
+    creditsFigure.className = 'rhq-meter-figure' + (credits <= 0 ? ' rhq-zero' : '');
+    clientNameEl.textContent = client;
+  }
+
+  function loadBalance() {
+    fetch(BASE_URL + '/credit-balance?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, 'No client found matching "' + clientName + '".', true); return; }
+        renderBalance(data.credits, data.client);
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); });
+  }
+
+  function loadInvestors(cb) {
+    fetch(BASE_URL + '/list-client-investors?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { loadingEl.textContent = data.error || 'Could not load investors.'; return; }
+        investors = data.investors || [];
+        investorsLoaded = true;
+        if (cb) cb();
+        renderList();
+      })
+      .catch(function () { loadingEl.textContent = 'Could not reach Raise HQ.'; });
+  }
+
+  // ---------- Tab switching ----------
+  function switchTab(tab) {
+    currentTab = tab;
+    tabs.forEach(function (t) { t.classList.toggle('rhq-tab-active', t.dataset.tab === tab); });
+    h1.textContent = TAB_META[tab].title;
+    meterCost.textContent = TAB_META[tab].cost;
+
+    panelPull.style.display = tab === 'pull' ? 'block' : 'none';
+    panelList.style.display = tab === 'pull' ? 'none' : 'block';
+    trackBar.style.display = tab === 'track' ? 'flex' : 'none';
+
+    if (tab !== 'pull') {
+      var opts = STATUS_OPTIONS[tab];
+      statusSelect.innerHTML = opts.map(function (o) { return '<option value="' + o.value + '">' + o.label + '</option>'; }).join('');
+      statusFilter = 'all';
+      resultsEl.style.display = 'none';
+      setStatus(statusEl, '', false);
+      submitBtn.textContent = tab === 'profile' ? 'Profile Selected' : (tab === 'message' ? 'Write Messages' : 'Assign Track');
+      selectAllBtn.textContent = tab === 'track' ? 'Select all visible' : 'Select all eligible';
+
+      if (!investorsLoaded) { loadInvestors(); } else { renderList(); }
+      updateToolbar();
+    }
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { switchTab(t.dataset.tab); });
+  });
+
+  // ---------- Eligibility per tab ----------
+  function eligible(inv) {
+    if (currentTab === 'profile') return !inv.profiled;
+    if (currentTab === 'message') return inv.profiled && (inv.tags || []).indexOf('outreach writer complete') === -1;
+    if (currentTab === 'track') return true;
+    return false;
+  }
+
+  function rowState(inv) {
+    if (currentTab === 'profile') {
+      if (justProfiled[inv.contactId]) return 'justdone';
+      return inv.profiled ? 'done' : 'ready';
+    }
+    if (currentTab === 'message') {
+      if (justMessaged[inv.contactId]) return 'justdone';
+      if ((inv.tags || []).indexOf('outreach writer complete') !== -1) return 'done';
+      if (!inv.profiled) return 'needsprofile';
+      return 'ready';
+    }
+    if (currentTab === 'track') {
+      if (justTracked[inv.contactId]) return 'justdone';
+      return inv.engagementTrack ? 'set' : 'none';
+    }
+    return '';
+  }
+
+  function matchesFilters(inv) {
+    var s = rowState(inv);
+    if (currentTab === 'message') {
+      if (statusFilter === 'ready' && s !== 'ready' && s !== 'justdone') return false;
+      if (statusFilter === 'needsprofile' && s !== 'needsprofile') return false;
+      if (statusFilter === 'done' && s !== 'done' && s !== 'justdone') return false;
+    } else if (currentTab === 'profile') {
+      if (statusFilter === 'pending' && s !== 'ready' && s !== 'justdone') return false;
+      if (statusFilter === 'profiled' && s !== 'done') return false;
+    } else if (currentTab === 'track') {
+      if (statusFilter === 'none' && s !== 'none') return false;
+      if (statusFilter === 'set' && s !== 'set' && s !== 'justdone') return false;
+    }
+    if (searchTerm) {
+      var hay = (inv.name + ' ' + inv.email).toLowerCase();
+      if (hay.indexOf(searchTerm) === -1) return false;
+    }
+    return true;
+  }
+
+  function selectedIds() { return Object.keys(selected).filter(function (id) { return selected[id]; }); }
+
+  function updateToolbar() {
+    if (currentTab === 'pull') return;
+    var ids = selectedIds().filter(function (id) {
+      var inv = investors.find(function (i) { return i.contactId === id; });
+      return inv && eligible(inv);
+    });
+    selectedCountEl.textContent = ids.length + ' selected';
+    var creditGated = currentTab === 'profile' || currentTab === 'message';
+    var overBudget = creditGated && ids.length > currentCredits;
+    submitBtn.disabled = ids.length === 0 || overBudget || (currentTab === 'track' && !trackSelect.value);
+    if (overBudget) {
+      setStatus(statusEl, 'You only have ' + currentCredits + ' credits available — deselect some investors.', true);
+    } else if (statusEl.textContent.indexOf('deselect') !== -1) {
+      setStatus(statusEl, '', false);
+    }
+  }
+
+  function tierClass(tier) {
+    var t = String(tier || '').toUpperCase();
+    if (t === 'T1') return 'rhq-tier-t1';
+    if (t === 'T2') return 'rhq-tier-t2';
+    return 'rhq-tier-t3';
+  }
+
+  function renderList() {
+    if (currentTab === 'pull') return;
+    listEl.innerHTML = '';
+    var visible = investors.filter(matchesFilters);
+
+    if (!visible.length) {
+      var empty = document.createElement('div');
+      empty.className = 'rhq-empty';
+      empty.textContent = investors.length ? 'No investors match your filters.' : 'No investors found for this client yet.';
+      listEl.appendChild(empty);
+      return;
+    }
+
+    visible.forEach(function (inv) {
+      if (currentTab === 'profile' && inv.profiled) listEl.appendChild(renderProfileCard(inv));
+      else listEl.appendChild(renderRow(inv));
+    });
+  }
+
+  function renderRow(inv) {
+    var s = rowState(inv);
+    var isEligible = eligible(inv);
+    var row = document.createElement('div');
+    row.className = 'rhq-row';
+
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.disabled = !isEligible;
+    checkbox.checked = !!selected[inv.contactId] && isEligible;
+    checkbox.addEventListener('change', function () {
+      selected[inv.contactId] = checkbox.checked;
+      if (checkbox.checked && (currentTab === 'profile' || currentTab === 'message')) {
+        var count = selectedIds().filter(function (id) {
+          var i = investors.find(function (x) { return x.contactId === id; });
+          return i && eligible(i);
+        }).length;
+        if (count > currentCredits) {
+          checkbox.checked = false;
+          selected[inv.contactId] = false;
+          setStatus(statusEl, 'You only have ' + currentCredits + ' credits available.', true);
+        }
+      }
+      updateToolbar();
+    });
+    row.appendChild(checkbox);
+
+    var main = document.createElement('div');
+    main.className = 'rhq-row-main';
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-row-name';
+    nameEl.textContent = inv.name || 'Unnamed';
+    var emailEl = document.createElement('div');
+    emailEl.className = 'rhq-row-email';
+    emailEl.textContent = inv.email || 'No email on file';
+    main.appendChild(nameEl);
+    main.appendChild(emailEl);
+    if (inv.fitScore !== null && inv.fitScore !== undefined) {
+      var meta = document.createElement('div');
+      meta.className = 'rhq-row-meta';
+      meta.textContent = 'Fit ' + Number(inv.fitScore).toFixed(1) + '/10' + (inv.tier ? ' · ' + inv.tier : '');
+      main.appendChild(meta);
+    }
+    row.appendChild(main);
+
+    var badges = document.createElement('div');
+    badges.className = 'rhq-row-badges';
+    var badge = document.createElement('span');
+    if (s === 'justdone') {
+      badge.className = 'rhq-badge rhq-filled';
+      badge.textContent = currentTab === 'track' ? 'Just assigned ✓' : (currentTab === 'message' ? 'Just messaged ✓' : 'Just profiled ✓');
+    } else if (s === 'done') {
+      badge.className = 'rhq-badge rhq-muted';
+      badge.textContent = currentTab === 'message' ? 'Messaged' : 'Profiled';
+    } else if (s === 'needsprofile') {
+      badge.className = 'rhq-badge rhq-muted';
+      badge.textContent = 'Needs profiling first';
+    } else if (s === 'ready') {
+      badge.className = 'rhq-badge rhq-outline';
+      badge.textContent = 'Ready';
+    } else if (s === 'set') {
+      badge.className = 'rhq-badge rhq-outline';
+      badge.textContent = inv.engagementTrack;
+    } else if (s === 'none') {
+      badge.className = 'rhq-badge rhq-muted';
+      badge.textContent = 'No track yet';
+    }
+    badges.appendChild(badge);
+    row.appendChild(badges);
+
+    return row;
+  }
+
+  function renderProfileCard(inv) {
+    var card = document.createElement('div');
+    card.className = 'rhq-card';
+    var top = document.createElement('div');
+    top.className = 'rhq-card-top';
+    var left = document.createElement('div');
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-card-name';
+    nameEl.textContent = inv.name || 'Unnamed';
+    left.appendChild(nameEl);
+    var firmRoleText = [inv.firm, inv.role].filter(Boolean).join(' · ');
+    if (firmRoleText) {
+      var fr = document.createElement('div');
+      fr.className = 'rhq-card-firmrole';
+      fr.textContent = firmRoleText;
+      left.appendChild(fr);
+    }
+    top.appendChild(left);
+
+    if (inv.fitScore !== null && inv.fitScore !== undefined) {
+      var scoreWrap = document.createElement('div');
+      scoreWrap.className = 'rhq-card-scorewrap';
+      var score = document.createElement('span');
+      score.className = 'rhq-card-score';
+      score.textContent = Number(inv.fitScore).toFixed(1);
+      var out = document.createElement('span');
+      out.className = 'rhq-card-score-out';
+      out.textContent = '/10';
+      scoreWrap.appendChild(score);
+      scoreWrap.appendChild(out);
+      if (inv.tier) {
+        var pill = document.createElement('span');
+        pill.className = 'rhq-tier-pill ' + tierClass(inv.tier);
+        pill.textContent = inv.tier;
+        scoreWrap.appendChild(pill);
+      }
+      top.appendChild(scoreWrap);
+    }
+    card.appendChild(top);
+
+    if (inv.fitRationale) {
+      var rationale = document.createElement('div');
+      rationale.className = 'rhq-card-rationale';
+      rationale.textContent = inv.fitRationale;
+      card.appendChild(rationale);
+    }
+    if (justProfiled[inv.contactId]) {
+      var jd = document.createElement('div');
+      jd.className = 'rhq-card-justdone';
+      jd.textContent = 'Just profiled ✓';
+      card.appendChild(jd);
+    }
+    return card;
+  }
+
+  searchInput.addEventListener('input', function () { searchTerm = searchInput.value.trim().toLowerCase(); renderList(); });
+  statusSelect.addEventListener('change', function () { statusFilter = statusSelect.value; renderList(); });
+  trackSelect.addEventListener('change', function () { updateToolbar(); });
+
+  selectAllBtn.addEventListener('click', function () {
+    var pool = investors.filter(function (inv) { return eligible(inv) && matchesFilters(inv) && !selected[inv.contactId]; });
+    if (currentTab === 'profile' || currentTab === 'message') {
+      var room = Math.max(currentCredits - selectedIds().length, 0);
+      var toSelect = pool.slice(0, room);
+      toSelect.forEach(function (inv) { selected[inv.contactId] = true; });
+      if (pool.length > room) setStatus(statusEl, 'Selected ' + toSelect.length + ' — only ' + currentCredits + ' credits available in total.', true);
+    } else {
+      pool.forEach(function (inv) { selected[inv.contactId] = true; });
+    }
+    renderList();
+    updateToolbar();
+  });
+
+  submitBtn.addEventListener('click', function () {
+    var ids = selectedIds().filter(function (id) {
+      var inv = investors.find(function (i) { return i.contactId === id; });
+      return inv && eligible(inv);
+    });
+    if (!ids.length) return;
+
+    if (currentTab === 'profile') { runProfile(ids); }
+    else if (currentTab === 'message') { runMessage(ids); }
+    else if (currentTab === 'track') { runTrack(ids, trackSelect.value); }
+  });
+
+  function runProfile(ids) {
+    submitBtn.disabled = true;
+    setStatus(statusEl, 'Profiling ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + '…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/profile-investors', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contact_ids: ids })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, "That run didn't go through — " + data.error, true); return; }
+        setStatus(statusEl, '', false);
+        renderBalance(data.credits_after, data.client);
+        ids.forEach(function (id) { justProfiled[id] = true; selected[id] = false; });
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Profiled ' + data.profiled + ' of ' + data.requested + ' requested.';
+        var parts = [];
+        if (data.skipped) parts.push(data.skipped + ' already had a fit score and were skipped free of charge.');
+        if (data.errors) parts.push(data.errors + ' could not be parsed and were not charged.');
+        resultsDetailEl.textContent = parts.join(' ');
+        loadInvestors();
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { updateToolbar(); });
+  }
+
+  function runMessage(ids) {
+    submitBtn.disabled = true;
+    setStatus(statusEl, 'Writing messages for ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + '…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/write-outreach-messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contact_ids: ids })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, "That run didn't go through — " + data.error, true); return; }
+        setStatus(statusEl, '', false);
+        renderBalance(data.credits_after, data.client);
+        (data.written_contacts || []).forEach(function (id) { justMessaged[id] = true; });
+        selected = {};
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Wrote messages for ' + data.written + ' of ' + data.requested + ' requested.';
+        var parts = [];
+        if (data.skipped) parts.push(data.skipped + ' already had messages and were skipped free of charge.');
+        if (data.not_profiled) parts.push(data.not_profiled + ' need profiling first and were skipped free of charge.');
+        if (data.errors) parts.push(data.errors + ' could not be parsed and were not charged.');
+        resultsDetailEl.textContent = parts.join(' ');
+        loadInvestors();
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { updateToolbar(); });
+  }
+
+  function runTrack(ids, track) {
+    if (!track) return;
+    submitBtn.disabled = true;
+    setStatus(statusEl, 'Assigning ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + ' to ' + track + '…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/select-engagement-track', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, track: track, contact_ids: ids })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, "That run didn't go through — " + (data.error || 'please try again.'), true); return; }
+        setStatus(statusEl, '', false);
+        (data.updated_contacts || []).forEach(function (id) {
+          justTracked[id] = true;
+          var inv = investors.find(function (i) { return i.contactId === id; });
+          if (inv) inv.engagementTrack = track;
+        });
+        selected = {};
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Assigned ' + data.updated + ' of ' + data.requested + ' to ' + data.track + '.';
+        resultsDetailEl.textContent = '';
+        renderList();
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { updateToolbar(); });
+  }
+
+  // ---------- Pull tab ----------
+  pullSubmitBtn.addEventListener('click', function () {
+    var count = parseInt(pullCountInput.value, 10) || 0;
+    if (count <= 0) return;
+    if (count > currentCredits) {
+      setStatus(pullStatusEl, 'You only have ' + currentCredits + ' credits available.', true);
+      return;
+    }
+    pullSubmitBtn.disabled = true;
+    setStatus(pullStatusEl, 'Pulling ' + count + ' investors…', false);
+    pullResultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/credit-pull', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, requested_count: count })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(pullStatusEl, "That run didn't go through — " + (data.error || 'please try again.'), true); return; }
+        setStatus(pullStatusEl, '', false);
+        renderBalance(data.credits_after, data.client);
+        pullResultsEl.style.display = 'block';
+        pullResultsEl.innerHTML = '';
+        (data.investors || []).forEach(function (inv) {
+          var item = document.createElement('div');
+          item.className = 'rhq-pull-row-item';
+          var name = document.createElement('div');
+          name.className = 'rhq-row-name';
+          name.style.color = 'var(--rhq-white)';
+          name.textContent = inv.name || 'Unnamed';
+          var email = document.createElement('div');
+          email.className = 'rhq-row-email';
+          email.textContent = inv.email || 'No email on file';
+          item.appendChild(name);
+          item.appendChild(email);
+          pullResultsEl.appendChild(item);
+        });
+        var summary = document.createElement('div');
+        summary.style.padding = '10px 16px';
+        summary.style.fontSize = '13px';
+        summary.style.color = 'var(--rhq-muted)';
+        summary.textContent = 'Pulled ' + data.pulled + ' of ' + data.requested + ' requested.';
+        pullResultsEl.insertBefore(summary, pullResultsEl.firstChild);
+        investorsLoaded = false;
+      })
+      .catch(function () { setStatus(pullStatusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { pullSubmitBtn.disabled = false; });
+  });
+
+  loadBalance();
+  switchTab('pull');
+})();
+</script>
