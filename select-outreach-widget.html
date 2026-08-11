@@ -1,0 +1,372 @@
+<div id="raisehq-engagement-track">
+  <style>
+    #raisehq-engagement-track {
+      --rhq-black: #000000;
+      --rhq-surface: #111111;
+      --rhq-green: #00FF84;
+      --rhq-text: #E8E8E8;
+      --rhq-muted: #A0A0A0;
+      --rhq-white: #FFFFFF;
+      --rhq-error: #FF4D4D;
+
+      font-family: 'Montserrat', sans-serif;
+      background: var(--rhq-black);
+      color: var(--rhq-text);
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 28px 36px;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #raisehq-engagement-track * { box-sizing: border-box; }
+    #raisehq-engagement-track .rhq-eyebrow {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--rhq-muted); margin: 0 0 6px;
+    }
+    #raisehq-engagement-track .rhq-h1 {
+      font-family: 'Inter', sans-serif; font-weight: 900; font-size: 28px; line-height: 1.1;
+      letter-spacing: 0.02em; text-transform: uppercase; color: var(--rhq-white); margin: 0 0 8px;
+    }
+    #raisehq-engagement-track .rhq-sub { font-size: 14px; color: var(--rhq-muted); margin: 0 0 24px; }
+
+    #raisehq-engagement-track .rhq-track-select-bar {
+      background: var(--rhq-surface); border-left: 2px solid var(--rhq-green);
+      padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    #raisehq-engagement-track .rhq-track-select-bar label {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--rhq-text); white-space: nowrap;
+    }
+    #raisehq-engagement-track .rhq-track-select {
+      flex: 1; min-width: 220px; background: var(--rhq-black); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      padding: 9px 12px; border-radius: 3px;
+    }
+
+    #raisehq-engagement-track .rhq-filters { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    #raisehq-engagement-track .rhq-search {
+      flex: 1; min-width: 160px; background: var(--rhq-surface); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      padding: 9px 12px; border-radius: 3px;
+    }
+    #raisehq-engagement-track .rhq-search::placeholder { color: var(--rhq-muted); }
+    #raisehq-engagement-track .rhq-status-filter {
+      background: var(--rhq-surface); border: 1px solid #222; color: var(--rhq-text);
+      font-family: 'Montserrat', sans-serif; font-size: 14px; padding: 9px 12px; border-radius: 3px;
+    }
+
+    #raisehq-engagement-track .rhq-toolbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 12px; flex-wrap: wrap;
+    }
+    #raisehq-engagement-track .rhq-toolbar-left { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-engagement-track .rhq-link-btn {
+      font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: var(--rhq-green);
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    #raisehq-engagement-track .rhq-link-btn:disabled { color: var(--rhq-muted); cursor: not-allowed; }
+
+    #raisehq-engagement-track .rhq-list {
+      max-height: 460px; overflow-y: auto; border: 1px solid var(--rhq-surface);
+      border-radius: 3px; margin-bottom: 20px;
+    }
+    #raisehq-engagement-track .rhq-row {
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px;
+      border-bottom: 1px solid var(--rhq-surface);
+    }
+    #raisehq-engagement-track .rhq-row:last-child { border-bottom: none; }
+    #raisehq-engagement-track .rhq-row input[type="checkbox"] {
+      margin-top: 3px; width: 16px; height: 16px; accent-color: var(--rhq-green); cursor: pointer; flex-shrink: 0;
+    }
+    #raisehq-engagement-track .rhq-row-main { flex: 1; min-width: 0; }
+    #raisehq-engagement-track .rhq-row-name {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: var(--rhq-white);
+    }
+    #raisehq-engagement-track .rhq-row-email { font-size: 12px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-engagement-track .rhq-row-meta { font-size: 11px; color: var(--rhq-muted); margin-top: 2px; }
+
+    #raisehq-engagement-track .rhq-badge {
+      display: inline-block; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.02em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px;
+      flex-shrink: 0; white-space: nowrap; max-width: 220px; text-overflow: ellipsis; overflow: hidden;
+    }
+    #raisehq-engagement-track .rhq-badge.rhq-badge-none { color: var(--rhq-muted); border: 1px solid var(--rhq-muted); background: transparent; }
+    #raisehq-engagement-track .rhq-badge.rhq-badge-set { color: var(--rhq-green); border: 1px solid var(--rhq-green); background: transparent; }
+    #raisehq-engagement-track .rhq-badge.rhq-badge-justdone { color: var(--rhq-black); background: var(--rhq-green); border: 1px solid var(--rhq-green); }
+
+    #raisehq-engagement-track .rhq-empty { padding: 24px 16px; color: var(--rhq-muted); font-size: 14px; text-align: center; }
+
+    #raisehq-engagement-track .rhq-submit {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.04em;
+      text-transform: uppercase; background: var(--rhq-green); color: var(--rhq-black); border: none;
+      padding: 14px 28px; border-radius: 3px; cursor: pointer; transition: opacity .15s ease;
+    }
+    #raisehq-engagement-track .rhq-submit:hover { opacity: 0.88; }
+    #raisehq-engagement-track .rhq-submit:disabled { background: var(--rhq-surface); color: var(--rhq-muted); cursor: not-allowed; }
+
+    #raisehq-engagement-track .rhq-status { font-size: 14px; color: var(--rhq-muted); margin-top: 14px; }
+    #raisehq-engagement-track .rhq-status.rhq-error { color: var(--rhq-error); }
+
+    #raisehq-engagement-track .rhq-results { margin-top: 28px; border-top: 1px solid var(--rhq-surface); padding-top: 20px; }
+    #raisehq-engagement-track .rhq-results-summary {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--rhq-white); margin-bottom: 8px;
+    }
+
+    #raisehq-engagement-track .rhq-footer {
+      font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--rhq-muted);
+      margin-top: 28px; text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      #raisehq-engagement-track .rhq-h1 { font-size: 22px; }
+      #raisehq-engagement-track .rhq-badge { max-width: 140px; }
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <p class="rhq-eyebrow">Raise HQ · Investor Data</p>
+  <h1 class="rhq-h1">Select Engagement Track</h1>
+  <p class="rhq-sub">Choose a campaign, then select the investors to route into it.</p>
+
+  <div class="rhq-track-select-bar">
+    <label for="rhq-track-select">Campaign</label>
+    <select class="rhq-track-select" id="rhq-track-select">
+      <option value="">Choose a track…</option>
+      <option value="Investor Email Warm Up Campaign">Investor Email Warm Up Campaign</option>
+      <option value="Angel Email Engagement Campaign">Angel Email Engagement Campaign</option>
+      <option value="VC Email Engagement Campaign">VC Email Engagement Campaign</option>
+      <option value="Angel Linkedin Engagement Campaign">Angel Linkedin Engagement Campaign</option>
+      <option value="VC Linkedin Engagement Campaign">VC Linkedin Engagement Campaign</option>
+    </select>
+  </div>
+
+  <div class="rhq-filters">
+    <input class="rhq-search" id="rhq-search" type="text" placeholder="Search by name or email…">
+    <select class="rhq-status-filter" id="rhq-status-filter">
+      <option value="all">All investors</option>
+      <option value="none">No track assigned</option>
+      <option value="set">Track assigned</option>
+    </select>
+  </div>
+
+  <div class="rhq-toolbar">
+    <span class="rhq-toolbar-left" id="rhq-selected-count">0 selected</span>
+    <button type="button" class="rhq-link-btn" id="rhq-select-all">Select all visible</button>
+  </div>
+
+  <div class="rhq-list" id="rhq-list">
+    <div class="rhq-empty" id="rhq-loading">Loading investors…</div>
+  </div>
+
+  <button class="rhq-submit" id="rhq-submit" disabled>Assign Track</button>
+  <div class="rhq-status" id="rhq-status"></div>
+
+  <div class="rhq-results" id="rhq-results" style="display:none;">
+    <div class="rhq-results-summary" id="rhq-results-summary"></div>
+  </div>
+
+  <p class="rhq-footer">Raise HQ is a Source Capital product.</p>
+</div>
+
+<script>
+(function () {
+  var ROOT = document.getElementById('raisehq-engagement-track');
+  if (!ROOT) return;
+
+  var DEFAULT_CLIENT = 'Test Client Co';
+  var BASE_URL = 'https://n8n.srv926257.hstgr.cloud/webhook';
+
+  var params = new URLSearchParams(window.location.search);
+  var clientName = params.get('client') || DEFAULT_CLIENT;
+
+  var investors = [];
+  var selected = {};
+  var justDone = {};
+  var searchTerm = '';
+  var statusFilter = 'all';
+
+  var trackSelect = ROOT.querySelector('#rhq-track-select');
+  var searchInput = ROOT.querySelector('#rhq-search');
+  var statusSelect = ROOT.querySelector('#rhq-status-filter');
+  var listEl = ROOT.querySelector('#rhq-list');
+  var loadingEl = ROOT.querySelector('#rhq-loading');
+  var selectedCountEl = ROOT.querySelector('#rhq-selected-count');
+  var selectAllBtn = ROOT.querySelector('#rhq-select-all');
+  var submitBtn = ROOT.querySelector('#rhq-submit');
+  var statusEl = ROOT.querySelector('#rhq-status');
+  var resultsEl = ROOT.querySelector('#rhq-results');
+  var resultsSummaryEl = ROOT.querySelector('#rhq-results-summary');
+
+  function setStatus(msg, isError) {
+    statusEl.textContent = msg || '';
+    statusEl.className = 'rhq-status' + (isError ? ' rhq-error' : '');
+  }
+
+  function currentTrack(inv) {
+    var f = (inv.tags || []).indexOf('engagement selected') !== -1;
+    return inv.engagementTrack || (f ? '' : '');
+  }
+
+  function selectedIds() {
+    return Object.keys(selected).filter(function (id) { return selected[id]; });
+  }
+
+  function updateToolbar() {
+    var count = selectedIds().length;
+    selectedCountEl.textContent = count + ' selected';
+    submitBtn.disabled = count === 0 || !trackSelect.value;
+  }
+
+  function matchesFilters(inv) {
+    var hasTrack = !!inv.engagementTrack;
+    if (statusFilter === 'none' && hasTrack) return false;
+    if (statusFilter === 'set' && !hasTrack) return false;
+    if (searchTerm) {
+      var hay = (inv.name + ' ' + inv.email).toLowerCase();
+      if (hay.indexOf(searchTerm) === -1) return false;
+    }
+    return true;
+  }
+
+  function renderList() {
+    listEl.innerHTML = '';
+    var visible = investors.filter(matchesFilters);
+
+    if (!visible.length) {
+      var empty = document.createElement('div');
+      empty.className = 'rhq-empty';
+      empty.textContent = investors.length ? 'No investors match your filters.' : 'No investors found for this client yet.';
+      listEl.appendChild(empty);
+      return;
+    }
+
+    visible.forEach(function (inv) { listEl.appendChild(renderRow(inv)); });
+  }
+
+  function renderRow(inv) {
+    var row = document.createElement('div');
+    row.className = 'rhq-row';
+
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = !!selected[inv.contactId];
+    checkbox.addEventListener('change', function () {
+      selected[inv.contactId] = checkbox.checked;
+      updateToolbar();
+    });
+    row.appendChild(checkbox);
+
+    var main = document.createElement('div');
+    main.className = 'rhq-row-main';
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-row-name';
+    nameEl.textContent = inv.name || 'Unnamed';
+    var emailEl = document.createElement('div');
+    emailEl.className = 'rhq-row-email';
+    emailEl.textContent = inv.email || 'No email on file';
+    main.appendChild(nameEl);
+    main.appendChild(emailEl);
+    if (inv.fitScore !== null && inv.fitScore !== undefined) {
+      var meta = document.createElement('div');
+      meta.className = 'rhq-row-meta';
+      meta.textContent = 'Fit ' + Number(inv.fitScore).toFixed(1) + '/10' + (inv.tier ? ' · ' + inv.tier : '');
+      main.appendChild(meta);
+    }
+    row.appendChild(main);
+
+    var badge = document.createElement('span');
+    if (justDone[inv.contactId]) {
+      badge.className = 'rhq-badge rhq-badge-justdone';
+      badge.textContent = 'Just assigned ✓';
+    } else if (inv.engagementTrack) {
+      badge.className = 'rhq-badge rhq-badge-set';
+      badge.textContent = inv.engagementTrack;
+    } else {
+      badge.className = 'rhq-badge rhq-badge-none';
+      badge.textContent = 'No track yet';
+    }
+    row.appendChild(badge);
+
+    return row;
+  }
+
+  function loadInvestors() {
+    fetch(BASE_URL + '/list-client-investors?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          loadingEl.textContent = data.error || 'Could not load investors.';
+          return;
+        }
+        investors = (data.investors || []).map(function (inv) {
+          inv.engagementTrack = inv.engagementTrack || '';
+          return inv;
+        });
+        renderList();
+      })
+      .catch(function () {
+        loadingEl.textContent = 'Could not reach Raise HQ. Check your connection and try again.';
+      });
+  }
+
+  searchInput.addEventListener('input', function () {
+    searchTerm = searchInput.value.trim().toLowerCase();
+    renderList();
+  });
+  statusSelect.addEventListener('change', function () {
+    statusFilter = statusSelect.value;
+    renderList();
+  });
+  trackSelect.addEventListener('change', function () { updateToolbar(); });
+
+  selectAllBtn.addEventListener('click', function () {
+    investors.filter(matchesFilters).forEach(function (inv) { selected[inv.contactId] = true; });
+    renderList();
+    updateToolbar();
+  });
+
+  submitBtn.addEventListener('click', function () {
+    var ids = selectedIds();
+    var track = trackSelect.value;
+    if (!ids.length || !track) return;
+
+    submitBtn.disabled = true;
+    setStatus('Assigning ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + ' to ' + track + '…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/select-engagement-track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, track: track, contact_ids: ids })
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (res) {
+        if (!res.data.success) {
+          setStatus("That run didn't go through — " + (res.data.error || 'please try again.'), true);
+          return;
+        }
+        setStatus('', false);
+
+        (res.data.updated_contacts || []).forEach(function (id) {
+          justDone[id] = true;
+          var inv = investors.find(function (i) { return i.contactId === id; });
+          if (inv) inv.engagementTrack = track;
+        });
+        selected = {};
+        renderList();
+
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Assigned ' + res.data.updated + ' of ' + res.data.requested + ' to ' + res.data.track + '.';
+      })
+      .catch(function () {
+        setStatus('Could not reach Raise HQ. Check your connection and try again.', true);
+      })
+      .finally(function () {
+        updateToolbar();
+      });
+  });
+
+  loadInvestors();
+})();
+</script>
