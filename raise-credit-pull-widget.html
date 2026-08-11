@@ -1,0 +1,444 @@
+<div id="raisehq-credit-pull">
+  <style>
+    #raisehq-credit-pull {
+      --rhq-black: #000000;
+      --rhq-surface: #111111;
+      --rhq-surface-alt: #0D0D0D;
+      --rhq-green: #00FF84;
+      --rhq-text: #E8E8E8;
+      --rhq-muted: #A0A0A0;
+      --rhq-white: #FFFFFF;
+      --rhq-error: #FF4D4D;
+
+      font-family: 'Montserrat', sans-serif;
+      background: var(--rhq-black);
+      color: var(--rhq-text);
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 28px 36px;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #raisehq-credit-pull * { box-sizing: border-box; }
+    #raisehq-credit-pull .rhq-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--rhq-muted);
+      margin: 0 0 6px;
+    }
+    #raisehq-credit-pull .rhq-h1 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--rhq-white);
+      margin: 0 0 24px;
+    }
+
+    /* --- Credit meter (signature element) --- */
+    #raisehq-credit-pull .rhq-meter {
+      background: var(--rhq-surface);
+      border-left: 2px solid var(--rhq-green);
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    #raisehq-credit-pull .rhq-meter-figure {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      font-size: 40px;
+      line-height: 1;
+      color: var(--rhq-green);
+    }
+    #raisehq-credit-pull .rhq-meter-figure.rhq-zero { color: var(--rhq-muted); }
+    #raisehq-credit-pull .rhq-meter-label {
+      font-size: 14px;
+      color: var(--rhq-muted);
+      margin-top: 4px;
+    }
+    #raisehq-credit-pull .rhq-meter-client {
+      font-size: 14px;
+      color: var(--rhq-muted);
+      text-align: right;
+    }
+    #raisehq-credit-pull .rhq-meter-client strong {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      color: var(--rhq-text);
+      font-size: 16px;
+    }
+
+    /* --- Form --- */
+    #raisehq-credit-pull .rhq-field-label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--rhq-text);
+      margin: 20px 0 8px;
+    }
+    #raisehq-credit-pull .rhq-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    #raisehq-credit-pull .rhq-chip {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--rhq-muted);
+      color: var(--rhq-muted);
+      background: transparent;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color .15s ease, color .15s ease;
+    }
+    #raisehq-credit-pull .rhq-chip.rhq-selected {
+      border-color: var(--rhq-green);
+      color: var(--rhq-green);
+    }
+    #raisehq-credit-pull .rhq-count-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    #raisehq-credit-pull .rhq-count-row input[type="number"] {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+      width: 90px;
+      background: var(--rhq-surface);
+      border: 1px solid var(--rhq-muted);
+      color: var(--rhq-white);
+      padding: 10px 12px;
+      border-radius: 3px;
+      font-size: 15px;
+    }
+    #raisehq-credit-pull .rhq-count-row input[type="number"]:focus {
+      outline: none;
+      border-color: var(--rhq-green);
+    }
+    #raisehq-credit-pull .rhq-count-row label {
+      font-size: 14px;
+      color: var(--rhq-muted);
+    }
+
+    #raisehq-credit-pull .rhq-submit {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--rhq-green);
+      color: var(--rhq-black);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: opacity .15s ease;
+    }
+    #raisehq-credit-pull .rhq-submit:hover { opacity: 0.88; }
+    #raisehq-credit-pull .rhq-submit:disabled {
+      background: var(--rhq-surface);
+      color: var(--rhq-muted);
+      cursor: not-allowed;
+    }
+
+    #raisehq-credit-pull .rhq-status {
+      font-size: 14px;
+      color: var(--rhq-muted);
+      margin-top: 14px;
+    }
+    #raisehq-credit-pull .rhq-status.rhq-error { color: var(--rhq-error); }
+
+    /* --- Results --- */
+    #raisehq-credit-pull .rhq-results {
+      margin-top: 32px;
+      border-top: 1px solid var(--rhq-surface);
+      padding-top: 24px;
+    }
+    #raisehq-credit-pull .rhq-results-summary {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--rhq-white);
+      margin-bottom: 16px;
+    }
+    #raisehq-credit-pull .rhq-investor-card {
+      background: var(--rhq-surface);
+      padding: 16px 18px;
+      border-radius: 3px;
+      margin-bottom: 10px;
+    }
+    #raisehq-credit-pull .rhq-investor-name {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--rhq-white);
+    }
+    #raisehq-credit-pull .rhq-investor-name a {
+      color: var(--rhq-green);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    #raisehq-credit-pull .rhq-investor-meta {
+      font-size: 13px;
+      color: var(--rhq-muted);
+      margin-top: 4px;
+    }
+    #raisehq-credit-pull .rhq-tag {
+      display: inline-block;
+      font-size: 11px;
+      color: var(--rhq-muted);
+      border: 1px solid var(--rhq-muted);
+      border-radius: 999px;
+      padding: 2px 9px;
+      margin: 4px 6px 0 0;
+    }
+
+    #raisehq-credit-pull .rhq-footer {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      color: var(--rhq-muted);
+      margin-top: 28px;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      #raisehq-credit-pull .rhq-h1 { font-size: 22px; }
+      #raisehq-credit-pull .rhq-meter-figure { font-size: 32px; }
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <p class="rhq-eyebrow">Raise HQ · Investor Data</p>
+  <h1 class="rhq-h1">Pull Investors</h1>
+
+  <div class="rhq-meter">
+    <div>
+      <div class="rhq-meter-figure" id="rhq-credits-figure">—</div>
+      <div class="rhq-meter-label">credits available</div>
+    </div>
+    <div class="rhq-meter-client">
+      <strong id="rhq-client-name">—</strong>
+      Central Investor Database
+    </div>
+  </div>
+
+  <div class="rhq-field-label">Sectors <span style="color:var(--rhq-muted); font-weight:400;">(optional)</span></div>
+  <div class="rhq-chips" id="rhq-sectors">
+    <button type="button" class="rhq-chip" data-value="Fintech">Fintech</button>
+    <button type="button" class="rhq-chip" data-value="Enterprise-SaaS">Enterprise-SaaS</button>
+    <button type="button" class="rhq-chip" data-value="Consumer">Consumer</button>
+    <button type="button" class="rhq-chip" data-value="Healthtech & Wellness">Healthtech &amp; Wellness</button>
+    <button type="button" class="rhq-chip" data-value="AI-Deep Tech">AI-Deep Tech</button>
+    <button type="button" class="rhq-chip" data-value="Climate & Sustainability">Climate &amp; Sustainability</button>
+    <button type="button" class="rhq-chip" data-value="Generalist">Generalist</button>
+  </div>
+
+  <div class="rhq-field-label">Stage <span style="color:var(--rhq-muted); font-weight:400;">(optional)</span></div>
+  <div class="rhq-chips" id="rhq-stages">
+    <button type="button" class="rhq-chip" data-value="Pre-Seed">Pre-Seed</button>
+    <button type="button" class="rhq-chip" data-value="Seed">Seed</button>
+    <button type="button" class="rhq-chip" data-value="Series A">Series A</button>
+  </div>
+
+  <div class="rhq-count-row">
+    <label for="rhq-count">Investors to pull</label>
+    <input type="number" id="rhq-count" min="1" max="100" value="10">
+  </div>
+
+  <button class="rhq-submit" id="rhq-submit">Pull Investors</button>
+  <div class="rhq-status" id="rhq-status"></div>
+
+  <div class="rhq-results" id="rhq-results" style="display:none;">
+    <div class="rhq-results-summary" id="rhq-results-summary"></div>
+    <div id="rhq-results-list"></div>
+  </div>
+
+  <p class="rhq-footer">Raise HQ is a Source Capital product.</p>
+</div>
+
+<script>
+(function () {
+  var ROOT = document.getElementById('raisehq-credit-pull');
+  if (!ROOT) return;
+
+  // Change this per client embed, or pass ?client=Name%20Here on the page URL.
+  var DEFAULT_CLIENT = 'Test Client Co';
+  var BASE_URL = 'https://n8n.srv926257.hstgr.cloud/webhook';
+
+  var params = new URLSearchParams(window.location.search);
+  var clientName = params.get('client') || DEFAULT_CLIENT;
+
+  var selectedSectors = [];
+  var selectedStages = [];
+
+  var creditsFigure = ROOT.querySelector('#rhq-credits-figure');
+  var clientNameEl = ROOT.querySelector('#rhq-client-name');
+  var submitBtn = ROOT.querySelector('#rhq-submit');
+  var statusEl = ROOT.querySelector('#rhq-status');
+  var resultsEl = ROOT.querySelector('#rhq-results');
+  var resultsSummaryEl = ROOT.querySelector('#rhq-results-summary');
+  var resultsListEl = ROOT.querySelector('#rhq-results-list');
+  var countInput = ROOT.querySelector('#rhq-count');
+
+  function wireChips(containerId, targetArray) {
+    var container = ROOT.querySelector(containerId);
+    container.querySelectorAll('.rhq-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var v = chip.getAttribute('data-value');
+        var idx = targetArray.indexOf(v);
+        if (idx === -1) {
+          targetArray.push(v);
+          chip.classList.add('rhq-selected');
+        } else {
+          targetArray.splice(idx, 1);
+          chip.classList.remove('rhq-selected');
+        }
+      });
+    });
+  }
+  wireChips('#rhq-sectors', selectedSectors);
+  wireChips('#rhq-stages', selectedStages);
+
+  function setStatus(msg, isError) {
+    statusEl.textContent = msg || '';
+    statusEl.className = 'rhq-status' + (isError ? ' rhq-error' : '');
+  }
+
+  function renderBalance(credits, client) {
+    creditsFigure.textContent = credits;
+    creditsFigure.className = 'rhq-meter-figure' + (credits <= 0 ? ' rhq-zero' : '');
+    clientNameEl.textContent = client;
+    if (credits <= 0) {
+      submitBtn.disabled = true;
+      setStatus("You're out of credits — top up to keep pulling investors.", true);
+    }
+  }
+
+  function loadBalance() {
+    fetch(BASE_URL + '/credit-balance?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          creditsFigure.textContent = '—';
+          setStatus('No client found matching "' + clientName + '".', true);
+          submitBtn.disabled = true;
+          return;
+        }
+        renderBalance(data.credits, data.client);
+      })
+      .catch(function () {
+        setStatus('Could not reach Raise HQ. Check your connection and try again.', true);
+      });
+  }
+
+  function renderResults(data) {
+    resultsEl.style.display = 'block';
+    resultsSummaryEl.textContent = 'Pulled ' + data.pulled + ' of ' + data.requested + ' requested — ' + data.credits_after + ' credits remaining.';
+    resultsListEl.innerHTML = '';
+
+    if (!data.investors.length) {
+      resultsListEl.innerHTML = '<div class="rhq-status">No investors matched these filters.</div>';
+      return;
+    }
+
+    data.investors.forEach(function (inv) {
+      var card = document.createElement('div');
+      card.className = 'rhq-investor-card';
+
+      var nameRow = document.createElement('div');
+      nameRow.className = 'rhq-investor-name';
+      nameRow.textContent = inv.name || 'Unnamed';
+      if (inv.linkedin) {
+        var link = document.createElement('a');
+        link.href = inv.linkedin;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = 'LinkedIn ↗';
+        nameRow.appendChild(link);
+      }
+      card.appendChild(nameRow);
+
+      var meta = document.createElement('div');
+      meta.className = 'rhq-investor-meta';
+      meta.textContent = inv.email || 'No verified email on file';
+      card.appendChild(meta);
+
+      var tags = document.createElement('div');
+      (inv.sectors || []).forEach(function (s) {
+        var t = document.createElement('span');
+        t.className = 'rhq-tag';
+        t.textContent = s;
+        tags.appendChild(t);
+      });
+      (inv.stage || []).forEach(function (s) {
+        var t = document.createElement('span');
+        t.className = 'rhq-tag';
+        t.textContent = s;
+        tags.appendChild(t);
+      });
+      card.appendChild(tags);
+
+      resultsListEl.appendChild(card);
+    });
+  }
+
+  submitBtn.addEventListener('click', function () {
+    var requestedCount = parseInt(countInput.value, 10) || 10;
+    submitBtn.disabled = true;
+    setStatus('Pulling investors…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/credit-pull', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_name: clientName,
+        requested_count: requestedCount,
+        sectors: selectedSectors,
+        stages: selectedStages
+      })
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (res) {
+        if (!res.data.success) {
+          setStatus("That pull didn't go through — " + (res.data.error === 'insufficient_credits' ? "you're out of credits." : res.data.error) + '', true);
+          if (typeof res.data.credits_remaining === 'number') {
+            renderBalance(res.data.credits_remaining, clientName);
+          }
+          submitBtn.disabled = res.data.error === 'insufficient_credits';
+          return;
+        }
+        setStatus('', false);
+        renderBalance(res.data.credits_after, res.data.client);
+        renderResults(res.data);
+        submitBtn.disabled = res.data.credits_after <= 0;
+      })
+      .catch(function () {
+        setStatus('Could not reach Raise HQ. Check your connection and try again.', true);
+        submitBtn.disabled = false;
+      });
+  });
+
+  loadBalance();
+})();
+</script>
