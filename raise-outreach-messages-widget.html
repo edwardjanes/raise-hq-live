@@ -396,7 +396,7 @@
         setStatus('', false);
         renderBalance(res.data.credits_after, res.data.client);
 
-        ids.forEach(function (id) { justDone[id] = true; });
+        (res.data.written_contacts || []).forEach(function (id) { justDone[id] = true; });
         selected = {};
         renderList();
 
