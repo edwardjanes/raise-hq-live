@@ -12,7 +12,7 @@
       font-family: 'Montserrat', sans-serif;
       background: var(--rhq-black);
       color: var(--rhq-text);
-      max-width: 760px;
+      max-width: 780px;
       margin: 0 auto;
       padding: 32px 28px 36px;
       border-radius: 4px;
@@ -20,43 +20,22 @@
     }
     #raisehq-profile-investors * { box-sizing: border-box; }
     #raisehq-profile-investors .rhq-eyebrow {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--rhq-muted);
-      margin: 0 0 6px;
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--rhq-muted); margin: 0 0 6px;
     }
     #raisehq-profile-investors .rhq-h1 {
-      font-family: 'Inter', sans-serif;
-      font-weight: 900;
-      font-size: 28px;
-      line-height: 1.1;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      color: var(--rhq-white);
-      margin: 0 0 24px;
+      font-family: 'Inter', sans-serif; font-weight: 900; font-size: 28px; line-height: 1.1;
+      letter-spacing: 0.02em; text-transform: uppercase; color: var(--rhq-white); margin: 0 0 24px;
     }
 
     #raisehq-profile-investors .rhq-meter {
-      background: var(--rhq-surface);
-      border-left: 2px solid var(--rhq-green);
-      padding: 18px 22px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+      background: var(--rhq-surface); border-left: 2px solid var(--rhq-green);
+      padding: 18px 22px; margin-bottom: 20px; display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 16px; flex-wrap: wrap;
     }
     #raisehq-profile-investors .rhq-meter-figure {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      font-size: 40px;
-      line-height: 1;
-      color: var(--rhq-green);
+      font-family: 'Inter', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums;
+      font-size: 40px; line-height: 1; color: var(--rhq-green);
     }
     #raisehq-profile-investors .rhq-meter-figure.rhq-zero { color: var(--rhq-muted); }
     #raisehq-profile-investors .rhq-meter-label { font-size: 14px; color: var(--rhq-muted); margin-top: 4px; }
@@ -65,138 +44,119 @@
       display: block; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--rhq-text); font-size: 16px;
     }
 
+    #raisehq-profile-investors .rhq-filters {
+      display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+    }
+    #raisehq-profile-investors .rhq-search {
+      flex: 1; min-width: 160px; background: var(--rhq-surface); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      padding: 9px 12px; border-radius: 3px;
+    }
+    #raisehq-profile-investors .rhq-search::placeholder { color: var(--rhq-muted); }
+    #raisehq-profile-investors .rhq-status-filter {
+      background: var(--rhq-surface); border: 1px solid #222; color: var(--rhq-text);
+      font-family: 'Montserrat', sans-serif; font-size: 14px; padding: 9px 12px; border-radius: 3px;
+    }
+
     #raisehq-profile-investors .rhq-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 12px; flex-wrap: wrap;
     }
     #raisehq-profile-investors .rhq-toolbar-left { font-size: 13px; color: var(--rhq-muted); }
     #raisehq-profile-investors .rhq-link-btn {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--rhq-green);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
+      font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: var(--rhq-green);
+      background: none; border: none; cursor: pointer; padding: 0;
     }
     #raisehq-profile-investors .rhq-link-btn:disabled { color: var(--rhq-muted); cursor: not-allowed; }
 
     #raisehq-profile-investors .rhq-list {
-      max-height: 360px;
-      overflow-y: auto;
-      border: 1px solid var(--rhq-surface);
-      border-radius: 3px;
-      margin-bottom: 20px;
+      max-height: 460px; overflow-y: auto; border: 1px solid var(--rhq-surface);
+      border-radius: 3px; margin-bottom: 20px;
     }
+
+    /* Simple (unprofiled) row */
     #raisehq-profile-investors .rhq-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px 16px;
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px;
       border-bottom: 1px solid var(--rhq-surface);
     }
     #raisehq-profile-investors .rhq-row:last-child { border-bottom: none; }
     #raisehq-profile-investors .rhq-row input[type="checkbox"] {
-      margin-top: 3px;
-      width: 16px;
-      height: 16px;
-      accent-color: var(--rhq-green);
-      cursor: pointer;
-      flex-shrink: 0;
+      margin-top: 3px; width: 16px; height: 16px; accent-color: var(--rhq-green); cursor: pointer; flex-shrink: 0;
     }
     #raisehq-profile-investors .rhq-row input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.4; }
     #raisehq-profile-investors .rhq-row-main { flex: 1; min-width: 0; }
     #raisehq-profile-investors .rhq-row-name {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--rhq-white);
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: var(--rhq-white);
     }
     #raisehq-profile-investors .rhq-row-email { font-size: 12px; color: var(--rhq-muted); margin-top: 2px; }
     #raisehq-profile-investors .rhq-badge {
-      display: inline-block;
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      border-radius: 999px;
-      padding: 3px 10px;
-      flex-shrink: 0;
-      white-space: nowrap;
+      display: inline-block; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.02em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px;
+      flex-shrink: 0; white-space: nowrap;
     }
-    #raisehq-profile-investors .rhq-badge.rhq-badge-done {
-      color: var(--rhq-muted);
-      border: 1px solid var(--rhq-muted);
-      background: transparent;
-    }
-    #raisehq-profile-investors .rhq-badge.rhq-badge-pending {
-      color: var(--rhq-green);
-      border: 1px solid var(--rhq-green);
-      background: transparent;
+    #raisehq-profile-investors .rhq-badge.rhq-badge-pending { color: var(--rhq-green); border: 1px solid var(--rhq-green); background: transparent; }
+    #raisehq-profile-investors .rhq-badge.rhq-badge-justdone {
+      color: var(--rhq-black); background: var(--rhq-green); border: 1px solid var(--rhq-green);
     }
 
-    #raisehq-profile-investors .rhq-empty {
-      padding: 24px 16px;
-      color: var(--rhq-muted);
-      font-size: 14px;
-      text-align: center;
+    /* Profiled card */
+    #raisehq-profile-investors .rhq-card {
+      padding: 16px 18px; border-bottom: 1px solid var(--rhq-surface);
     }
+    #raisehq-profile-investors .rhq-card:last-child { border-bottom: none; }
+    #raisehq-profile-investors .rhq-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    #raisehq-profile-investors .rhq-card-name {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; color: var(--rhq-white);
+    }
+    #raisehq-profile-investors .rhq-card-firmrole { font-size: 13px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-profile-investors .rhq-card-scorewrap { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+    #raisehq-profile-investors .rhq-card-score {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums;
+      font-size: 22px; color: var(--rhq-green); line-height: 1;
+    }
+    #raisehq-profile-investors .rhq-card-score-out { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-profile-investors .rhq-tier-pill {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; border-radius: 999px;
+      padding: 3px 11px; line-height: 1.4;
+    }
+    #raisehq-profile-investors .rhq-tier-pill.rhq-tier-t1 { background: var(--rhq-green); color: var(--rhq-black); }
+    #raisehq-profile-investors .rhq-tier-pill.rhq-tier-t2 { border: 1px solid var(--rhq-green); color: var(--rhq-green); }
+    #raisehq-profile-investors .rhq-tier-pill.rhq-tier-t3 { border: 1px solid var(--rhq-muted); color: var(--rhq-muted); }
+    #raisehq-profile-investors .rhq-card-rationale { font-size: 13px; color: var(--rhq-muted); margin-top: 10px; line-height: 1.5; }
+    #raisehq-profile-investors .rhq-card-justdone {
+      display: inline-block; margin-top: 8px; font-family: 'Inter', sans-serif; font-size: 11px;
+      font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--rhq-black);
+      background: var(--rhq-green); border-radius: 999px; padding: 3px 10px;
+    }
+
+    #raisehq-profile-investors .rhq-empty { padding: 24px 16px; color: var(--rhq-muted); font-size: 14px; text-align: center; }
 
     #raisehq-profile-investors .rhq-submit {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      background: var(--rhq-green);
-      color: var(--rhq-black);
-      border: none;
-      padding: 14px 28px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: opacity .15s ease;
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.04em;
+      text-transform: uppercase; background: var(--rhq-green); color: var(--rhq-black); border: none;
+      padding: 14px 28px; border-radius: 3px; cursor: pointer; transition: opacity .15s ease;
     }
     #raisehq-profile-investors .rhq-submit:hover { opacity: 0.88; }
-    #raisehq-profile-investors .rhq-submit:disabled {
-      background: var(--rhq-surface);
-      color: var(--rhq-muted);
-      cursor: not-allowed;
-    }
+    #raisehq-profile-investors .rhq-submit:disabled { background: var(--rhq-surface); color: var(--rhq-muted); cursor: not-allowed; }
 
     #raisehq-profile-investors .rhq-status { font-size: 14px; color: var(--rhq-muted); margin-top: 14px; }
     #raisehq-profile-investors .rhq-status.rhq-error { color: var(--rhq-error); }
 
-    #raisehq-profile-investors .rhq-results {
-      margin-top: 28px;
-      border-top: 1px solid var(--rhq-surface);
-      padding-top: 20px;
-    }
+    #raisehq-profile-investors .rhq-results { margin-top: 28px; border-top: 1px solid var(--rhq-surface); padding-top: 20px; }
     #raisehq-profile-investors .rhq-results-summary {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 15px;
-      color: var(--rhq-white);
-      margin-bottom: 8px;
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--rhq-white); margin-bottom: 8px;
     }
     #raisehq-profile-investors .rhq-results-detail { font-size: 13px; color: var(--rhq-muted); }
 
     #raisehq-profile-investors .rhq-footer {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 12px;
-      color: var(--rhq-muted);
-      margin-top: 28px;
-      text-align: center;
+      font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--rhq-muted);
+      margin-top: 28px; text-align: center;
     }
 
     @media (max-width: 480px) {
       #raisehq-profile-investors .rhq-h1 { font-size: 22px; }
       #raisehq-profile-investors .rhq-meter-figure { font-size: 32px; }
+      #raisehq-profile-investors .rhq-card-top { flex-direction: column; }
     }
   </style>
 
@@ -215,6 +175,15 @@
       <strong id="rhq-client-name">—</strong>
       1 credit per investor profiled
     </div>
+  </div>
+
+  <div class="rhq-filters">
+    <input class="rhq-search" id="rhq-search" type="text" placeholder="Search by name or email…">
+    <select class="rhq-status-filter" id="rhq-status-filter">
+      <option value="all">All investors</option>
+      <option value="pending">Not profiled</option>
+      <option value="profiled">Profiled</option>
+    </select>
   </div>
 
   <div class="rhq-toolbar">
@@ -251,9 +220,14 @@
   var currentCredits = 0;
   var investors = [];
   var selected = {};
+  var justDone = {};
+  var searchTerm = '';
+  var statusFilter = 'all';
 
   var creditsFigure = ROOT.querySelector('#rhq-credits-figure');
   var clientNameEl = ROOT.querySelector('#rhq-client-name');
+  var searchInput = ROOT.querySelector('#rhq-search');
+  var statusSelect = ROOT.querySelector('#rhq-status-filter');
   var listEl = ROOT.querySelector('#rhq-list');
   var loadingEl = ROOT.querySelector('#rhq-loading');
   var selectedCountEl = ROOT.querySelector('#rhq-selected-count');
@@ -263,6 +237,12 @@
   var resultsEl = ROOT.querySelector('#rhq-results');
   var resultsSummaryEl = ROOT.querySelector('#rhq-results-summary');
   var resultsDetailEl = ROOT.querySelector('#rhq-results-detail');
+
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
 
   function setStatus(msg, isError) {
     statusEl.textContent = msg || '';
@@ -292,54 +272,150 @@
     updateToolbar();
   }
 
+  function tierClass(tier) {
+    var t = String(tier || '').toUpperCase();
+    if (t === 'T1') return 'rhq-tier-t1';
+    if (t === 'T2') return 'rhq-tier-t2';
+    return 'rhq-tier-t3';
+  }
+
+  function matchesFilters(inv) {
+    if (statusFilter === 'pending' && inv.profiled) return false;
+    if (statusFilter === 'profiled' && !inv.profiled) return false;
+    if (searchTerm) {
+      var hay = (inv.name + ' ' + inv.email).toLowerCase();
+      if (hay.indexOf(searchTerm) === -1) return false;
+    }
+    return true;
+  }
+
   function renderList() {
     listEl.innerHTML = '';
-    if (!investors.length) {
+    var visible = investors.filter(matchesFilters);
+
+    if (!visible.length) {
       var empty = document.createElement('div');
       empty.className = 'rhq-empty';
-      empty.textContent = 'No investors found for this client yet. Pull some investors first.';
+      empty.textContent = investors.length ? 'No investors match your filters.' : 'No investors found for this client yet. Pull some investors first.';
       listEl.appendChild(empty);
       return;
     }
 
-    investors.forEach(function (inv) {
-      var row = document.createElement('div');
-      row.className = 'rhq-row';
-
-      var checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.disabled = inv.profiled;
-      checkbox.checked = !!selected[inv.contactId];
-      checkbox.addEventListener('change', function () {
-        selected[inv.contactId] = checkbox.checked;
-        if (checkbox.checked && selectedIds().length > currentCredits) {
-          checkbox.checked = false;
-          selected[inv.contactId] = false;
-          setStatus('You only have ' + currentCredits + ' credits available.', true);
-        }
-        updateToolbar();
-      });
-      row.appendChild(checkbox);
-
-      var main = document.createElement('div');
-      main.className = 'rhq-row-main';
-      var nameEl = document.createElement('div');
-      nameEl.className = 'rhq-row-name';
-      nameEl.textContent = inv.name || 'Unnamed';
-      var emailEl = document.createElement('div');
-      emailEl.className = 'rhq-row-email';
-      emailEl.textContent = inv.email || 'No email on file';
-      main.appendChild(nameEl);
-      main.appendChild(emailEl);
-      row.appendChild(main);
-
-      var badge = document.createElement('span');
-      badge.className = 'rhq-badge ' + (inv.profiled ? 'rhq-badge-done' : 'rhq-badge-pending');
-      badge.textContent = inv.profiled ? 'Profiled' : 'Not profiled';
-      row.appendChild(badge);
-
-      listEl.appendChild(row);
+    visible.forEach(function (inv) {
+      if (inv.profiled) {
+        listEl.appendChild(renderCard(inv));
+      } else {
+        listEl.appendChild(renderRow(inv));
+      }
     });
+  }
+
+  function renderRow(inv) {
+    var row = document.createElement('div');
+    row.className = 'rhq-row';
+
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = !!selected[inv.contactId];
+    checkbox.addEventListener('change', function () {
+      selected[inv.contactId] = checkbox.checked;
+      if (checkbox.checked && selectedIds().length > currentCredits) {
+        checkbox.checked = false;
+        selected[inv.contactId] = false;
+        setStatus('You only have ' + currentCredits + ' credits available.', true);
+      }
+      updateToolbar();
+    });
+    row.appendChild(checkbox);
+
+    var main = document.createElement('div');
+    main.className = 'rhq-row-main';
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-row-name';
+    nameEl.textContent = inv.name || 'Unnamed';
+    var emailEl = document.createElement('div');
+    emailEl.className = 'rhq-row-email';
+    emailEl.textContent = inv.email || 'No email on file';
+    main.appendChild(nameEl);
+    main.appendChild(emailEl);
+    row.appendChild(main);
+
+    if (justDone[inv.contactId]) {
+      var jb = document.createElement('span');
+      jb.className = 'rhq-badge rhq-badge-justdone';
+      jb.textContent = 'Just profiled ✓';
+      row.appendChild(jb);
+    } else {
+      var badge = document.createElement('span');
+      badge.className = 'rhq-badge rhq-badge-pending';
+      badge.textContent = 'Not profiled';
+      row.appendChild(badge);
+    }
+
+    return row;
+  }
+
+  function renderCard(inv) {
+    var card = document.createElement('div');
+    card.className = 'rhq-card';
+
+    var top = document.createElement('div');
+    top.className = 'rhq-card-top';
+
+    var left = document.createElement('div');
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-card-name';
+    nameEl.textContent = inv.name || 'Unnamed';
+    left.appendChild(nameEl);
+
+    var firmRoleText = [inv.firm, inv.role].filter(Boolean).join(' · ');
+    if (firmRoleText) {
+      var fr = document.createElement('div');
+      fr.className = 'rhq-card-firmrole';
+      fr.textContent = firmRoleText;
+      left.appendChild(fr);
+    }
+    top.appendChild(left);
+
+    if (inv.fitScore !== null && inv.fitScore !== undefined) {
+      var scoreWrap = document.createElement('div');
+      scoreWrap.className = 'rhq-card-scorewrap';
+
+      var score = document.createElement('span');
+      score.className = 'rhq-card-score';
+      score.textContent = Number(inv.fitScore).toFixed(1);
+      var out = document.createElement('span');
+      out.className = 'rhq-card-score-out';
+      out.textContent = '/10';
+      scoreWrap.appendChild(score);
+      scoreWrap.appendChild(out);
+
+      if (inv.tier) {
+        var pill = document.createElement('span');
+        pill.className = 'rhq-tier-pill ' + tierClass(inv.tier);
+        pill.textContent = inv.tier;
+        scoreWrap.appendChild(pill);
+      }
+      top.appendChild(scoreWrap);
+    }
+
+    card.appendChild(top);
+
+    if (inv.fitRationale) {
+      var rationale = document.createElement('div');
+      rationale.className = 'rhq-card-rationale';
+      rationale.textContent = inv.fitRationale;
+      card.appendChild(rationale);
+    }
+
+    if (justDone[inv.contactId]) {
+      var jd = document.createElement('div');
+      jd.className = 'rhq-card-justdone';
+      jd.textContent = 'Just profiled ✓';
+      card.appendChild(jd);
+    }
+
+    return card;
   }
 
   function loadInvestors() {
@@ -373,8 +449,17 @@
       });
   }
 
+  searchInput.addEventListener('input', function () {
+    searchTerm = searchInput.value.trim().toLowerCase();
+    renderList();
+  });
+  statusSelect.addEventListener('change', function () {
+    statusFilter = statusSelect.value;
+    renderList();
+  });
+
   selectAllBtn.addEventListener('click', function () {
-    var unselectedUnprofiled = investors.filter(function (inv) { return !inv.profiled && !selected[inv.contactId]; });
+    var unselectedUnprofiled = investors.filter(function (inv) { return !inv.profiled && !selected[inv.contactId] && matchesFilters(inv); });
     var room = Math.max(currentCredits - selectedIds().length, 0);
     var toSelect = unselectedUnprofiled.slice(0, room);
     toSelect.forEach(function (inv) { selected[inv.contactId] = true; });
@@ -413,7 +498,10 @@
         setStatus('', false);
         renderBalance(res.data.credits_after, res.data.client);
 
+        ids.forEach(function (id) { justDone[id] = true; });
         selected = {};
+        renderList();
+
         resultsEl.style.display = 'block';
         resultsSummaryEl.textContent = 'Profiled ' + res.data.profiled + ' of ' + res.data.requested + ' requested.';
         var detailParts = [];
