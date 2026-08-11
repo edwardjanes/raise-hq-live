@@ -130,9 +130,16 @@
       outline: none;
       border-color: var(--rhq-green);
     }
+    #raisehq-credit-pull .rhq-count-row input[type="number"]:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
     #raisehq-credit-pull .rhq-count-row label {
       font-size: 14px;
       color: var(--rhq-muted);
+    }
+    #raisehq-credit-pull #rhq-count-hint {
+      margin-top: 0;
     }
 
     #raisehq-credit-pull .rhq-submit {
@@ -263,6 +270,7 @@
   <div class="rhq-count-row">
     <label for="rhq-count">Investors to pull</label>
     <input type="number" id="rhq-count" min="1" max="100" value="10">
+    <span class="rhq-meter-label" id="rhq-count-hint"></span>
   </div>
 
   <button class="rhq-submit" id="rhq-submit">Pull Investors</button>
@@ -299,6 +307,8 @@
   var resultsSummaryEl = ROOT.querySelector('#rhq-results-summary');
   var resultsListEl = ROOT.querySelector('#rhq-results-list');
   var countInput = ROOT.querySelector('#rhq-count');
+  var countHint = ROOT.querySelector('#rhq-count-hint');
+  var currentCredits = 0;
 
   function wireChips(containerId, targetArray) {
     var container = ROOT.querySelector(containerId);
@@ -325,14 +335,40 @@
   }
 
   function renderBalance(credits, client) {
+    currentCredits = credits;
     creditsFigure.textContent = credits;
     creditsFigure.className = 'rhq-meter-figure' + (credits <= 0 ? ' rhq-zero' : '');
     clientNameEl.textContent = client;
+
+    // Guard: the input can never be set above what's actually available.
+    var cap = Math.max(1, Math.min(100, credits));
+    countInput.max = cap;
     if (credits <= 0) {
+      countInput.disabled = true;
       submitBtn.disabled = true;
       setStatus("You're out of credits — top up to keep pulling investors.", true);
+    } else {
+      countInput.disabled = false;
+      if (parseInt(countInput.value, 10) > credits) {
+        countInput.value = credits;
+      }
     }
+    countHint.textContent = credits > 0 ? ('of ' + credits + ' available') : '';
   }
+
+  function clampCountToCredits() {
+    var v = parseInt(countInput.value, 10);
+    if (isNaN(v) || v < 1) v = 1;
+    if (v > currentCredits) {
+      v = currentCredits;
+      setStatus('You only have ' + currentCredits + ' credits available — capped at ' + currentCredits + '.', true);
+    } else if (statusEl.textContent.indexOf('capped at') !== -1) {
+      setStatus('', false);
+    }
+    countInput.value = v;
+  }
+  countInput.addEventListener('input', clampCountToCredits);
+  countInput.addEventListener('blur', clampCountToCredits);
 
   function loadBalance() {
     fetch(BASE_URL + '/credit-balance?client_name=' + encodeURIComponent(clientName))
@@ -403,7 +439,18 @@
   }
 
   submitBtn.addEventListener('click', function () {
-    var requestedCount = parseInt(countInput.value, 10) || 10;
+    var requestedCount = parseInt(countInput.value, 10) || 1;
+
+    if (currentCredits <= 0) {
+      setStatus("You're out of credits — top up to keep pulling investors.", true);
+      return;
+    }
+    if (requestedCount > currentCredits) {
+      setStatus('You only have ' + currentCredits + ' credits available — lower the count and try again.', true);
+      countInput.value = currentCredits;
+      return;
+    }
+
     submitBtn.disabled = true;
     setStatus('Pulling investors…', false);
     resultsEl.style.display = 'none';
