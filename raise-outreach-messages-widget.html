@@ -1,0 +1,424 @@
+<div id="raisehq-outreach-messages">
+  <style>
+    #raisehq-outreach-messages {
+      --rhq-black: #000000;
+      --rhq-surface: #111111;
+      --rhq-green: #00FF84;
+      --rhq-text: #E8E8E8;
+      --rhq-muted: #A0A0A0;
+      --rhq-white: #FFFFFF;
+      --rhq-error: #FF4D4D;
+
+      font-family: 'Montserrat', sans-serif;
+      background: var(--rhq-black);
+      color: var(--rhq-text);
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 28px 36px;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #raisehq-outreach-messages * { box-sizing: border-box; }
+    #raisehq-outreach-messages .rhq-eyebrow {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--rhq-muted); margin: 0 0 6px;
+    }
+    #raisehq-outreach-messages .rhq-h1 {
+      font-family: 'Inter', sans-serif; font-weight: 900; font-size: 28px; line-height: 1.1;
+      letter-spacing: 0.02em; text-transform: uppercase; color: var(--rhq-white); margin: 0 0 24px;
+    }
+
+    #raisehq-outreach-messages .rhq-meter {
+      background: var(--rhq-surface); border-left: 2px solid var(--rhq-green);
+      padding: 18px 22px; margin-bottom: 20px; display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    #raisehq-outreach-messages .rhq-meter-figure {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums;
+      font-size: 40px; line-height: 1; color: var(--rhq-green);
+    }
+    #raisehq-outreach-messages .rhq-meter-figure.rhq-zero { color: var(--rhq-muted); }
+    #raisehq-outreach-messages .rhq-meter-label { font-size: 14px; color: var(--rhq-muted); margin-top: 4px; }
+    #raisehq-outreach-messages .rhq-meter-client { font-size: 14px; color: var(--rhq-muted); text-align: right; }
+    #raisehq-outreach-messages .rhq-meter-client strong {
+      display: block; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--rhq-text); font-size: 16px;
+    }
+
+    #raisehq-outreach-messages .rhq-filters { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    #raisehq-outreach-messages .rhq-search {
+      flex: 1; min-width: 160px; background: var(--rhq-surface); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      padding: 9px 12px; border-radius: 3px;
+    }
+    #raisehq-outreach-messages .rhq-search::placeholder { color: var(--rhq-muted); }
+    #raisehq-outreach-messages .rhq-status-filter {
+      background: var(--rhq-surface); border: 1px solid #222; color: var(--rhq-text);
+      font-family: 'Montserrat', sans-serif; font-size: 14px; padding: 9px 12px; border-radius: 3px;
+    }
+
+    #raisehq-outreach-messages .rhq-toolbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 12px; flex-wrap: wrap;
+    }
+    #raisehq-outreach-messages .rhq-toolbar-left { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-outreach-messages .rhq-link-btn {
+      font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: var(--rhq-green);
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    #raisehq-outreach-messages .rhq-link-btn:disabled { color: var(--rhq-muted); cursor: not-allowed; }
+
+    #raisehq-outreach-messages .rhq-list {
+      max-height: 460px; overflow-y: auto; border: 1px solid var(--rhq-surface);
+      border-radius: 3px; margin-bottom: 20px;
+    }
+    #raisehq-outreach-messages .rhq-row {
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px;
+      border-bottom: 1px solid var(--rhq-surface);
+    }
+    #raisehq-outreach-messages .rhq-row:last-child { border-bottom: none; }
+    #raisehq-outreach-messages .rhq-row input[type="checkbox"] {
+      margin-top: 3px; width: 16px; height: 16px; accent-color: var(--rhq-green); cursor: pointer; flex-shrink: 0;
+    }
+    #raisehq-outreach-messages .rhq-row input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.4; }
+    #raisehq-outreach-messages .rhq-row-main { flex: 1; min-width: 0; }
+    #raisehq-outreach-messages .rhq-row-name {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: var(--rhq-white);
+    }
+    #raisehq-outreach-messages .rhq-row-email { font-size: 12px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-outreach-messages .rhq-row-meta { font-size: 11px; color: var(--rhq-muted); margin-top: 2px; }
+
+    #raisehq-outreach-messages .rhq-badge {
+      display: inline-block; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.02em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    #raisehq-outreach-messages .rhq-badge.rhq-badge-needsprofile { color: var(--rhq-muted); border: 1px solid var(--rhq-muted); background: transparent; }
+    #raisehq-outreach-messages .rhq-badge.rhq-badge-ready { color: var(--rhq-green); border: 1px solid var(--rhq-green); background: transparent; }
+    #raisehq-outreach-messages .rhq-badge.rhq-badge-done { color: var(--rhq-muted); border: 1px solid var(--rhq-muted); background: transparent; }
+    #raisehq-outreach-messages .rhq-badge.rhq-badge-justdone { color: var(--rhq-black); background: var(--rhq-green); border: 1px solid var(--rhq-green); }
+
+    #raisehq-outreach-messages .rhq-empty { padding: 24px 16px; color: var(--rhq-muted); font-size: 14px; text-align: center; }
+
+    #raisehq-outreach-messages .rhq-submit {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.04em;
+      text-transform: uppercase; background: var(--rhq-green); color: var(--rhq-black); border: none;
+      padding: 14px 28px; border-radius: 3px; cursor: pointer; transition: opacity .15s ease;
+    }
+    #raisehq-outreach-messages .rhq-submit:hover { opacity: 0.88; }
+    #raisehq-outreach-messages .rhq-submit:disabled { background: var(--rhq-surface); color: var(--rhq-muted); cursor: not-allowed; }
+
+    #raisehq-outreach-messages .rhq-status { font-size: 14px; color: var(--rhq-muted); margin-top: 14px; }
+    #raisehq-outreach-messages .rhq-status.rhq-error { color: var(--rhq-error); }
+
+    #raisehq-outreach-messages .rhq-results { margin-top: 28px; border-top: 1px solid var(--rhq-surface); padding-top: 20px; }
+    #raisehq-outreach-messages .rhq-results-summary {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--rhq-white); margin-bottom: 8px;
+    }
+    #raisehq-outreach-messages .rhq-results-detail { font-size: 13px; color: var(--rhq-muted); }
+
+    #raisehq-outreach-messages .rhq-footer {
+      font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--rhq-muted);
+      margin-top: 28px; text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      #raisehq-outreach-messages .rhq-h1 { font-size: 22px; }
+      #raisehq-outreach-messages .rhq-meter-figure { font-size: 32px; }
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <p class="rhq-eyebrow">Raise HQ · Investor Data</p>
+  <h1 class="rhq-h1">Write Outreach Messages</h1>
+
+  <div class="rhq-meter">
+    <div>
+      <div class="rhq-meter-figure" id="rhq-credits-figure">—</div>
+      <div class="rhq-meter-label">credits available</div>
+    </div>
+    <div class="rhq-meter-client">
+      <strong id="rhq-client-name">—</strong>
+      1 credit per investor messaged
+    </div>
+  </div>
+
+  <div class="rhq-filters">
+    <input class="rhq-search" id="rhq-search" type="text" placeholder="Search by name or email…">
+    <select class="rhq-status-filter" id="rhq-status-filter">
+      <option value="all">All investors</option>
+      <option value="ready">Ready to message</option>
+      <option value="needsprofile">Needs profiling first</option>
+      <option value="done">Already messaged</option>
+    </select>
+  </div>
+
+  <div class="rhq-toolbar">
+    <span class="rhq-toolbar-left" id="rhq-selected-count">0 selected</span>
+    <button type="button" class="rhq-link-btn" id="rhq-select-all">Select all ready</button>
+  </div>
+
+  <div class="rhq-list" id="rhq-list">
+    <div class="rhq-empty" id="rhq-loading">Loading investors…</div>
+  </div>
+
+  <button class="rhq-submit" id="rhq-submit" disabled>Write Messages</button>
+  <div class="rhq-status" id="rhq-status"></div>
+
+  <div class="rhq-results" id="rhq-results" style="display:none;">
+    <div class="rhq-results-summary" id="rhq-results-summary"></div>
+    <div class="rhq-results-detail" id="rhq-results-detail"></div>
+  </div>
+
+  <p class="rhq-footer">Raise HQ is a Source Capital product.</p>
+</div>
+
+<script>
+(function () {
+  var ROOT = document.getElementById('raisehq-outreach-messages');
+  if (!ROOT) return;
+
+  var DEFAULT_CLIENT = 'Test Client Co';
+  var BASE_URL = 'https://n8n.srv926257.hstgr.cloud/webhook';
+
+  var params = new URLSearchParams(window.location.search);
+  var clientName = params.get('client') || DEFAULT_CLIENT;
+
+  var currentCredits = 0;
+  var investors = [];
+  var selected = {};
+  var justDone = {};
+  var searchTerm = '';
+  var statusFilter = 'all';
+
+  var creditsFigure = ROOT.querySelector('#rhq-credits-figure');
+  var clientNameEl = ROOT.querySelector('#rhq-client-name');
+  var searchInput = ROOT.querySelector('#rhq-search');
+  var statusSelect = ROOT.querySelector('#rhq-status-filter');
+  var listEl = ROOT.querySelector('#rhq-list');
+  var loadingEl = ROOT.querySelector('#rhq-loading');
+  var selectedCountEl = ROOT.querySelector('#rhq-selected-count');
+  var selectAllBtn = ROOT.querySelector('#rhq-select-all');
+  var submitBtn = ROOT.querySelector('#rhq-submit');
+  var statusEl = ROOT.querySelector('#rhq-status');
+  var resultsEl = ROOT.querySelector('#rhq-results');
+  var resultsSummaryEl = ROOT.querySelector('#rhq-results-summary');
+  var resultsDetailEl = ROOT.querySelector('#rhq-results-detail');
+
+  function setStatus(msg, isError) {
+    statusEl.textContent = msg || '';
+    statusEl.className = 'rhq-status' + (isError ? ' rhq-error' : '');
+  }
+
+  function state(inv) {
+    if (justDone[inv.contactId]) return 'justdone';
+    if ((inv.tags || []).indexOf('outreach writer complete') !== -1) return 'done';
+    if (!inv.profiled) return 'needsprofile';
+    return 'ready';
+  }
+
+  function selectedIds() {
+    return Object.keys(selected).filter(function (id) { return selected[id]; });
+  }
+
+  function updateToolbar() {
+    var count = selectedIds().length;
+    selectedCountEl.textContent = count + ' selected';
+    submitBtn.disabled = count === 0 || count > currentCredits || currentCredits <= 0;
+    if (count > currentCredits) {
+      setStatus('You only have ' + currentCredits + ' credits available — deselect some investors.', true);
+    } else if (statusEl.textContent.indexOf('deselect') !== -1) {
+      setStatus('', false);
+    }
+  }
+
+  function renderBalance(credits, client) {
+    currentCredits = credits;
+    creditsFigure.textContent = credits;
+    creditsFigure.className = 'rhq-meter-figure' + (credits <= 0 ? ' rhq-zero' : '');
+    clientNameEl.textContent = client;
+    updateToolbar();
+  }
+
+  function matchesFilters(inv) {
+    var s = state(inv);
+    if (statusFilter === 'ready' && s !== 'ready' && s !== 'justdone') return false;
+    if (statusFilter === 'needsprofile' && s !== 'needsprofile') return false;
+    if (statusFilter === 'done' && s !== 'done' && s !== 'justdone') return false;
+    if (searchTerm) {
+      var hay = (inv.name + ' ' + inv.email).toLowerCase();
+      if (hay.indexOf(searchTerm) === -1) return false;
+    }
+    return true;
+  }
+
+  function renderList() {
+    listEl.innerHTML = '';
+    var visible = investors.filter(matchesFilters);
+
+    if (!visible.length) {
+      var empty = document.createElement('div');
+      empty.className = 'rhq-empty';
+      empty.textContent = investors.length ? 'No investors match your filters.' : 'No investors found for this client yet.';
+      listEl.appendChild(empty);
+      return;
+    }
+
+    visible.forEach(function (inv) { listEl.appendChild(renderRow(inv)); });
+  }
+
+  function renderRow(inv) {
+    var s = state(inv);
+    var row = document.createElement('div');
+    row.className = 'rhq-row';
+
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.disabled = s !== 'ready';
+    checkbox.checked = !!selected[inv.contactId];
+    checkbox.addEventListener('change', function () {
+      selected[inv.contactId] = checkbox.checked;
+      if (checkbox.checked && selectedIds().length > currentCredits) {
+        checkbox.checked = false;
+        selected[inv.contactId] = false;
+        setStatus('You only have ' + currentCredits + ' credits available.', true);
+      }
+      updateToolbar();
+    });
+    row.appendChild(checkbox);
+
+    var main = document.createElement('div');
+    main.className = 'rhq-row-main';
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-row-name';
+    nameEl.textContent = inv.name || 'Unnamed';
+    var emailEl = document.createElement('div');
+    emailEl.className = 'rhq-row-email';
+    emailEl.textContent = inv.email || 'No email on file';
+    main.appendChild(nameEl);
+    main.appendChild(emailEl);
+    if (inv.fitScore !== null && inv.fitScore !== undefined) {
+      var meta = document.createElement('div');
+      meta.className = 'rhq-row-meta';
+      meta.textContent = 'Fit ' + Number(inv.fitScore).toFixed(1) + '/10' + (inv.tier ? ' · ' + inv.tier : '');
+      main.appendChild(meta);
+    }
+    row.appendChild(main);
+
+    var badge = document.createElement('span');
+    if (s === 'justdone') { badge.className = 'rhq-badge rhq-badge-justdone'; badge.textContent = 'Just messaged ✓'; }
+    else if (s === 'done') { badge.className = 'rhq-badge rhq-badge-done'; badge.textContent = 'Messaged'; }
+    else if (s === 'needsprofile') { badge.className = 'rhq-badge rhq-badge-needsprofile'; badge.textContent = 'Needs profiling first'; }
+    else { badge.className = 'rhq-badge rhq-badge-ready'; badge.textContent = 'Ready'; }
+    row.appendChild(badge);
+
+    return row;
+  }
+
+  function loadInvestors() {
+    fetch(BASE_URL + '/list-client-investors?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          loadingEl.textContent = data.error || 'Could not load investors.';
+          return;
+        }
+        investors = data.investors || [];
+        renderList();
+      })
+      .catch(function () {
+        loadingEl.textContent = 'Could not reach Raise HQ. Check your connection and try again.';
+      });
+  }
+
+  function loadBalance() {
+    fetch(BASE_URL + '/credit-balance?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          setStatus('No client found matching "' + clientName + '".', true);
+          return;
+        }
+        renderBalance(data.credits, data.client);
+      })
+      .catch(function () {
+        setStatus('Could not reach Raise HQ. Check your connection and try again.', true);
+      });
+  }
+
+  searchInput.addEventListener('input', function () {
+    searchTerm = searchInput.value.trim().toLowerCase();
+    renderList();
+  });
+  statusSelect.addEventListener('change', function () {
+    statusFilter = statusSelect.value;
+    renderList();
+  });
+
+  selectAllBtn.addEventListener('click', function () {
+    var unselectedReady = investors.filter(function (inv) { return state(inv) === 'ready' && !selected[inv.contactId] && matchesFilters(inv); });
+    var room = Math.max(currentCredits - selectedIds().length, 0);
+    var toSelect = unselectedReady.slice(0, room);
+    toSelect.forEach(function (inv) { selected[inv.contactId] = true; });
+
+    if (unselectedReady.length > room) {
+      setStatus('Selected ' + toSelect.length + ' — only ' + currentCredits + ' credits available in total.', true);
+    }
+    renderList();
+    updateToolbar();
+  });
+
+  submitBtn.addEventListener('click', function () {
+    var ids = selectedIds();
+    if (!ids.length) return;
+    if (ids.length > currentCredits) {
+      setStatus('You only have ' + currentCredits + ' credits available.', true);
+      return;
+    }
+
+    submitBtn.disabled = true;
+    setStatus('Writing messages for ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + '… this can take a moment.', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/write-outreach-messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contact_ids: ids })
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (res) {
+        if (!res.data.success) {
+          setStatus("That run didn't go through — " + (res.data.error === 'insufficient_credits' ? "you're out of credits." : res.data.error), true);
+          if (typeof res.data.credits_remaining === 'number') renderBalance(res.data.credits_remaining, clientName);
+          return;
+        }
+        setStatus('', false);
+        renderBalance(res.data.credits_after, res.data.client);
+
+        ids.forEach(function (id) { justDone[id] = true; });
+        selected = {};
+        renderList();
+
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Wrote messages for ' + res.data.written + ' of ' + res.data.requested + ' requested.';
+        var detailParts = [];
+        if (res.data.skipped) detailParts.push(res.data.skipped + ' already had messages and were skipped free of charge.');
+        if (res.data.not_profiled) detailParts.push(res.data.not_profiled + ' need profiling first and were skipped free of charge.');
+        if (res.data.errors) detailParts.push(res.data.errors + ' could not be parsed and were not charged.');
+        resultsDetailEl.textContent = detailParts.join(' ');
+
+        loadInvestors();
+      })
+      .catch(function () {
+        setStatus('Could not reach Raise HQ. Check your connection and try again.', true);
+      })
+      .finally(function () {
+        updateToolbar();
+      });
+  });
+
+  loadBalance();
+  loadInvestors();
+})();
+</script>
