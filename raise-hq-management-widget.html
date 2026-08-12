@@ -67,6 +67,20 @@
       width: 90px; background: var(--rhq-black); border: 1px solid #222; color: var(--rhq-text);
       font-family: 'Inter', sans-serif; font-size: 15px; padding: 8px 10px; border-radius: 3px;
     }
+    #raisehq-unified .rhq-pull-filters { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
+    #raisehq-unified .rhq-pull-filter-group { flex: 1; min-width: 200px; }
+    #raisehq-unified .rhq-pull-filter-group label {
+      display: block; font-size: 12px; font-weight: 600; color: var(--rhq-muted); margin-bottom: 6px;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    #raisehq-unified .rhq-multiselect {
+      width: 100%; min-height: 96px; background: var(--rhq-black); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 13px;
+      padding: 6px; border-radius: 3px;
+    }
+    #raisehq-unified .rhq-multiselect option { padding: 5px 8px; }
+    #raisehq-unified .rhq-multiselect option:checked { background: var(--rhq-green); color: var(--rhq-black); }
+    #raisehq-unified .rhq-pull-filter-hint { font-size: 11px; color: var(--rhq-muted); margin-top: 4px; }
 
     /* Track select bar */
     #raisehq-unified .rhq-track-select-bar {
@@ -224,6 +238,58 @@
         <input class="rhq-pull-input" id="rhq-pull-count" type="number" min="1" value="10">
         <button class="rhq-submit" id="rhq-pull-submit" type="button">Pull Investors</button>
       </div>
+      <div class="rhq-pull-filters">
+        <div class="rhq-pull-filter-group">
+          <label for="rhq-pull-sectors">Sector</label>
+          <select class="rhq-multiselect" id="rhq-pull-sectors" multiple size="6">
+            <option value="Healthtech & Wellness">Healthtech & Wellness</option>
+            <option value="Biotech & Life Sciences">Biotech & Life Sciences</option>
+            <option value="Fintech">Fintech</option>
+            <option value="Enterprise-SaaS">Enterprise-SaaS</option>
+            <option value="Consumer">Consumer</option>
+            <option value="Marketplace">Marketplace</option>
+            <option value="AI-Deep Tech">AI-Deep Tech</option>
+            <option value="Climate & Sustainability">Climate & Sustainability</option>
+            <option value="Hardware & Robotics">Hardware & Robotics</option>
+            <option value="Web3-Crypto">Web3-Crypto</option>
+            <option value="EdTech">EdTech</option>
+            <option value="Proptech & Real Estate">Proptech & Real Estate</option>
+            <option value="Media & Entertainment">Media & Entertainment</option>
+            <option value="Logistics & Supply Chain">Logistics & Supply Chain</option>
+            <option value="Generalist">Generalist</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="rhq-pull-filter-hint">Cmd/Ctrl-click to select several. Leave blank for all sectors.</div>
+        </div>
+        <div class="rhq-pull-filter-group">
+          <label for="rhq-pull-stages">Stage</label>
+          <select class="rhq-multiselect" id="rhq-pull-stages" multiple size="6">
+            <option value="Pre-Seed">Pre-Seed</option>
+            <option value="Seed">Seed</option>
+            <option value="Post-Seed-Bridge">Post-Seed-Bridge</option>
+            <option value="Series A">Series A</option>
+            <option value="Series B">Series B</option>
+            <option value="Series C+">Series C+</option>
+            <option value="Growth-Late Stage">Growth-Late Stage</option>
+          </select>
+          <div class="rhq-pull-filter-hint">Cmd/Ctrl-click to select several. Leave blank for all stages.</div>
+        </div>
+        <div class="rhq-pull-filter-group">
+          <label for="rhq-pull-geographies">Country / Region</label>
+          <select class="rhq-multiselect" id="rhq-pull-geographies" multiple size="6">
+            <option value="US">United States</option>
+            <option value="UK">United Kingdom</option>
+            <option value="Canada">Canada</option>
+            <option value="Europe (ex-UK)">Europe (ex-UK)</option>
+            <option value="Asia">Asia</option>
+            <option value="LatAm">Latin America</option>
+            <option value="MENA">Middle East & North Africa</option>
+            <option value="Global-No Preference">Global / No preference</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="rhq-pull-filter-hint">Cmd/Ctrl-click to select several. The investor database tags geography by country/region, not individual countries within Europe or Asia. Leave blank for all.</div>
+        </div>
+      </div>
     </div>
     <div class="rhq-status" id="rhq-pull-status"></div>
     <div class="rhq-pull-results" id="rhq-pull-results" style="display:none;"></div>
@@ -297,6 +363,9 @@
 
   var panelPull = ROOT.querySelector('#rhq-panel-pull');
   var pullCountInput = ROOT.querySelector('#rhq-pull-count');
+  var pullSectorsSelect = ROOT.querySelector('#rhq-pull-sectors');
+  var pullStagesSelect = ROOT.querySelector('#rhq-pull-stages');
+  var pullGeographiesSelect = ROOT.querySelector('#rhq-pull-geographies');
   var pullSubmitBtn = ROOT.querySelector('#rhq-pull-submit');
   var pullStatusEl = ROOT.querySelector('#rhq-pull-status');
   var pullResultsEl = ROOT.querySelector('#rhq-pull-results');
@@ -754,9 +823,17 @@
     setStatus(pullStatusEl, 'Pulling ' + count + ' investors…', false);
     pullResultsEl.style.display = 'none';
 
+    var selectedSectors = Array.prototype.map.call(pullSectorsSelect.selectedOptions, function (o) { return o.value; });
+    var selectedStages = Array.prototype.map.call(pullStagesSelect.selectedOptions, function (o) { return o.value; });
+    var GEO_EXPAND = {
+      'US': ['US-Northeast/NYC', 'US-Bay Area', 'US-LA', 'US-Other West Coast', 'US-Texas', 'US-Midwest', 'US-Southeast', 'US-Nationwide']
+    };
+    var selectedGeographies = Array.prototype.map.call(pullGeographiesSelect.selectedOptions, function (o) { return o.value; })
+      .reduce(function (acc, v) { return acc.concat(GEO_EXPAND[v] || [v]); }, []);
+
     fetch(BASE_URL + '/credit-pull', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_name: clientName, requested_count: count })
+      body: JSON.stringify({ client_name: clientName, requested_count: count, sectors: selectedSectors, stages: selectedStages, geographies: selectedGeographies })
     })
       .then(function (r) { return r.json(); })
       .then(function (data) {
