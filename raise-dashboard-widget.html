@@ -58,7 +58,8 @@ body{background:#000;color:#E8E8E8;font-family:-apple-system,BlinkMacSystemFont,
 .alert.hot .alert-label{color:#00FF84}
 .alert.hot .alert-value{color:#00FF84}
 .loading{text-align:center;padding:60px;color:#333;font-size:14px}
-.error{text-align:center;padding:40px;color:#444;font-size:13px;background:#111;border-radius:8px}
+.error{text-align:center;padding:40px;color:#888;font-size:13px;background:#111;border-radius:8px;border:1px solid #2a1a1a}
+.error .error-code{display:block;margin-top:8px;font-size:11px;color:#444;letter-spacing:0.04em;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -86,12 +87,37 @@ var N8N = 'https://n8n.srv926257.hstgr.cloud/webhook/raise-dashboard';
 function fmt(n){ return isNaN(n)||n===null?'—':String(Math.round(Number(n))); }
 function pct(a,b){ return b>0?Math.round(a/b*100):0; }
 function ago(iso){ if(!iso)return ''; var d=new Date(iso); return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+function esc(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; }
+
+function showError(message, code) {
+  var codeLine = code ? '<span class="error-code">'+esc(code)+'</span>' : '';
+  document.getElementById('root').innerHTML =
+    '<div class="error">'+esc(message)+codeLine+'</div>';
+}
 
 fetch(N8N+'?loc='+encodeURIComponent(LOC))
-  .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
-  .then(render)
+  .then(function(r){
+    return r.json()
+      .catch(function(){ return null; })
+      .then(function(data){ return { ok: r.ok, status: r.status, data: data }; });
+  })
+  .then(function(res){
+    // Backend (Raise - Dashboard Data) always returns a JSON body, success or error,
+    // with hasError:true/false and, on error, errorCode + errorMessage. Read those
+    // directly rather than inferring the cause from the HTTP status alone.
+    if (!res.data) {
+      showError('Could not load dashboard data (status ' + res.status + ', no response body).');
+      return;
+    }
+    if (!res.ok || res.data.hasError) {
+      var msg = res.data.errorMessage || ('Could not load dashboard data (status ' + res.status + ').');
+      showError(msg, res.data.errorCode);
+      return;
+    }
+    render(res.data);
+  })
   .catch(function(e){
-    document.getElementById('root').innerHTML='<div class="error">Could not load dashboard data.<br>Check that your account is fully onboarded and the n8n_webhook_base Custom Value is set.<br><br><small>'+e.message+'</small></div>';
+    showError('Could not reach the dashboard service. ' + (e && e.message ? e.message : ''));
   });
 
 function render(d) {
