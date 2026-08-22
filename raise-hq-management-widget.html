@@ -238,6 +238,23 @@
     #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-requested { border: 1px solid var(--rhq-green); color: var(--rhq-green); }
     #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-made { background: var(--rhq-green); color: var(--rhq-black); border: 1px solid var(--rhq-green); }
     #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-declined { border: 1px solid var(--rhq-error); color: var(--rhq-error); }
+    #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-suggested { border: 1px dashed var(--rhq-muted); color: var(--rhq-muted); }
+
+    #raisehq-unified .rhq-ip-suggested-wrap { margin-bottom: 16px; }
+    #raisehq-unified .rhq-ip-suggested-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.03em; text-transform: uppercase; color: var(--rhq-muted); margin-bottom: 8px; }
+    #raisehq-unified .rhq-ip-conn-list.rhq-ip-suggested-list { border: 1px dashed var(--rhq-muted); border-radius: 3px; }
+    #raisehq-unified .rhq-ip-conn-row.rhq-ip-conn-row-suggested { background: rgba(255,255,255,0.02); }
+    #raisehq-unified .rhq-ip-action-btn.rhq-ip-action-confirm:hover { border-color: var(--rhq-green); color: var(--rhq-green); }
+    #raisehq-unified .rhq-ip-action-btn.rhq-ip-action-dismiss:hover { border-color: var(--rhq-error); color: var(--rhq-error); }
+
+    #raisehq-unified .rhq-ip-linkedin-panel { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    #raisehq-unified .rhq-ip-li-section { flex: 1; min-width: 260px; background: var(--rhq-surface); padding: 16px; border-radius: 3px; }
+    #raisehq-unified .rhq-ip-li-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.03em; text-transform: uppercase; color: var(--rhq-white); margin-bottom: 8px; }
+    #raisehq-unified .rhq-ip-li-copy { font-size: 12px; color: var(--rhq-muted); line-height: 1.5; margin-bottom: 10px; }
+    #raisehq-unified .rhq-ip-li-copy.rhq-ip-li-risk { color: var(--rhq-text); border-left: 2px solid var(--rhq-error); padding-left: 10px; }
+    #raisehq-unified .rhq-ip-li-status { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; color: var(--rhq-text); margin-bottom: 10px; text-transform: capitalize; }
+    #raisehq-unified .rhq-ip-file-input { display: block; width: 100%; font-size: 12px; color: var(--rhq-muted); margin-bottom: 10px; }
+    #raisehq-unified .rhq-ip-li-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
     #raisehq-unified .rhq-ip-add-panel { background: var(--rhq-surface); padding: 16px; border-radius: 3px; }
     #raisehq-unified .rhq-ip-add-toggle {
@@ -392,6 +409,25 @@
 
   <!-- INTRO PATH PANEL -->
   <div id="rhq-panel-intropath" style="display:none;">
+    <div class="rhq-ip-linkedin-panel">
+      <div class="rhq-ip-li-section">
+        <div class="rhq-ip-li-title">LinkedIn Connections</div>
+        <div class="rhq-ip-li-copy">Upload your LinkedIn connections export (Connections.csv) so discovered connectors can be matched against people you actually know — company, title, and how long you've been connected. Used for that matching only; it's your personal data and isn't shared or shown anywhere else.</div>
+        <input type="file" id="rhq-ip-csv-input" accept=".csv" class="rhq-ip-file-input">
+        <button type="button" class="rhq-ip-action-btn" id="rhq-ip-csv-upload-btn">Upload Connections.csv</button>
+        <div class="rhq-status" id="rhq-ip-csv-status"></div>
+      </div>
+      <div class="rhq-ip-li-section">
+        <div class="rhq-ip-li-title">Connect LinkedIn</div>
+        <div class="rhq-ip-li-status" id="rhq-ip-li-status-label">Status: not connected</div>
+        <div class="rhq-ip-li-copy rhq-ip-li-risk">Connecting lets our automation partner (PhantomBuster) browse LinkedIn as you, using your own logged-in session, to find people you know in common with target investors. This can trigger a LinkedIn account restriction or ban — that risk sits with your own LinkedIn account, not Raise HQ's. Ask your Raise HQ contact for your personal connection link, complete it on PhantomBuster's page, then confirm below.</div>
+        <div class="rhq-ip-li-actions">
+          <button type="button" class="rhq-ip-action-btn" id="rhq-ip-li-connected-btn">I've Connected My LinkedIn</button>
+          <button type="button" class="rhq-ip-action-btn" id="rhq-ip-li-expired-btn">Report Session Expired</button>
+        </div>
+        <div class="rhq-status" id="rhq-ip-li-status"></div>
+      </div>
+    </div>
     <div class="rhq-ip-layout">
       <div class="rhq-ip-investors">
         <input class="rhq-search" id="rhq-ip-search" type="text" placeholder="Search by name or email…" style="margin-bottom:10px; width:100%;">
@@ -471,6 +507,14 @@
   var ipConnectors = [];
   var ipConnectorsLoaded = false;
   var ipAddOpen = false;
+
+  var ipCsvInput = ROOT.querySelector('#rhq-ip-csv-input');
+  var ipCsvUploadBtn = ROOT.querySelector('#rhq-ip-csv-upload-btn');
+  var ipCsvStatusEl = ROOT.querySelector('#rhq-ip-csv-status');
+  var ipLiStatusLabelEl = ROOT.querySelector('#rhq-ip-li-status-label');
+  var ipLiConnectedBtn = ROOT.querySelector('#rhq-ip-li-connected-btn');
+  var ipLiExpiredBtn = ROOT.querySelector('#rhq-ip-li-expired-btn');
+  var ipLiStatusEl = ROOT.querySelector('#rhq-ip-li-status');
 
   var TAB_META = {
     pull: { title: 'Pull Investors', cost: 'Central Investor Database' },
@@ -1071,15 +1115,32 @@
       return;
     }
 
+    var suggested = ipConnectors.filter(function (rec) { return rec.intro_status === 'suggested'; });
+    var confirmedConnectors = ipConnectors.filter(function (rec) { return rec.intro_status !== 'suggested'; });
+
+    if (suggested.length) {
+      var suggestedWrap = document.createElement('div');
+      suggestedWrap.className = 'rhq-ip-suggested-wrap';
+      var suggestedTitle = document.createElement('div');
+      suggestedTitle.className = 'rhq-ip-suggested-title';
+      suggestedTitle.textContent = 'Suggested — from LinkedIn Crossover Discovery';
+      suggestedWrap.appendChild(suggestedTitle);
+      var suggestedList = document.createElement('div');
+      suggestedList.className = 'rhq-ip-conn-list rhq-ip-suggested-list';
+      suggested.forEach(function (rec) { suggestedList.appendChild(renderIpSuggestedRow(rec)); });
+      suggestedWrap.appendChild(suggestedList);
+      ipDetailEl.appendChild(suggestedWrap);
+    }
+
     var listWrap = document.createElement('div');
     listWrap.className = 'rhq-ip-conn-list';
-    if (!ipConnectors.length) {
+    if (!confirmedConnectors.length) {
       var empty = document.createElement('div');
       empty.className = 'rhq-empty';
       empty.textContent = 'No intro paths logged yet for this investor.';
       listWrap.appendChild(empty);
     } else {
-      ipConnectors.forEach(function (rec) { listWrap.appendChild(renderIpConnectorRow(rec)); });
+      confirmedConnectors.forEach(function (rec) { listWrap.appendChild(renderIpConnectorRow(rec)); });
     }
     ipDetailEl.appendChild(listWrap);
 
@@ -1145,6 +1206,110 @@
     row.appendChild(actions);
 
     return row;
+  }
+
+  function renderIpSuggestedRow(rec) {
+    var row = document.createElement('div');
+    row.className = 'rhq-ip-conn-row rhq-ip-conn-row-suggested';
+
+    var top = document.createElement('div');
+    top.className = 'rhq-ip-conn-top';
+    var left = document.createElement('div');
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-ip-conn-name';
+    nameEl.textContent = rec.connector_name || 'Unnamed connector';
+    left.appendChild(nameEl);
+    if (rec.connector_relationship) {
+      var relEl = document.createElement('div');
+      relEl.className = 'rhq-ip-conn-rel';
+      relEl.textContent = rec.connector_relationship;
+      left.appendChild(relEl);
+    }
+    top.appendChild(left);
+
+    var right = document.createElement('div');
+    right.style.display = 'flex';
+    right.style.flexDirection = 'column';
+    right.style.alignItems = 'flex-end';
+    right.style.gap = '8px';
+    right.appendChild(ipStatusPill('suggested'));
+    top.appendChild(right);
+    row.appendChild(top);
+
+    var actions = document.createElement('div');
+    actions.className = 'rhq-ip-conn-actions';
+
+    var confirmBtn = document.createElement('button');
+    confirmBtn.type = 'button';
+    confirmBtn.className = 'rhq-ip-action-btn rhq-ip-action-confirm';
+    confirmBtn.textContent = 'Confirm';
+    confirmBtn.addEventListener('click', function () { runIpConfirmSuggestion(rec.recordId, confirmBtn); });
+    actions.appendChild(confirmBtn);
+
+    var dismissBtn = document.createElement('button');
+    dismissBtn.type = 'button';
+    dismissBtn.className = 'rhq-ip-action-btn rhq-ip-action-dismiss';
+    dismissBtn.textContent = 'Dismiss';
+    dismissBtn.addEventListener('click', function () { runIpDismissSuggestion(rec.recordId, dismissBtn); });
+    actions.appendChild(dismissBtn);
+
+    row.appendChild(actions);
+    return row;
+  }
+
+  function runIpConfirmSuggestion(recordId, btn) {
+    if (btn) btn.disabled = true;
+    var st = ipDetailEl.querySelector('#rhq-ip-status');
+    if (st) setStatus(st, 'Confirming…', false);
+
+    fetch(BASE_URL + '/intro-path-confirm-suggestion', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contactId: ipSelectedContactId, recordId: recordId })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+          if (stEl) setStatus(stEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+          if (btn) btn.disabled = false;
+          return;
+        }
+        var inv = investors.find(function (i) { return i.contactId === ipSelectedContactId; });
+        if (inv) inv.introPathStatus = data.intro_path_status_rollup;
+        loadIpConnectors(ipSelectedContactId);
+        renderIpInvestorList();
+      })
+      .catch(function () {
+        var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+        if (stEl) setStatus(stEl, 'Could not reach Raise HQ.', true);
+        if (btn) btn.disabled = false;
+      });
+  }
+
+  function runIpDismissSuggestion(recordId, btn) {
+    if (btn) btn.disabled = true;
+    var st = ipDetailEl.querySelector('#rhq-ip-status');
+    if (st) setStatus(st, 'Dismissing…', false);
+
+    fetch(BASE_URL + '/intro-path-dismiss-suggestion', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contactId: ipSelectedContactId, recordId: recordId })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+          if (stEl) setStatus(stEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+          if (btn) btn.disabled = false;
+          return;
+        }
+        loadIpConnectors(ipSelectedContactId);
+      })
+      .catch(function () {
+        var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+        if (stEl) setStatus(stEl, 'Could not reach Raise HQ.', true);
+        if (btn) btn.disabled = false;
+      });
   }
 
   function renderIpAddPanel(inv) {
@@ -1283,6 +1448,142 @@
         if (btn) btn.disabled = false;
       });
   }
+
+  // ---------- Intro Path tab: Connections.csv upload ----------
+  function splitCsvLine(line) {
+    var result = [];
+    var cur = '';
+    var inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (line[i + 1] === '"') { cur += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          cur += ch;
+        }
+      } else {
+        if (ch === '"') inQuotes = true;
+        else if (ch === ',') { result.push(cur); cur = ''; }
+        else cur += ch;
+      }
+    }
+    result.push(cur);
+    return result;
+  }
+
+  function parseConnectionsCsv(text) {
+    var lines = String(text || '').split(/\r\n|\n|\r/).filter(function (l) { return l.length > 0; });
+    var headerIdx = -1;
+    for (var i = 0; i < lines.length; i++) {
+      if (/first name/i.test(lines[i]) && /last name/i.test(lines[i])) { headerIdx = i; break; }
+    }
+    if (headerIdx === -1) return [];
+
+    var headers = splitCsvLine(lines[headerIdx]).map(function (h) { return h.trim().toLowerCase(); });
+    var idx = {
+      first: headers.indexOf('first name'),
+      last: headers.indexOf('last name'),
+      url: headers.indexOf('url'),
+      company: headers.indexOf('company'),
+      position: headers.indexOf('position'),
+      connected: headers.indexOf('connected on')
+    };
+
+    var rows = [];
+    for (var j = headerIdx + 1; j < lines.length; j++) {
+      var cols = splitCsvLine(lines[j]);
+      if (!cols.length) continue;
+      var first = idx.first !== -1 ? (cols[idx.first] || '').trim() : '';
+      var last = idx.last !== -1 ? (cols[idx.last] || '').trim() : '';
+      var fullName = (first + ' ' + last).trim();
+      if (!fullName) continue;
+      rows.push({
+        full_name: fullName,
+        linkedin_url: idx.url !== -1 ? (cols[idx.url] || '').trim() : '',
+        company: idx.company !== -1 ? (cols[idx.company] || '').trim() : '',
+        position: idx.position !== -1 ? (cols[idx.position] || '').trim() : '',
+        connected_on: idx.connected !== -1 ? (cols[idx.connected] || '').trim() : ''
+      });
+    }
+    return rows;
+  }
+
+  ipCsvUploadBtn.addEventListener('click', function () {
+    var file = ipCsvInput.files && ipCsvInput.files[0];
+    if (!file) { setStatus(ipCsvStatusEl, 'Choose a Connections.csv file first.', true); return; }
+
+    ipCsvUploadBtn.disabled = true;
+    setStatus(ipCsvStatusEl, 'Reading file…', false);
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var rows = parseConnectionsCsv(e.target.result);
+      if (!rows.length) {
+        setStatus(ipCsvStatusEl, "Couldn't find any connections in that file — is it a LinkedIn Connections.csv export?", true);
+        ipCsvUploadBtn.disabled = false;
+        return;
+      }
+      setStatus(ipCsvStatusEl, 'Uploading ' + rows.length + ' connections…', false);
+      fetch(BASE_URL + '/intro-path-upload-connections', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_name: clientName, connections: rows })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          ipCsvUploadBtn.disabled = false;
+          if (!data.success) {
+            setStatus(ipCsvStatusEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+            return;
+          }
+          var created = (data.rows_created != null) ? data.rows_created : rows.length;
+          setStatus(ipCsvStatusEl, 'Uploaded ' + created + ' connections.', false);
+          ipCsvInput.value = '';
+        })
+        .catch(function () {
+          ipCsvUploadBtn.disabled = false;
+          setStatus(ipCsvStatusEl, 'Could not reach Raise HQ.', true);
+        });
+    };
+    reader.onerror = function () {
+      ipCsvUploadBtn.disabled = false;
+      setStatus(ipCsvStatusEl, 'Could not read that file.', true);
+    };
+    reader.readAsText(file);
+  });
+
+  // ---------- Intro Path tab: Connect LinkedIn ----------
+  function runIpLinkedInStatus(status) {
+    ipLiConnectedBtn.disabled = true;
+    ipLiExpiredBtn.disabled = true;
+    setStatus(ipLiStatusEl, 'Updating…', false);
+
+    fetch(BASE_URL + '/intro-path-connect-linkedin', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, status: status })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        ipLiConnectedBtn.disabled = false;
+        ipLiExpiredBtn.disabled = false;
+        if (!data.success) {
+          setStatus(ipLiStatusEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+          return;
+        }
+        var newStatus = data.linkedin_automation_status || status;
+        ipLiStatusLabelEl.textContent = 'Status: ' + newStatus.replace(/_/g, ' ');
+        setStatus(ipLiStatusEl, 'Updated.', false);
+      })
+      .catch(function () {
+        ipLiConnectedBtn.disabled = false;
+        ipLiExpiredBtn.disabled = false;
+        setStatus(ipLiStatusEl, 'Could not reach Raise HQ.', true);
+      });
+  }
+
+  ipLiConnectedBtn.addEventListener('click', function () { runIpLinkedInStatus('connected'); });
+  ipLiExpiredBtn.addEventListener('click', function () { runIpLinkedInStatus('session_expired'); });
 
   loadBalance();
   switchTab('pull');
