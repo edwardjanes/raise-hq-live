@@ -514,6 +514,7 @@
   var ipAddOpen = false;
   var linkedinAutomationStatus = 'not_connected';
   var ipDiscoveryRunning = false;
+  var ipLastDiscoveryResult = null; // {contactId, message, isError} — survives the panel re-render after a run finishes
 
   var ipCsvInput = ROOT.querySelector('#rhq-ip-csv-input');
   var ipCsvUploadBtn = ROOT.querySelector('#rhq-ip-csv-upload-btn');
@@ -1195,6 +1196,9 @@
 
     var statusEl = document.createElement('div');
     statusEl.className = 'rhq-status';
+    if (inv && ipLastDiscoveryResult && ipLastDiscoveryResult.contactId === inv.contactId) {
+      setStatus(statusEl, ipLastDiscoveryResult.message, ipLastDiscoveryResult.isError);
+    }
     wrap.appendChild(statusEl);
 
     if (canRun) {
@@ -1208,6 +1212,7 @@
     ipDiscoveryRunning = true;
     btn.disabled = true;
     btn.textContent = 'Running discovery…';
+    if (ipLastDiscoveryResult && ipLastDiscoveryResult.contactId === inv.contactId) ipLastDiscoveryResult = null;
     setStatus(statusEl, 'Scanning your LinkedIn connections against ' + (inv.name || 'this investor') + ' — this can take several minutes, please stay on this tab.', false);
 
     fetch(BASE_URL + '/intro-path-discover-connectors', {
@@ -1223,18 +1228,22 @@
       .then(function (data) {
         ipDiscoveryRunning = false;
         if (!data.success) {
-          setStatus(statusEl, "Discovery didn't complete — " + (data.error || 'please try again.'), true);
+          ipLastDiscoveryResult = { contactId: inv.contactId, message: "Discovery didn't complete — " + (data.error || 'please try again.'), isError: true };
+          setStatus(statusEl, ipLastDiscoveryResult.message, true);
           if (ipSelectedContactId === inv.contactId) renderIpDetail();
           return;
         }
         var summary = (data.candidates_discovered || 0) + ' candidate' + (data.candidates_discovered === 1 ? '' : 's') + ' found, ' +
-          (data.suggestions_created || 0) + ' suggested.';
+          (data.suggestions_created || 0) + ' suggested.' +
+          (data.candidates_discovered === 0 ? ' (No new mutual connections since the last scan — LinkedIn scraping tools skip profiles they\'ve already processed, so this can happen on repeat runs against the same investor.)' : '');
+        ipLastDiscoveryResult = { contactId: inv.contactId, message: summary, isError: false };
         setStatus(statusEl, summary, false);
         if (ipSelectedContactId === inv.contactId) loadIpConnectors(inv.contactId);
       })
       .catch(function () {
         ipDiscoveryRunning = false;
-        setStatus(statusEl, 'Could not reach Raise HQ — discovery may still be running in the background.', true);
+        ipLastDiscoveryResult = { contactId: inv.contactId, message: 'Could not reach Raise HQ — discovery may still be running in the background.', isError: true };
+        setStatus(statusEl, ipLastDiscoveryResult.message, true);
         if (ipSelectedContactId === inv.contactId) renderIpDetail();
       });
   }
