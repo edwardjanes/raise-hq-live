@@ -1174,11 +1174,11 @@
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'rhq-ip-action-btn';
-    btn.textContent = ipDiscoveryRunning ? 'Running discovery…' : 'Find Connectors via LinkedIn';
 
     var hint = document.createElement('div');
     hint.className = 'rhq-ip-no-credit';
 
+    var DISCOVERY_CREDIT_COST = 2;
     var canRun = !!(inv && inv.linkedinProfile) && linkedinAutomationStatus === 'connected';
     if (!inv || !inv.linkedinProfile) {
       hint.textContent = 'No LinkedIn profile on file for this investor — add one to their contact record to enable discovery.';
@@ -1186,10 +1186,15 @@
     } else if (linkedinAutomationStatus !== 'connected') {
       hint.textContent = 'Connect LinkedIn above before running discovery for this investor.';
       btn.disabled = true;
+    } else if (currentCredits < DISCOVERY_CREDIT_COST) {
+      hint.textContent = 'Costs ' + DISCOVERY_CREDIT_COST + ' credits per scan — you have ' + currentCredits + ' available.';
+      btn.disabled = true;
+      canRun = false;
     } else {
-      hint.textContent = 'Scans your LinkedIn connections in common with this investor. Can take several minutes — stay on this tab while it runs.';
+      hint.textContent = 'Costs ' + DISCOVERY_CREDIT_COST + ' credits per scan. Scans your LinkedIn connections in common with this investor. Can take several minutes — stay on this tab while it runs.';
       btn.disabled = ipDiscoveryRunning;
     }
+    btn.textContent = ipDiscoveryRunning ? 'Running discovery…' : 'Find Connectors via LinkedIn (' + DISCOVERY_CREDIT_COST + ' credits)';
 
     wrap.appendChild(btn);
     wrap.appendChild(hint);
@@ -1228,14 +1233,22 @@
       .then(function (data) {
         ipDiscoveryRunning = false;
         if (!data.success) {
-          ipLastDiscoveryResult = { contactId: inv.contactId, message: "Discovery didn't complete — " + (data.error || 'please try again.'), isError: true };
+          var errMsg = data.error === 'insufficient_credits'
+            ? 'Not enough credits — this scan costs ' + (data.credits_required || 2) + ' and you have ' + (data.credits_remaining != null ? data.credits_remaining : currentCredits) + '.'
+            : "Discovery didn't complete — " + (data.error || 'please try again.');
+          ipLastDiscoveryResult = { contactId: inv.contactId, message: errMsg, isError: true };
           setStatus(statusEl, ipLastDiscoveryResult.message, true);
           if (ipSelectedContactId === inv.contactId) renderIpDetail();
           return;
         }
+        if (typeof data.credits_after === 'number') renderBalance(data.credits_after, clientName);
+        var creditsNote = data.credit_deduction_failed
+          ? ' (credit balance could not be updated — please refresh)'
+          : (typeof data.credits_charged === 'number' ? ' — ' + data.credits_charged + ' credit' + (data.credits_charged === 1 ? '' : 's') + ' charged.' : '');
         var summary = (data.candidates_discovered || 0) + ' candidate' + (data.candidates_discovered === 1 ? '' : 's') + ' found, ' +
           (data.suggestions_created || 0) + ' suggested.' +
-          (data.candidates_discovered === 0 ? ' (No new mutual connections since the last scan — LinkedIn scraping tools skip profiles they\'ve already processed, so this can happen on repeat runs against the same investor.)' : '');
+          (data.candidates_discovered === 0 ? ' (No new mutual connections since the last scan — LinkedIn scraping tools skip profiles they\'ve already processed, so this can happen on repeat runs against the same investor.)' : '') +
+          creditsNote;
         ipLastDiscoveryResult = { contactId: inv.contactId, message: summary, isError: false };
         setStatus(statusEl, summary, false);
         if (ipSelectedContactId === inv.contactId) loadIpConnectors(inv.contactId);
