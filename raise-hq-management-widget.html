@@ -188,6 +188,11 @@
     #raisehq-unified .rhq-status { font-size: 14px; color: var(--rhq-muted); margin-top: 14px; }
     #raisehq-unified .rhq-status.rhq-error { color: var(--rhq-error); }
 
+    #raisehq-unified .rhq-ip-progress-wrap { margin-top: 14px; }
+    #raisehq-unified .rhq-ip-progress-track { width: 100%; height: 6px; background: var(--rhq-surface); border-radius: 3px; overflow: hidden; }
+    #raisehq-unified .rhq-ip-progress-fill { height: 100%; width: 3%; background: var(--rhq-green); transition: width .6s ease; }
+    #raisehq-unified .rhq-ip-progress-label { font-size: 12px; color: var(--rhq-muted); margin-top: 6px; }
+
     #raisehq-unified .rhq-results { margin-top: 24px; border-top: 1px solid var(--rhq-surface); padding-top: 18px; }
     #raisehq-unified .rhq-results-summary { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--rhq-white); margin-bottom: 6px; }
     #raisehq-unified .rhq-results-detail { font-size: 13px; color: var(--rhq-muted); }
@@ -515,6 +520,7 @@
   var linkedinAutomationStatus = 'not_connected';
   var ipDiscoveryRunning = false;
   var ipLastDiscoveryResult = null; // {contactId, message, isError} — survives the panel re-render after a run finishes
+  var ipActiveDiscoveryJob = null; // {contactId, jobId, lastPct, lastLabel, timer} — survives navigating away and back while a scan is in flight
 
   var ipCsvInput = ROOT.querySelector('#rhq-ip-csv-input');
   var ipCsvUploadBtn = ROOT.querySelector('#rhq-ip-csv-upload-btn');
@@ -1191,13 +1197,27 @@
       btn.disabled = true;
       canRun = false;
     } else {
-      hint.textContent = 'Costs ' + DISCOVERY_CREDIT_COST + ' credits per scan. Scans your LinkedIn connections in common with this investor. Can take several minutes — stay on this tab while it runs.';
+      hint.textContent = 'Costs ' + DISCOVERY_CREDIT_COST + ' credits per scan. Scans your LinkedIn connections in common with this investor. Can take several minutes — feel free to navigate away, it keeps running in the background.';
       btn.disabled = ipDiscoveryRunning;
     }
     btn.textContent = ipDiscoveryRunning ? 'Running discovery…' : 'Find Connectors via LinkedIn (' + DISCOVERY_CREDIT_COST + ' credits)';
 
     wrap.appendChild(btn);
     wrap.appendChild(hint);
+
+    var progressWrap = document.createElement('div');
+    progressWrap.className = 'rhq-ip-progress-wrap';
+    progressWrap.style.display = 'none';
+    var progressTrack = document.createElement('div');
+    progressTrack.className = 'rhq-ip-progress-track';
+    var progressFill = document.createElement('div');
+    progressFill.className = 'rhq-ip-progress-fill';
+    progressTrack.appendChild(progressFill);
+    var progressLabel = document.createElement('div');
+    progressLabel.className = 'rhq-ip-progress-label';
+    progressWrap.appendChild(progressTrack);
+    progressWrap.appendChild(progressLabel);
+    wrap.appendChild(progressWrap);
 
     var statusEl = document.createElement('div');
     statusEl.className = 'rhq-status';
@@ -1206,19 +1226,114 @@
     }
     wrap.appendChild(statusEl);
 
+    if (inv && ipActiveDiscoveryJob && ipActiveDiscoveryJob.contactId === inv.contactId) {
+      btn.disabled = true;
+      btn.textContent = 'Running discovery…';
+      progressWrap.style.display = 'block';
+      progressFill.style.width = ipActiveDiscoveryJob.lastPct + '%';
+      progressLabel.textContent = ipActiveDiscoveryJob.lastLabel || 'Working…';
+    }
+
     if (canRun) {
-      btn.addEventListener('click', function () { runIpDiscoverConnectors(inv, btn, hint, statusEl); });
+      btn.addEventListener('click', function () { runIpDiscoverConnectors(inv, btn, hint, statusEl, progressWrap, progressFill, progressLabel); });
     }
 
     return wrap;
   }
 
-  function runIpDiscoverConnectors(inv, btn, hint, statusEl) {
+  var IP_DISCOVERY_STAGE_LABELS = {
+    queued: 'Queued…',
+    scraping: 'Scanning LinkedIn profile for mutual connections…',
+    searching: 'Searching your network for matches…',
+    done: 'Finishing up…'
+  };
+
+  function ipDiscoveryStagePct(stage, pollAttempt, maxAttempts) {
+    if (stage === 'scraping') return 10 + Math.min(35, ((pollAttempt || 0) / (maxAttempts || 1)) * 35);
+    if (stage === 'searching') return 50 + Math.min(40, ((pollAttempt || 0) / (maxAttempts || 1)) * 40);
+    if (stage === 'done') return 100;
+    return 5; // queued
+  }
+
+  function finishIpDiscoveryRun(inv, btn, progressWrap) {
+    ipDiscoveryRunning = false;
+    if (ipActiveDiscoveryJob && ipActiveDiscoveryJob.timer) clearInterval(ipActiveDiscoveryJob.timer);
+    ipActiveDiscoveryJob = null;
+    if (btn) { btn.disabled = false; btn.textContent = 'Find Connectors via LinkedIn (' + DISCOVERY_CREDIT_COST_GLOBAL + ' credits)'; }
+    if (progressWrap) progressWrap.style.display = 'none';
+  }
+
+  function handleIpDiscoveryResult(data, inv, statusEl) {
+    if (!data || !data.success) {
+      var errMsg;
+      if (data && data.error === 'insufficient_credits') {
+        errMsg = 'Not enough credits — this scan costs ' + (data.credits_required || DISCOVERY_CREDIT_COST_GLOBAL) + ' and you have ' + (data.credits_remaining != null ? data.credits_remaining : currentCredits) + '.';
+      } else if (data && data.message) {
+        errMsg = data.message;
+      } else {
+        errMsg = "Discovery didn't complete — " + ((data && data.error) || 'please try again.');
+      }
+      ipLastDiscoveryResult = { contactId: inv.contactId, message: errMsg, isError: true };
+      setStatus(statusEl, ipLastDiscoveryResult.message, true);
+      if (ipSelectedContactId === inv.contactId) renderIpDetail();
+      return;
+    }
+    if (typeof data.credits_after === 'number') renderBalance(data.credits_after, clientName);
+    var creditsNote = data.credit_deduction_failed
+      ? ' (credit balance could not be updated — please refresh)'
+      : (typeof data.credits_charged === 'number' ? ' — ' + data.credits_charged + ' credit' + (data.credits_charged === 1 ? '' : 's') + ' charged.' : '');
+    var summary = (data.candidates_discovered || 0) + ' candidate' + (data.candidates_discovered === 1 ? '' : 's') + ' found, ' +
+      (data.suggestions_created || 0) + ' suggested.' +
+      (data.candidates_discovered === 0 ? ' (No new mutual connections since the last scan — LinkedIn scraping tools skip profiles they\'ve already processed, so this can happen on repeat runs against the same investor.)' : '') +
+      creditsNote;
+    ipLastDiscoveryResult = { contactId: inv.contactId, message: summary, isError: false };
+    setStatus(statusEl, summary, false);
+    if (ipSelectedContactId === inv.contactId) loadIpConnectors(inv.contactId);
+  }
+
+  function pollIpDiscoveryStatus(jobId, inv, btn, statusEl, progressWrap, progressFill, progressLabel) {
+    var attempts = 0;
+    var maxPolls = 300; // ~15 min safety cap at 3s interval
+    var timer = setInterval(function () {
+      attempts++;
+      if (attempts > maxPolls) {
+        finishIpDiscoveryRun(inv, btn, progressWrap);
+        ipLastDiscoveryResult = { contactId: inv.contactId, message: 'Lost track of this scan — it may still be running in the background. Check back in a few minutes.', isError: true };
+        setStatus(statusEl, ipLastDiscoveryResult.message, true);
+        if (ipSelectedContactId === inv.contactId) renderIpDetail();
+        return;
+      }
+      fetch(BASE_URL + '/intro-path-discovery-status?job_id=' + encodeURIComponent(jobId))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data || !data.found) return; // row may not have landed yet — keep polling
+          var pct = Math.min(100, Math.round(ipDiscoveryStagePct(data.stage, data.poll_attempt, data.max_attempts)));
+          var label = (IP_DISCOVERY_STAGE_LABELS[data.stage] || 'Working…') + ' (' + pct + '%)';
+          if (progressFill) progressFill.style.width = pct + '%';
+          if (progressLabel) progressLabel.textContent = label;
+          if (ipActiveDiscoveryJob) { ipActiveDiscoveryJob.lastPct = pct; ipActiveDiscoveryJob.lastLabel = label; }
+          if (data.done) {
+            finishIpDiscoveryRun(inv, btn, progressWrap);
+            handleIpDiscoveryResult(data.result, inv, statusEl);
+          }
+        })
+        .catch(function () { /* transient poll failure — try again next tick */ });
+    }, 3000);
+    if (ipActiveDiscoveryJob) ipActiveDiscoveryJob.timer = timer;
+  }
+
+  var DISCOVERY_CREDIT_COST_GLOBAL = 2;
+
+  function runIpDiscoverConnectors(inv, btn, hint, statusEl, progressWrap, progressFill, progressLabel) {
     ipDiscoveryRunning = true;
     btn.disabled = true;
     btn.textContent = 'Running discovery…';
     if (ipLastDiscoveryResult && ipLastDiscoveryResult.contactId === inv.contactId) ipLastDiscoveryResult = null;
-    setStatus(statusEl, 'Scanning your LinkedIn connections against ' + (inv.name || 'this investor') + ' — this can take several minutes, please stay on this tab.', false);
+    setStatus(statusEl, '', false);
+    progressWrap.style.display = 'block';
+    progressFill.style.width = '3%';
+    progressLabel.textContent = 'Starting scan…';
+    ipActiveDiscoveryJob = { contactId: inv.contactId, jobId: null, lastPct: 3, lastLabel: 'Starting scan…', timer: null };
 
     fetch(BASE_URL + '/intro-path-discover-connectors', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -1229,33 +1344,21 @@
         target_investor: inv.name || ''
       })
     })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        ipDiscoveryRunning = false;
-        if (!data.success) {
-          var errMsg = data.error === 'insufficient_credits'
-            ? 'Not enough credits — this scan costs ' + (data.credits_required || 2) + ' and you have ' + (data.credits_remaining != null ? data.credits_remaining : currentCredits) + '.'
-            : "Discovery didn't complete — " + (data.error || 'please try again.');
-          ipLastDiscoveryResult = { contactId: inv.contactId, message: errMsg, isError: true };
-          setStatus(statusEl, ipLastDiscoveryResult.message, true);
-          if (ipSelectedContactId === inv.contactId) renderIpDetail();
+      .then(function (r) { return r.json().then(function (data) { return { status: r.status, data: data }; }); })
+      .then(function (resp) {
+        var data = resp.data;
+        if (resp.status === 202 && data && data.job_id) {
+          if (ipActiveDiscoveryJob) ipActiveDiscoveryJob.jobId = data.job_id;
+          pollIpDiscoveryStatus(data.job_id, inv, btn, statusEl, progressWrap, progressFill, progressLabel);
           return;
         }
-        if (typeof data.credits_after === 'number') renderBalance(data.credits_after, clientName);
-        var creditsNote = data.credit_deduction_failed
-          ? ' (credit balance could not be updated — please refresh)'
-          : (typeof data.credits_charged === 'number' ? ' — ' + data.credits_charged + ' credit' + (data.credits_charged === 1 ? '' : 's') + ' charged.' : '');
-        var summary = (data.candidates_discovered || 0) + ' candidate' + (data.candidates_discovered === 1 ? '' : 's') + ' found, ' +
-          (data.suggestions_created || 0) + ' suggested.' +
-          (data.candidates_discovered === 0 ? ' (No new mutual connections since the last scan — LinkedIn scraping tools skip profiles they\'ve already processed, so this can happen on repeat runs against the same investor.)' : '') +
-          creditsNote;
-        ipLastDiscoveryResult = { contactId: inv.contactId, message: summary, isError: false };
-        setStatus(statusEl, summary, false);
-        if (ipSelectedContactId === inv.contactId) loadIpConnectors(inv.contactId);
+        // Synchronous outcome (e.g. insufficient credits) — no job was started
+        finishIpDiscoveryRun(inv, btn, progressWrap);
+        handleIpDiscoveryResult(data, inv, statusEl);
       })
       .catch(function () {
-        ipDiscoveryRunning = false;
-        ipLastDiscoveryResult = { contactId: inv.contactId, message: 'Could not reach Raise HQ — discovery may still be running in the background.', isError: true };
+        finishIpDiscoveryRun(inv, btn, progressWrap);
+        ipLastDiscoveryResult = { contactId: inv.contactId, message: 'Could not reach Raise HQ — please try again.', isError: true };
         setStatus(statusEl, ipLastDiscoveryResult.message, true);
         if (ipSelectedContactId === inv.contactId) renderIpDetail();
       });
