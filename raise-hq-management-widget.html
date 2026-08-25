@@ -446,16 +446,10 @@
         <button type="button" class="rhq-ip-action-btn" id="rhq-ip-csv-upload-btn">Upload Connections.csv</button>
         <div class="rhq-status" id="rhq-ip-csv-status"></div>
       </div>
-      <div class="rhq-ip-li-section">
-        <div class="rhq-ip-li-title">Connect LinkedIn</div>
-        <div class="rhq-ip-li-status" id="rhq-ip-li-status-label">Status: not connected</div>
-        <div class="rhq-ip-li-copy rhq-ip-li-risk">Connecting lets our automation partner (PhantomBuster) browse LinkedIn as you, using your own logged-in session, to find people you know in common with target investors. This can trigger a LinkedIn account restriction or ban — that risk sits with your own LinkedIn account, not Raise HQ's. Ask your Raise HQ contact for your personal connection link, complete it on PhantomBuster's page, then confirm below.</div>
-        <div class="rhq-ip-li-actions">
-          <button type="button" class="rhq-ip-action-btn" id="rhq-ip-li-connected-btn">I've Connected My LinkedIn</button>
-          <button type="button" class="rhq-ip-action-btn" id="rhq-ip-li-expired-btn">Report Session Expired</button>
-        </div>
-        <div class="rhq-status" id="rhq-ip-li-status"></div>
-      </div>
+      <!-- "Connect LinkedIn" (PhantomBuster magic-link) panel removed 2026-08-25 —
+           Ed reviewed the live PhantomBuster consent flow and rejected it as
+           client-facing UX. Connections.csv upload above is the v1 shipping
+           mechanism. See linkedin-crossover-connector-discovery-spec.md. -->
     </div>
     <div class="rhq-ip-layout">
       <div class="rhq-ip-investors">
@@ -553,10 +547,6 @@
   var ipCsvInput = ROOT.querySelector('#rhq-ip-csv-input');
   var ipCsvUploadBtn = ROOT.querySelector('#rhq-ip-csv-upload-btn');
   var ipCsvStatusEl = ROOT.querySelector('#rhq-ip-csv-status');
-  var ipLiStatusLabelEl = ROOT.querySelector('#rhq-ip-li-status-label');
-  var ipLiConnectedBtn = ROOT.querySelector('#rhq-ip-li-connected-btn');
-  var ipLiExpiredBtn = ROOT.querySelector('#rhq-ip-li-expired-btn');
-  var ipLiStatusEl = ROOT.querySelector('#rhq-ip-li-status');
 
   var TAB_META = {
     pull: { title: 'Pull Investors', cost: 'Central Investor Database' },
@@ -610,7 +600,6 @@
         renderBalance(data.credits, data.client);
         if (data.linkedin_automation_status) {
           linkedinAutomationStatus = data.linkedin_automation_status;
-          ipLiStatusLabelEl.textContent = 'Status: ' + linkedinAutomationStatus.replace(/_/g, ' ');
           if (ipSelectedContactId) renderIpDetail();
         }
       })
@@ -1302,7 +1291,10 @@
       return;
     }
 
-    ipDetailEl.appendChild(renderIpFindConnectorsPanel(inv));
+    // "Find Connectors via LinkedIn" (PhantomBuster live-scan discovery) is shelved
+    // as of 2026-08-25 — see linkedin-crossover-connector-discovery-spec.md. The
+    // renderIpFindConnectorsPanel function below is left in place, unused, in case
+    // this path is revisited; it is not appended to the DOM.
 
     if (!ipConnectorsLoaded) {
       var loading = document.createElement('div');
@@ -1941,39 +1933,8 @@
     reader.readAsText(file);
   });
 
-  // ---------- Intro Path tab: Connect LinkedIn ----------
-  function runIpLinkedInStatus(status) {
-    ipLiConnectedBtn.disabled = true;
-    ipLiExpiredBtn.disabled = true;
-    setStatus(ipLiStatusEl, 'Updating…', false);
-
-    fetch(BASE_URL + '/intro-path-connect-linkedin', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_name: clientName, status: status })
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        ipLiConnectedBtn.disabled = false;
-        ipLiExpiredBtn.disabled = false;
-        if (!data.success) {
-          setStatus(ipLiStatusEl, "That didn't go through — " + (data.error || 'please try again.'), true);
-          return;
-        }
-        var newStatus = data.linkedin_automation_status || status;
-        linkedinAutomationStatus = newStatus;
-        ipLiStatusLabelEl.textContent = 'Status: ' + newStatus.replace(/_/g, ' ');
-        setStatus(ipLiStatusEl, 'Updated.', false);
-        if (ipSelectedContactId) renderIpDetail();
-      })
-      .catch(function () {
-        ipLiConnectedBtn.disabled = false;
-        ipLiExpiredBtn.disabled = false;
-        setStatus(ipLiStatusEl, 'Could not reach Raise HQ.', true);
-      });
-  }
-
-  ipLiConnectedBtn.addEventListener('click', function () { runIpLinkedInStatus('connected'); });
-  ipLiExpiredBtn.addEventListener('click', function () { runIpLinkedInStatus('session_expired'); });
+  // "Connect LinkedIn" (PhantomBuster magic-link) UI removed 2026-08-25 — see
+  // linkedin-crossover-connector-discovery-spec.md for why.
 
   loadBalance();
   switchTab('pull');
