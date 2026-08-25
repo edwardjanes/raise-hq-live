@@ -1,1 +1,1981 @@
-PLACEHOLDER
+<div id="raisehq-unified">
+  <style>
+    #raisehq-unified {
+      --rhq-black: #000000;
+      --rhq-surface: #111111;
+      --rhq-green: #00FF84;
+      --rhq-text: #E8E8E8;
+      --rhq-muted: #A0A0A0;
+      --rhq-white: #FFFFFF;
+      --rhq-error: #FF4D4D;
+
+      font-family: 'Montserrat', sans-serif;
+      background: var(--rhq-black);
+      color: var(--rhq-text);
+      width: 100%;
+      margin: 0;
+      padding: 32px 28px 36px;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #raisehq-unified * { box-sizing: border-box; }
+    #raisehq-unified .rhq-eyebrow {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--rhq-muted); margin: 0 0 6px;
+    }
+    #raisehq-unified .rhq-h1 {
+      font-family: 'Inter', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.1;
+      letter-spacing: 0.02em; text-transform: uppercase; color: var(--rhq-white); margin: 0 0 20px;
+    }
+
+    /* Tabs */
+    #raisehq-unified .rhq-tabs {
+      display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--rhq-surface);
+      overflow-x: auto;
+    }
+    #raisehq-unified .rhq-tab {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.02em;
+      background: none; border: none; color: var(--rhq-muted); cursor: pointer;
+      padding: 10px 16px 12px; border-bottom: 2px solid transparent; white-space: nowrap;
+    }
+    #raisehq-unified .rhq-tab.rhq-tab-active { color: var(--rhq-white); border-bottom-color: var(--rhq-green); }
+    #raisehq-unified .rhq-tab:hover:not(.rhq-tab-active) { color: var(--rhq-text); }
+
+    /* Credit meter (shared) */
+    #raisehq-unified .rhq-meter {
+      background: var(--rhq-surface); border-left: 2px solid var(--rhq-green);
+      padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    #raisehq-unified .rhq-meter-figure {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums;
+      font-size: 36px; line-height: 1; color: var(--rhq-green);
+    }
+    #raisehq-unified .rhq-meter-figure.rhq-zero { color: var(--rhq-muted); }
+    #raisehq-unified .rhq-meter-label { font-size: 13px; color: var(--rhq-muted); margin-top: 4px; }
+    #raisehq-unified .rhq-meter-client { font-size: 13px; color: var(--rhq-muted); text-align: right; }
+    #raisehq-unified .rhq-meter-client strong {
+      display: block; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--rhq-text); font-size: 15px;
+    }
+
+    /* Pull panel */
+    #raisehq-unified .rhq-pull-panel {
+      background: var(--rhq-surface); padding: 20px; border-radius: 3px; margin-bottom: 20px;
+    }
+    #raisehq-unified .rhq-pull-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    #raisehq-unified .rhq-pull-row label { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-unified .rhq-pull-input {
+      width: 90px; background: var(--rhq-black); border: 1px solid #222; color: var(--rhq-text);
+      font-family: 'Inter', sans-serif; font-size: 15px; padding: 8px 10px; border-radius: 3px;
+    }
+    #raisehq-unified .rhq-pull-filters { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
+    #raisehq-unified .rhq-pull-filter-group { flex: 1; min-width: 200px; }
+    #raisehq-unified .rhq-pull-filter-group label {
+      display: block; font-size: 12px; font-weight: 600; color: var(--rhq-muted); margin-bottom: 6px;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    #raisehq-unified .rhq-multiselect {
+      width: 100%; min-height: 96px; background: var(--rhq-black); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 13px;
+      padding: 6px; border-radius: 3px;
+    }
+    #raisehq-unified .rhq-multiselect option { padding: 5px 8px; }
+    #raisehq-unified .rhq-multiselect option:checked { background: var(--rhq-green); color: var(--rhq-black); }
+    #raisehq-unified .rhq-pull-filter-hint { font-size: 11px; color: var(--rhq-muted); margin-top: 4px; }
+
+    /* Track select bar */
+    #raisehq-unified .rhq-track-select-bar {
+      background: var(--rhq-surface); border-left: 2px solid var(--rhq-green);
+      padding: 14px 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    #raisehq-unified .rhq-track-select-bar label {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--rhq-text); white-space: nowrap;
+    }
+    #raisehq-unified .rhq-track-select {
+      flex: 1; min-width: 220px; background: var(--rhq-black); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      padding: 9px 12px; border-radius: 3px;
+    }
+
+    /* Filters */
+    #raisehq-unified .rhq-filters { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    #raisehq-unified .rhq-search {
+      flex: 1; min-width: 160px; background: var(--rhq-surface); border: 1px solid #222;
+      color: var(--rhq-text); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      padding: 9px 12px; border-radius: 3px;
+    }
+    #raisehq-unified .rhq-search::placeholder { color: var(--rhq-muted); }
+    #raisehq-unified .rhq-status-filter {
+      background: var(--rhq-surface); border: 1px solid #222; color: var(--rhq-text);
+      font-family: 'Montserrat', sans-serif; font-size: 14px; padding: 9px 12px; border-radius: 3px;
+    }
+
+    #raisehq-unified .rhq-toolbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 12px; flex-wrap: wrap;
+    }
+    #raisehq-unified .rhq-toolbar-left { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-unified .rhq-link-btn {
+      font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: var(--rhq-green);
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    #raisehq-unified .rhq-link-btn:disabled { color: var(--rhq-muted); cursor: not-allowed; }
+
+    /* List */
+    #raisehq-unified .rhq-list {
+      max-height: 440px; overflow-y: auto; border: 1px solid var(--rhq-surface);
+      border-radius: 3px; margin-bottom: 20px;
+    }
+    #raisehq-unified .rhq-row {
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px;
+      border-bottom: 1px solid var(--rhq-surface);
+    }
+    #raisehq-unified .rhq-row:last-child { border-bottom: none; }
+    #raisehq-unified .rhq-row input[type="checkbox"] {
+      margin-top: 3px; width: 16px; height: 16px; accent-color: var(--rhq-green); cursor: pointer; flex-shrink: 0;
+    }
+    #raisehq-unified .rhq-row input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.4; }
+    #raisehq-unified .rhq-row-main { flex: 1; min-width: 0; }
+    #raisehq-unified .rhq-row-name {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: var(--rhq-white);
+    }
+    #raisehq-unified .rhq-row-email { font-size: 12px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-unified .rhq-row-meta { font-size: 11px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-unified .rhq-row-badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: 260px; }
+
+    #raisehq-unified .rhq-badge {
+      display: inline-block; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.02em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    #raisehq-unified .rhq-badge.rhq-muted { color: var(--rhq-muted); border: 1px solid var(--rhq-muted); background: transparent; }
+    #raisehq-unified .rhq-badge.rhq-outline { color: var(--rhq-green); border: 1px solid var(--rhq-green); background: transparent; }
+    #raisehq-unified .rhq-badge.rhq-filled { color: var(--rhq-black); background: var(--rhq-green); border: 1px solid var(--rhq-green); }
+
+    /* Profiled card (Profile tab) */
+    #raisehq-unified .rhq-card { padding: 16px 18px; border-bottom: 1px solid var(--rhq-surface); }
+    #raisehq-unified .rhq-card:last-child { border-bottom: none; }
+    #raisehq-unified .rhq-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    #raisehq-unified .rhq-card-name { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; color: var(--rhq-white); }
+    #raisehq-unified .rhq-card-firmrole { font-size: 13px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-unified .rhq-card-scorewrap { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+    #raisehq-unified .rhq-card-score {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums;
+      font-size: 22px; color: var(--rhq-green); line-height: 1;
+    }
+    #raisehq-unified .rhq-card-score-out { font-size: 13px; color: var(--rhq-muted); }
+    #raisehq-unified .rhq-tier-pill { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; border-radius: 999px; padding: 3px 11px; line-height: 1.4; }
+    #raisehq-unified .rhq-tier-pill.rhq-tier-t1 { background: var(--rhq-green); color: var(--rhq-black); }
+    #raisehq-unified .rhq-tier-pill.rhq-tier-t2 { border: 1px solid var(--rhq-green); color: var(--rhq-green); }
+    #raisehq-unified .rhq-tier-pill.rhq-tier-t3 { border: 1px solid var(--rhq-muted); color: var(--rhq-muted); }
+    #raisehq-unified .rhq-card-rationale { font-size: 13px; color: var(--rhq-muted); margin-top: 10px; line-height: 1.5; }
+    #raisehq-unified .rhq-card-justdone {
+      display: inline-block; margin-top: 8px; font-family: 'Inter', sans-serif; font-size: 11px;
+      font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--rhq-black);
+      background: var(--rhq-green); border-radius: 999px; padding: 3px 10px;
+    }
+
+    #raisehq-unified .rhq-empty { padding: 24px 16px; color: var(--rhq-muted); font-size: 14px; text-align: center; }
+
+    #raisehq-unified .rhq-submit {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.04em;
+      text-transform: uppercase; background: var(--rhq-green); color: var(--rhq-black); border: none;
+      padding: 14px 28px; border-radius: 3px; cursor: pointer; transition: opacity .15s ease;
+    }
+    #raisehq-unified .rhq-submit:hover { opacity: 0.88; }
+    #raisehq-unified .rhq-submit:disabled { background: var(--rhq-surface); color: var(--rhq-muted); cursor: not-allowed; }
+
+    #raisehq-unified .rhq-status { font-size: 14px; color: var(--rhq-muted); margin-top: 14px; }
+    #raisehq-unified .rhq-status.rhq-error { color: var(--rhq-error); }
+
+    #raisehq-unified .rhq-ip-progress-wrap { margin-top: 14px; }
+    #raisehq-unified .rhq-ip-progress-track { width: 100%; height: 6px; background: var(--rhq-surface); border-radius: 3px; overflow: hidden; }
+    #raisehq-unified .rhq-ip-progress-fill { height: 100%; width: 3%; background: var(--rhq-green); transition: width .6s ease; }
+    #raisehq-unified .rhq-ip-progress-label { font-size: 12px; color: var(--rhq-muted); margin-top: 6px; }
+
+    #raisehq-unified .rhq-results { margin-top: 24px; border-top: 1px solid var(--rhq-surface); padding-top: 18px; }
+    #raisehq-unified .rhq-results-summary { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--rhq-white); margin-bottom: 6px; }
+    #raisehq-unified .rhq-results-detail { font-size: 13px; color: var(--rhq-muted); }
+
+    #raisehq-unified .rhq-pull-results { max-height: 260px; overflow-y: auto; border: 1px solid var(--rhq-surface); border-radius: 3px; margin-top: 16px; }
+    #raisehq-unified .rhq-pull-row-item { padding: 10px 16px; border-bottom: 1px solid var(--rhq-surface); }
+    #raisehq-unified .rhq-pull-row-item:last-child { border-bottom: none; }
+
+    #raisehq-unified .rhq-footer { font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--rhq-muted); margin-top: 28px; text-align: center; }
+
+    /* Intro Path tab */
+    #raisehq-unified .rhq-ip-layout { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+    #raisehq-unified .rhq-ip-investors { flex: 1; min-width: 240px; }
+    #raisehq-unified .rhq-ip-detail { flex: 1.4; min-width: 280px; }
+    #raisehq-unified .rhq-ip-list { max-height: 440px; overflow-y: auto; border: 1px solid var(--rhq-surface); border-radius: 3px; }
+    #raisehq-unified .rhq-ip-inv-row {
+      padding: 11px 14px; border-bottom: 1px solid var(--rhq-surface); cursor: pointer;
+    }
+    #raisehq-unified .rhq-ip-inv-row:last-child { border-bottom: none; }
+    #raisehq-unified .rhq-ip-inv-row:hover { background: var(--rhq-surface); }
+    #raisehq-unified .rhq-ip-inv-row.rhq-ip-inv-active { background: var(--rhq-surface); border-left: 2px solid var(--rhq-green); padding-left: 12px; }
+    #raisehq-unified .rhq-ip-inv-name { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--rhq-white); }
+    #raisehq-unified .rhq-ip-inv-status { font-size: 11px; color: var(--rhq-muted); margin-top: 2px; text-transform: capitalize; }
+
+    #raisehq-unified .rhq-ip-detail-header { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; color: var(--rhq-white); margin-bottom: 12px; }
+    #raisehq-unified .rhq-ip-detail-placeholder { padding: 24px 16px; color: var(--rhq-muted); font-size: 14px; text-align: center; border: 1px solid var(--rhq-surface); border-radius: 3px; }
+
+    #raisehq-unified .rhq-ip-conn-list { border: 1px solid var(--rhq-surface); border-radius: 3px; margin-bottom: 16px; }
+    #raisehq-unified .rhq-ip-conn-row { padding: 14px 16px; border-bottom: 1px solid var(--rhq-surface); }
+    #raisehq-unified .rhq-ip-conn-row:last-child { border-bottom: none; }
+    #raisehq-unified .rhq-ip-conn-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    #raisehq-unified .rhq-ip-conn-name { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: var(--rhq-white); }
+    #raisehq-unified .rhq-ip-conn-rel { font-size: 12px; color: var(--rhq-muted); margin-top: 2px; }
+    #raisehq-unified .rhq-ip-conn-date { font-size: 11px; color: var(--rhq-muted); margin-top: 4px; }
+    #raisehq-unified .rhq-ip-strength { display: flex; gap: 3px; align-items: center; flex-shrink: 0; }
+    #raisehq-unified .rhq-ip-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rhq-surface); border: 1px solid var(--rhq-muted); }
+    #raisehq-unified .rhq-ip-dot.rhq-ip-dot-on { background: var(--rhq-green); border-color: var(--rhq-green); }
+    #raisehq-unified .rhq-ip-conn-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    #raisehq-unified .rhq-ip-action-btn {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 0.02em;
+      text-transform: uppercase; background: none; border: 1px solid var(--rhq-muted); color: var(--rhq-text);
+      padding: 5px 11px; border-radius: 999px; cursor: pointer;
+    }
+    #raisehq-unified .rhq-ip-action-btn:hover { border-color: var(--rhq-green); color: var(--rhq-green); }
+    #raisehq-unified .rhq-ip-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #raisehq-unified .rhq-ip-status-pill { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.02em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; flex-shrink: 0; }
+    #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-identified { border: 1px solid var(--rhq-muted); color: var(--rhq-muted); }
+    #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-requested { border: 1px solid var(--rhq-green); color: var(--rhq-green); }
+    #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-made { background: var(--rhq-green); color: var(--rhq-black); border: 1px solid var(--rhq-green); }
+    #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-declined { border: 1px solid var(--rhq-error); color: var(--rhq-error); }
+    #raisehq-unified .rhq-ip-status-pill.rhq-ip-s-suggested { border: 1px dashed var(--rhq-muted); color: var(--rhq-muted); }
+
+    #raisehq-unified .rhq-ip-suggested-wrap { margin-bottom: 16px; }
+    #raisehq-unified .rhq-ip-suggested-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.03em; text-transform: uppercase; color: var(--rhq-muted); margin-bottom: 8px; }
+    #raisehq-unified .rhq-ip-conn-list.rhq-ip-suggested-list { border: 1px dashed var(--rhq-muted); border-radius: 3px; }
+    #raisehq-unified .rhq-ip-conn-row.rhq-ip-conn-row-suggested { background: rgba(255,255,255,0.02); }
+    #raisehq-unified .rhq-ip-action-btn.rhq-ip-action-confirm:hover { border-color: var(--rhq-green); color: var(--rhq-green); }
+    #raisehq-unified .rhq-ip-action-btn.rhq-ip-action-dismiss:hover { border-color: var(--rhq-error); color: var(--rhq-error); }
+
+    #raisehq-unified .rhq-ip-linkedin-panel { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    #raisehq-unified .rhq-ip-li-section { flex: 1; min-width: 260px; background: var(--rhq-surface); padding: 16px; border-radius: 3px; }
+    #raisehq-unified .rhq-ip-li-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.03em; text-transform: uppercase; color: var(--rhq-white); margin-bottom: 8px; }
+    #raisehq-unified .rhq-ip-li-copy { font-size: 12px; color: var(--rhq-muted); line-height: 1.5; margin-bottom: 10px; }
+    #raisehq-unified .rhq-ip-li-copy.rhq-ip-li-risk { color: var(--rhq-text); border-left: 2px solid var(--rhq-error); padding-left: 10px; }
+    #raisehq-unified .rhq-ip-li-status { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; color: var(--rhq-text); margin-bottom: 10px; text-transform: capitalize; }
+    #raisehq-unified .rhq-ip-file-input { display: block; width: 100%; font-size: 12px; color: var(--rhq-muted); margin-bottom: 10px; }
+    #raisehq-unified .rhq-ip-li-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+    #raisehq-unified .rhq-ip-add-panel { background: var(--rhq-surface); padding: 16px; border-radius: 3px; }
+    #raisehq-unified .rhq-ip-add-toggle {
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.03em;
+      text-transform: uppercase; background: none; border: none; color: var(--rhq-green); cursor: pointer; padding: 0;
+    }
+    #raisehq-unified .rhq-ip-add-fields { display: none; margin-top: 14px; gap: 10px; flex-direction: column; }
+    #raisehq-unified .rhq-ip-add-fields.rhq-ip-add-open { display: flex; }
+    #raisehq-unified .rhq-ip-add-fields input, #raisehq-unified .rhq-ip-add-fields select {
+      width: 100%; background: var(--rhq-black); border: 1px solid #222; color: var(--rhq-text);
+      font-family: 'Montserrat', sans-serif; font-size: 13px; padding: 9px 11px; border-radius: 3px;
+    }
+    #raisehq-unified .rhq-ip-add-row { display: flex; gap: 10px; }
+    #raisehq-unified .rhq-ip-add-row > * { flex: 1; }
+    #raisehq-unified .rhq-ip-no-credit { font-size: 11px; color: var(--rhq-muted); margin-top: 2px; }
+
+    #raisehq-unified .rhq-ip-find-panel { background: var(--rhq-surface); padding: 16px; border-radius: 3px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+    #raisehq-unified .rhq-ip-find-panel .rhq-ip-action-btn { align-self: flex-start; }
+    #raisehq-unified .rhq-ip-find-panel .rhq-ip-no-credit { margin-top: 0; line-height: 1.5; }
+    #raisehq-unified .rhq-ip-find-panel .rhq-status { margin-top: 2px; }
+
+    @media (max-width: 480px) {
+      #raisehq-unified .rhq-h1 { font-size: 20px; }
+      #raisehq-unified .rhq-meter-figure { font-size: 30px; }
+      #raisehq-unified .rhq-tabs { overflow-x: auto; }
+      #raisehq-unified .rhq-card-top { flex-direction: column; }
+      #raisehq-unified .rhq-row-badges { max-width: 140px; }
+      #raisehq-unified .rhq-ip-layout { flex-direction: column; }
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <p class="rhq-eyebrow">Raise HQ · Investor Workflow</p>
+  <h1 class="rhq-h1" id="rhq-h1">Pull Investors</h1>
+
+  <div class="rhq-tabs">
+    <button type="button" class="rhq-tab rhq-tab-active" data-tab="pull">Pull</button>
+    <button type="button" class="rhq-tab" data-tab="profile">Profile</button>
+    <button type="button" class="rhq-tab" data-tab="message">Message</button>
+    <button type="button" class="rhq-tab" data-tab="track">Assign Track</button>
+    <button type="button" class="rhq-tab" data-tab="intropath">Intro Path</button>
+    <button type="button" class="rhq-tab" data-tab="bulk">Bulk Actions</button>
+  </div>
+
+  <div class="rhq-meter">
+    <div>
+      <div class="rhq-meter-figure" id="rhq-credits-figure">—</div>
+      <div class="rhq-meter-label" id="rhq-meter-label">credits available</div>
+    </div>
+    <div class="rhq-meter-client">
+      <strong id="rhq-client-name">—</strong>
+      <span id="rhq-meter-cost">1 credit per investor</span>
+    </div>
+  </div>
+
+  <!-- PULL PANEL -->
+  <div id="rhq-panel-pull">
+    <div class="rhq-pull-panel">
+      <div class="rhq-pull-row">
+        <label for="rhq-pull-count">Investors to pull</label>
+        <input class="rhq-pull-input" id="rhq-pull-count" type="number" min="1" value="10">
+        <button class="rhq-submit" id="rhq-pull-submit" type="button">Pull Investors</button>
+      </div>
+      <div class="rhq-pull-filters">
+        <div class="rhq-pull-filter-group">
+          <label for="rhq-pull-sectors">Sector</label>
+          <select class="rhq-multiselect" id="rhq-pull-sectors" multiple size="6">
+            <option value="Healthtech & Wellness">Healthtech & Wellness</option>
+            <option value="Biotech & Life Sciences">Biotech & Life Sciences</option>
+            <option value="Fintech">Fintech</option>
+            <option value="Enterprise-SaaS">Enterprise-SaaS</option>
+            <option value="Consumer">Consumer</option>
+            <option value="Marketplace">Marketplace</option>
+            <option value="AI-Deep Tech">AI-Deep Tech</option>
+            <option value="Climate & Sustainability">Climate & Sustainability</option>
+            <option value="Hardware & Robotics">Hardware & Robotics</option>
+            <option value="Web3-Crypto">Web3-Crypto</option>
+            <option value="EdTech">EdTech</option>
+            <option value="Proptech & Real Estate">Proptech & Real Estate</option>
+            <option value="Media & Entertainment">Media & Entertainment</option>
+            <option value="Logistics & Supply Chain">Logistics & Supply Chain</option>
+            <option value="Generalist">Generalist</option>
+            <option value="Food & Beverage">Food & Beverage</option>
+            <option value="Defense & Security">Defense & Security</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="rhq-pull-filter-hint">Cmd/Ctrl-click to select several. Leave blank for all sectors.</div>
+        </div>
+        <div class="rhq-pull-filter-group">
+          <label for="rhq-pull-stages">Stage</label>
+          <select class="rhq-multiselect" id="rhq-pull-stages" multiple size="6">
+            <option value="Pre-Seed">Pre-Seed</option>
+            <option value="Seed">Seed</option>
+            <option value="Post-Seed-Bridge">Post-Seed-Bridge</option>
+            <option value="Series A">Series A</option>
+            <option value="Series B">Series B</option>
+            <option value="Series C+">Series C+</option>
+            <option value="Growth-Late Stage">Growth-Late Stage</option>
+          </select>
+          <div class="rhq-pull-filter-hint">Cmd/Ctrl-click to select several. Leave blank for all stages.</div>
+        </div>
+        <div class="rhq-pull-filter-group">
+          <label for="rhq-pull-geographies">Country / Region</label>
+          <select class="rhq-multiselect" id="rhq-pull-geographies" multiple size="6">
+            <option value="US">United States</option>
+            <option value="UK">United Kingdom</option>
+            <option value="Canada">Canada</option>
+            <option value="Europe (ex-UK)">Europe (ex-UK)</option>
+            <option value="Asia">Asia</option>
+            <option value="LatAm">Latin America</option>
+            <option value="MENA">Middle East & North Africa</option>
+            <option value="Global-No Preference">Global / No preference</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="rhq-pull-filter-hint">Cmd/Ctrl-click to select several. The investor database tags geography by country/region, not individual countries within Europe or Asia. Leave blank for all.</div>
+        </div>
+      </div>
+    </div>
+    <div class="rhq-status" id="rhq-pull-status"></div>
+    <div class="rhq-pull-results" id="rhq-pull-results" style="display:none;"></div>
+  </div>
+
+  <!-- TRACK SELECT BAR (track tab only) -->
+  <div id="rhq-track-bar" class="rhq-track-select-bar" style="display:none;">
+    <label for="rhq-track-select">Campaign</label>
+    <select class="rhq-track-select" id="rhq-track-select">
+      <option value="">Choose a track…</option>
+      <option value="Investor Email Warm Up Campaign">Investor Email Warm Up Campaign</option>
+      <option value="Angel Email Engagement Campaign">Angel Email Engagement Campaign</option>
+      <option value="VC Email Engagement Campaign">VC Email Engagement Campaign</option>
+      <option value="Angel Linkedin Engagement Campaign">Angel Linkedin Engagement Campaign</option>
+      <option value="VC Linkedin Engagement Campaign">VC Linkedin Engagement Campaign</option>
+    </select>
+  </div>
+
+  <!-- BULK ACTION SELECT BAR (bulk tab only) -->
+  <div id="rhq-bulk-bar" class="rhq-track-select-bar" style="display:none;">
+    <label for="rhq-bulk-action-select">Action</label>
+    <select class="rhq-track-select" id="rhq-bulk-action-select">
+      <option value="stage">Change Stage</option>
+      <option value="tag">Add Tag / Label</option>
+      <option value="discovery">Run Discovery Scan</option>
+    </select>
+    <span id="rhq-bulk-stage-wrap">
+      <label for="rhq-bulk-stage-select">Stage</label>
+      <select class="rhq-track-select" id="rhq-bulk-stage-select"><option value="">Loading stages…</option></select>
+    </span>
+    <span id="rhq-bulk-tag-wrap" style="display:none;">
+      <label for="rhq-bulk-tag-input">Tag</label>
+      <input type="text" class="rhq-pull-input" id="rhq-bulk-tag-input" placeholder="e.g. hot lead">
+    </span>
+  </div>
+
+  <!-- SHARED LIST PANEL (profile / message / track / bulk) -->
+  <div id="rhq-panel-list" style="display:none;">
+    <div class="rhq-filters">
+      <input class="rhq-search" id="rhq-search" type="text" placeholder="Search by name or email…">
+      <select class="rhq-status-filter" id="rhq-status-filter"></select>
+    </div>
+    <div class="rhq-toolbar">
+      <span class="rhq-toolbar-left" id="rhq-selected-count">0 selected</span>
+      <button type="button" class="rhq-link-btn" id="rhq-select-all">Select all eligible</button>
+    </div>
+    <div class="rhq-list" id="rhq-list">
+      <div class="rhq-empty" id="rhq-loading">Loading investors…</div>
+    </div>
+    <button class="rhq-submit" id="rhq-submit" disabled>Go</button>
+    <div class="rhq-status" id="rhq-status"></div>
+    <div class="rhq-results" id="rhq-results" style="display:none;">
+      <div class="rhq-results-summary" id="rhq-results-summary"></div>
+      <div class="rhq-results-detail" id="rhq-results-detail"></div>
+    </div>
+  </div>
+
+  <!-- INTRO PATH PANEL -->
+  <div id="rhq-panel-intropath" style="display:none;">
+    <div class="rhq-ip-linkedin-panel">
+      <div class="rhq-ip-li-section">
+        <div class="rhq-ip-li-title">LinkedIn Connections</div>
+        <div class="rhq-ip-li-copy">Upload your LinkedIn connections export (Connections.csv) so discovered connectors can be matched against people you actually know — company, title, and how long you've been connected. Used for that matching only; it's your personal data and isn't shared or shown anywhere else.</div>
+        <input type="file" id="rhq-ip-csv-input" accept=".csv" class="rhq-ip-file-input">
+        <button type="button" class="rhq-ip-action-btn" id="rhq-ip-csv-upload-btn">Upload Connections.csv</button>
+        <div class="rhq-status" id="rhq-ip-csv-status"></div>
+      </div>
+      <div class="rhq-ip-li-section">
+        <div class="rhq-ip-li-title">Connect LinkedIn</div>
+        <div class="rhq-ip-li-status" id="rhq-ip-li-status-label">Status: not connected</div>
+        <div class="rhq-ip-li-copy rhq-ip-li-risk">Connecting lets our automation partner (PhantomBuster) browse LinkedIn as you, using your own logged-in session, to find people you know in common with target investors. This can trigger a LinkedIn account restriction or ban — that risk sits with your own LinkedIn account, not Raise HQ's. Ask your Raise HQ contact for your personal connection link, complete it on PhantomBuster's page, then confirm below.</div>
+        <div class="rhq-ip-li-actions">
+          <button type="button" class="rhq-ip-action-btn" id="rhq-ip-li-connected-btn">I've Connected My LinkedIn</button>
+          <button type="button" class="rhq-ip-action-btn" id="rhq-ip-li-expired-btn">Report Session Expired</button>
+        </div>
+        <div class="rhq-status" id="rhq-ip-li-status"></div>
+      </div>
+    </div>
+    <div class="rhq-ip-layout">
+      <div class="rhq-ip-investors">
+        <input class="rhq-search" id="rhq-ip-search" type="text" placeholder="Search by name or email…" style="margin-bottom:10px; width:100%;">
+        <div class="rhq-ip-list" id="rhq-ip-inv-list">
+          <div class="rhq-empty" id="rhq-ip-loading">Loading investors…</div>
+        </div>
+      </div>
+      <div class="rhq-ip-detail" id="rhq-ip-detail">
+        <div class="rhq-ip-detail-placeholder">Select an investor to view or add intro paths.</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="rhq-footer">Raise HQ is a Source Capital product.</p>
+</div>
+
+<script>
+(function () {
+  var ROOT = document.getElementById('raisehq-unified');
+  if (!ROOT) return;
+
+  var DEFAULT_CLIENT = 'Test Client Co';
+  var BASE_URL = 'https://n8n.srv926257.hstgr.cloud/webhook';
+
+  var params = new URLSearchParams(window.location.search);
+  var clientName = params.get('client') || DEFAULT_CLIENT;
+
+  var currentTab = 'pull';
+  var currentCredits = 0;
+  var investors = [];
+  var investorsLoaded = false;
+  var selected = {};
+  var justProfiled = {};
+  var justMessaged = {};
+  var justTracked = {};
+  var justBulked = {};
+  var searchTerm = '';
+  var statusFilter = 'all';
+
+  var h1 = ROOT.querySelector('#rhq-h1');
+  var tabs = ROOT.querySelectorAll('.rhq-tab');
+  var creditsFigure = ROOT.querySelector('#rhq-credits-figure');
+  var meterLabel = ROOT.querySelector('#rhq-meter-label');
+  var meterCost = ROOT.querySelector('#rhq-meter-cost');
+  var clientNameEl = ROOT.querySelector('#rhq-client-name');
+
+  var panelPull = ROOT.querySelector('#rhq-panel-pull');
+  var pullCountInput = ROOT.querySelector('#rhq-pull-count');
+  var pullSectorsSelect = ROOT.querySelector('#rhq-pull-sectors');
+  var pullStagesSelect = ROOT.querySelector('#rhq-pull-stages');
+  var pullGeographiesSelect = ROOT.querySelector('#rhq-pull-geographies');
+  var pullSubmitBtn = ROOT.querySelector('#rhq-pull-submit');
+  var pullStatusEl = ROOT.querySelector('#rhq-pull-status');
+  var pullResultsEl = ROOT.querySelector('#rhq-pull-results');
+
+  var trackBar = ROOT.querySelector('#rhq-track-bar');
+  var trackSelect = ROOT.querySelector('#rhq-track-select');
+
+  var bulkBar = ROOT.querySelector('#rhq-bulk-bar');
+  var bulkActionSelect = ROOT.querySelector('#rhq-bulk-action-select');
+  var bulkStageWrap = ROOT.querySelector('#rhq-bulk-stage-wrap');
+  var bulkStageSelect = ROOT.querySelector('#rhq-bulk-stage-select');
+  var bulkTagWrap = ROOT.querySelector('#rhq-bulk-tag-wrap');
+  var bulkTagInput = ROOT.querySelector('#rhq-bulk-tag-input');
+  var bulkStagesLoaded = false;
+
+  var panelList = ROOT.querySelector('#rhq-panel-list');
+  var searchInput = ROOT.querySelector('#rhq-search');
+  var statusSelect = ROOT.querySelector('#rhq-status-filter');
+  var listEl = ROOT.querySelector('#rhq-list');
+  var loadingEl = ROOT.querySelector('#rhq-loading');
+  var selectedCountEl = ROOT.querySelector('#rhq-selected-count');
+  var selectAllBtn = ROOT.querySelector('#rhq-select-all');
+  var submitBtn = ROOT.querySelector('#rhq-submit');
+  var statusEl = ROOT.querySelector('#rhq-status');
+  var resultsEl = ROOT.querySelector('#rhq-results');
+  var resultsSummaryEl = ROOT.querySelector('#rhq-results-summary');
+  var resultsDetailEl = ROOT.querySelector('#rhq-results-detail');
+
+  var panelIntroPath = ROOT.querySelector('#rhq-panel-intropath');
+  var ipSearchInput = ROOT.querySelector('#rhq-ip-search');
+  var ipInvListEl = ROOT.querySelector('#rhq-ip-inv-list');
+  var ipDetailEl = ROOT.querySelector('#rhq-ip-detail');
+  var ipSearchTerm = '';
+  var ipSelectedContactId = null;
+  var ipConnectors = [];
+  var ipConnectorsLoaded = false;
+  var ipAddOpen = false;
+  var linkedinAutomationStatus = 'not_connected';
+  var ipDiscoveryRunning = false;
+  var ipLastDiscoveryResult = null; // {contactId, message, isError} — survives the panel re-render after a run finishes
+  var ipActiveDiscoveryJob = null; // {contactId, jobId, lastPct, lastLabel, timer} — survives navigating away and back while a scan is in flight
+
+  var ipCsvInput = ROOT.querySelector('#rhq-ip-csv-input');
+  var ipCsvUploadBtn = ROOT.querySelector('#rhq-ip-csv-upload-btn');
+  var ipCsvStatusEl = ROOT.querySelector('#rhq-ip-csv-status');
+  var ipLiStatusLabelEl = ROOT.querySelector('#rhq-ip-li-status-label');
+  var ipLiConnectedBtn = ROOT.querySelector('#rhq-ip-li-connected-btn');
+  var ipLiExpiredBtn = ROOT.querySelector('#rhq-ip-li-expired-btn');
+  var ipLiStatusEl = ROOT.querySelector('#rhq-ip-li-status');
+
+  var TAB_META = {
+    pull: { title: 'Pull Investors', cost: 'Central Investor Database' },
+    profile: { title: 'Profile Investors', cost: '1 credit per investor profiled' },
+    message: { title: 'Write Outreach Messages', cost: '1 credit per investor messaged' },
+    track: { title: 'Select Engagement Track', cost: 'No credit cost — routing only' },
+    intropath: { title: 'Intro Path', cost: 'No credit cost — tracking only' },
+    bulk: { title: 'Bulk Actions', cost: 'Stage change and tags are free — discovery scans use discovery credits' }
+  };
+
+  var STATUS_OPTIONS = {
+    profile: [
+      { value: 'all', label: 'All investors' },
+      { value: 'pending', label: 'Not profiled' },
+      { value: 'profiled', label: 'Profiled' }
+    ],
+    message: [
+      { value: 'all', label: 'All investors' },
+      { value: 'ready', label: 'Ready to message' },
+      { value: 'needsprofile', label: 'Needs profiling first' },
+      { value: 'done', label: 'Already messaged' }
+    ],
+    track: [
+      { value: 'all', label: 'All investors' },
+      { value: 'none', label: 'No track assigned' },
+      { value: 'set', label: 'Track assigned' }
+    ],
+    bulk: [
+      { value: 'all', label: 'All investors' }
+    ]
+  };
+
+  function esc(s) { return s == null ? '' : String(s); }
+  function setStatus(el, msg, isError) {
+    el.textContent = msg || '';
+    el.className = 'rhq-status' + (isError ? ' rhq-error' : '');
+  }
+
+  function renderBalance(credits, client) {
+    currentCredits = credits;
+    creditsFigure.textContent = credits;
+    creditsFigure.className = 'rhq-meter-figure' + (credits <= 0 ? ' rhq-zero' : '');
+    clientNameEl.textContent = client;
+  }
+
+  function loadBalance() {
+    fetch(BASE_URL + '/credit-balance?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, 'No client found matching "' + clientName + '".', true); return; }
+        renderBalance(data.credits, data.client);
+        if (data.linkedin_automation_status) {
+          linkedinAutomationStatus = data.linkedin_automation_status;
+          ipLiStatusLabelEl.textContent = 'Status: ' + linkedinAutomationStatus.replace(/_/g, ' ');
+          if (ipSelectedContactId) renderIpDetail();
+        }
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); });
+  }
+
+  function loadInvestors(cb) {
+    fetch(BASE_URL + '/list-client-investors?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { loadingEl.textContent = data.error || 'Could not load investors.'; return; }
+        investors = data.investors || [];
+        investorsLoaded = true;
+        if (cb) cb();
+        renderList();
+        if (currentTab === 'intropath') renderIpInvestorList();
+      })
+      .catch(function () { loadingEl.textContent = 'Could not reach Raise HQ.'; });
+  }
+
+  // ---------- Tab switching ----------
+  function switchTab(tab) {
+    currentTab = tab;
+    tabs.forEach(function (t) { t.classList.toggle('rhq-tab-active', t.dataset.tab === tab); });
+    h1.textContent = TAB_META[tab].title;
+    meterCost.textContent = TAB_META[tab].cost;
+
+    panelPull.style.display = tab === 'pull' ? 'block' : 'none';
+    panelList.style.display = (tab === 'profile' || tab === 'message' || tab === 'track' || tab === 'bulk') ? 'block' : 'none';
+    panelIntroPath.style.display = tab === 'intropath' ? 'block' : 'none';
+    trackBar.style.display = tab === 'track' ? 'flex' : 'none';
+    bulkBar.style.display = tab === 'bulk' ? 'flex' : 'none';
+
+    if (tab === 'profile' || tab === 'message' || tab === 'track' || tab === 'bulk') {
+      var opts = STATUS_OPTIONS[tab];
+      statusSelect.innerHTML = opts.map(function (o) { return '<option value="' + o.value + '">' + o.label + '</option>'; }).join('');
+      statusFilter = 'all';
+      resultsEl.style.display = 'none';
+      setStatus(statusEl, '', false);
+      submitBtn.textContent = tab === 'profile' ? 'Profile Selected' : (tab === 'message' ? 'Write Messages' : (tab === 'track' ? 'Assign Track' : 'Go'));
+      selectAllBtn.textContent = (tab === 'track' || tab === 'bulk') ? 'Select all visible' : 'Select all eligible';
+
+      if (!investorsLoaded) { loadInvestors(); } else { renderList(); }
+      if (tab === 'bulk') {
+        updateBulkActionUI();
+        if (!bulkStagesLoaded) loadBulkStages();
+      }
+      updateToolbar();
+    } else if (tab === 'intropath') {
+      if (!investorsLoaded) { loadInvestors(); } else { renderIpInvestorList(); }
+    }
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { switchTab(t.dataset.tab); });
+  });
+
+  // ---------- Eligibility per tab ----------
+  function eligible(inv) {
+    if (currentTab === 'profile') return !inv.profiled;
+    if (currentTab === 'message') return inv.profiled && (inv.tags || []).indexOf('outreach writer complete') === -1;
+    if (currentTab === 'track') return true;
+    if (currentTab === 'bulk') return true;
+    return false;
+  }
+
+  function rowState(inv) {
+    if (currentTab === 'profile') {
+      if (justProfiled[inv.contactId]) return 'justdone';
+      return inv.profiled ? 'done' : 'ready';
+    }
+    if (currentTab === 'message') {
+      if (justMessaged[inv.contactId]) return 'justdone';
+      if ((inv.tags || []).indexOf('outreach writer complete') !== -1) return 'done';
+      if (!inv.profiled) return 'needsprofile';
+      return 'ready';
+    }
+    if (currentTab === 'track') {
+      if (justTracked[inv.contactId]) return 'justdone';
+      return inv.engagementTrack ? 'set' : 'none';
+    }
+    if (currentTab === 'bulk') {
+      if (justBulked[inv.contactId]) return 'justdone';
+      return 'ready';
+    }
+    return '';
+  }
+
+  function matchesFilters(inv) {
+    var s = rowState(inv);
+    if (currentTab === 'message') {
+      if (statusFilter === 'ready' && s !== 'ready' && s !== 'justdone') return false;
+      if (statusFilter === 'needsprofile' && s !== 'needsprofile') return false;
+      if (statusFilter === 'done' && s !== 'done' && s !== 'justdone') return false;
+    } else if (currentTab === 'profile') {
+      if (statusFilter === 'pending' && s !== 'ready' && s !== 'justdone') return false;
+      if (statusFilter === 'profiled' && s !== 'done') return false;
+    } else if (currentTab === 'track') {
+      if (statusFilter === 'none' && s !== 'none') return false;
+      if (statusFilter === 'set' && s !== 'set' && s !== 'justdone') return false;
+    }
+    if (searchTerm) {
+      var hay = (inv.name + ' ' + inv.email).toLowerCase();
+      if (hay.indexOf(searchTerm) === -1) return false;
+    }
+    return true;
+  }
+
+  function selectedIds() { return Object.keys(selected).filter(function (id) { return selected[id]; }); }
+
+  function updateToolbar() {
+    if (currentTab === 'pull' || currentTab === 'intropath') return;
+    var ids = selectedIds().filter(function (id) {
+      var inv = investors.find(function (i) { return i.contactId === id; });
+      return inv && eligible(inv);
+    });
+    selectedCountEl.textContent = ids.length + ' selected';
+    var creditGated = currentTab === 'profile' || currentTab === 'message';
+    var overBudget = creditGated && ids.length > currentCredits;
+    var bulkInvalid = false;
+    if (currentTab === 'bulk') {
+      var bulkAction = bulkActionSelect.value;
+      if (bulkAction === 'stage' && !bulkStageSelect.value) bulkInvalid = true;
+      if (bulkAction === 'tag' && !bulkTagInput.value.trim()) bulkInvalid = true;
+    }
+    submitBtn.disabled = ids.length === 0 || overBudget || (currentTab === 'track' && !trackSelect.value) || (currentTab === 'bulk' && bulkInvalid);
+    if (overBudget) {
+      setStatus(statusEl, 'You only have ' + currentCredits + ' credits available — deselect some investors.', true);
+    } else if (statusEl.textContent.indexOf('deselect') !== -1) {
+      setStatus(statusEl, '', false);
+    }
+  }
+
+  function updateBulkActionUI() {
+    var action = bulkActionSelect.value;
+    bulkStageWrap.style.display = action === 'stage' ? 'inline-flex' : 'none';
+    bulkTagWrap.style.display = action === 'tag' ? 'inline-flex' : 'none';
+    submitBtn.textContent = action === 'stage' ? 'Move Stage' : (action === 'tag' ? 'Add Tag' : 'Run Discovery Scan');
+    updateToolbar();
+  }
+
+  function loadBulkStages() {
+    bulkStageSelect.innerHTML = '<option value="">Loading stages…</option>';
+    fetch(BASE_URL + '/list-pipeline-stages?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success || !data.stages || !data.stages.length) {
+          bulkStageSelect.innerHTML = '<option value="">Could not load stages</option>';
+          return;
+        }
+        bulkStagesLoaded = true;
+        bulkStageSelect.innerHTML = '<option value="">Choose a stage…</option>' + data.stages.map(function (s) {
+          return '<option value="' + esc(s.name) + '">' + esc(s.name) + '</option>';
+        }).join('');
+      })
+      .catch(function () { bulkStageSelect.innerHTML = '<option value="">Could not reach Raise HQ</option>'; });
+  }
+
+  bulkActionSelect.addEventListener('change', updateBulkActionUI);
+  bulkStageSelect.addEventListener('change', updateToolbar);
+  bulkTagInput.addEventListener('input', updateToolbar);
+
+  function tierClass(tier) {
+    var t = String(tier || '').toUpperCase();
+    if (t === 'T1') return 'rhq-tier-t1';
+    if (t === 'T2') return 'rhq-tier-t2';
+    return 'rhq-tier-t3';
+  }
+
+  function renderList() {
+    if (currentTab === 'pull' || currentTab === 'intropath') return;
+    listEl.innerHTML = '';
+    var visible = investors.filter(matchesFilters);
+
+    if (!visible.length) {
+      var empty = document.createElement('div');
+      empty.className = 'rhq-empty';
+      empty.textContent = investors.length ? 'No investors match your filters.' : 'No investors found for this client yet.';
+      listEl.appendChild(empty);
+      return;
+    }
+
+    visible.forEach(function (inv) {
+      if (currentTab === 'profile' && inv.profiled) listEl.appendChild(renderProfileCard(inv));
+      else listEl.appendChild(renderRow(inv));
+    });
+  }
+
+  function renderRow(inv) {
+    var s = rowState(inv);
+    var isEligible = eligible(inv);
+    var row = document.createElement('div');
+    row.className = 'rhq-row';
+
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.disabled = !isEligible;
+    checkbox.checked = !!selected[inv.contactId] && isEligible;
+    checkbox.addEventListener('change', function () {
+      selected[inv.contactId] = checkbox.checked;
+      if (checkbox.checked && (currentTab === 'profile' || currentTab === 'message')) {
+        var count = selectedIds().filter(function (id) {
+          var i = investors.find(function (x) { return x.contactId === id; });
+          return i && eligible(i);
+        }).length;
+        if (count > currentCredits) {
+          checkbox.checked = false;
+          selected[inv.contactId] = false;
+          setStatus(statusEl, 'You only have ' + currentCredits + ' credits available.', true);
+        }
+      }
+      updateToolbar();
+    });
+    row.appendChild(checkbox);
+
+    var main = document.createElement('div');
+    main.className = 'rhq-row-main';
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-row-name';
+    nameEl.textContent = inv.name || 'Unnamed';
+    var emailEl = document.createElement('div');
+    emailEl.className = 'rhq-row-email';
+    emailEl.textContent = inv.email || 'No email on file';
+    main.appendChild(nameEl);
+    main.appendChild(emailEl);
+    if (inv.fitScore !== null && inv.fitScore !== undefined) {
+      var meta = document.createElement('div');
+      meta.className = 'rhq-row-meta';
+      meta.textContent = 'Fit ' + Number(inv.fitScore).toFixed(1) + '/10' + (inv.tier ? ' · ' + inv.tier : '');
+      main.appendChild(meta);
+    }
+    row.appendChild(main);
+
+    var badges = document.createElement('div');
+    badges.className = 'rhq-row-badges';
+    var badge = document.createElement('span');
+    if (s === 'justdone') {
+      badge.className = 'rhq-badge rhq-filled';
+      badge.textContent = currentTab === 'track' ? 'Just assigned ✓' : (currentTab === 'message' ? 'Just messaged ✓' : (currentTab === 'bulk' ? 'Just updated ✓' : 'Just profiled ✓'));
+    } else if (s === 'done') {
+      badge.className = 'rhq-badge rhq-muted';
+      badge.textContent = currentTab === 'message' ? 'Messaged' : 'Profiled';
+    } else if (s === 'needsprofile') {
+      badge.className = 'rhq-badge rhq-muted';
+      badge.textContent = 'Needs profiling first';
+    } else if (s === 'ready') {
+      badge.className = 'rhq-badge rhq-outline';
+      badge.textContent = 'Ready';
+    } else if (s === 'set') {
+      badge.className = 'rhq-badge rhq-outline';
+      badge.textContent = inv.engagementTrack;
+    } else if (s === 'none') {
+      badge.className = 'rhq-badge rhq-muted';
+      badge.textContent = 'No track yet';
+    }
+    badges.appendChild(badge);
+    row.appendChild(badges);
+
+    return row;
+  }
+
+  function renderProfileCard(inv) {
+    var card = document.createElement('div');
+    card.className = 'rhq-card';
+    var top = document.createElement('div');
+    top.className = 'rhq-card-top';
+    var left = document.createElement('div');
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-card-name';
+    nameEl.textContent = inv.name || 'Unnamed';
+    left.appendChild(nameEl);
+    var firmRoleText = [inv.firm, inv.role].filter(Boolean).join(' · ');
+    if (firmRoleText) {
+      var fr = document.createElement('div');
+      fr.className = 'rhq-card-firmrole';
+      fr.textContent = firmRoleText;
+      left.appendChild(fr);
+    }
+    top.appendChild(left);
+
+    if (inv.fitScore !== null && inv.fitScore !== undefined) {
+      var scoreWrap = document.createElement('div');
+      scoreWrap.className = 'rhq-card-scorewrap';
+      var score = document.createElement('span');
+      score.className = 'rhq-card-score';
+      score.textContent = Number(inv.fitScore).toFixed(1);
+      var out = document.createElement('span');
+      out.className = 'rhq-card-score-out';
+      out.textContent = '/10';
+      scoreWrap.appendChild(score);
+      scoreWrap.appendChild(out);
+      if (inv.tier) {
+        var pill = document.createElement('span');
+        pill.className = 'rhq-tier-pill ' + tierClass(inv.tier);
+        pill.textContent = inv.tier;
+        scoreWrap.appendChild(pill);
+      }
+      top.appendChild(scoreWrap);
+    }
+    card.appendChild(top);
+
+    if (inv.fitRationale) {
+      var rationale = document.createElement('div');
+      rationale.className = 'rhq-card-rationale';
+      rationale.textContent = inv.fitRationale;
+      card.appendChild(rationale);
+    }
+    if (justProfiled[inv.contactId]) {
+      var jd = document.createElement('div');
+      jd.className = 'rhq-card-justdone';
+      jd.textContent = 'Just profiled ✓';
+      card.appendChild(jd);
+    }
+    return card;
+  }
+
+  searchInput.addEventListener('input', function () { searchTerm = searchInput.value.trim().toLowerCase(); renderList(); });
+  statusSelect.addEventListener('change', function () { statusFilter = statusSelect.value; renderList(); });
+  trackSelect.addEventListener('change', function () { updateToolbar(); });
+
+  selectAllBtn.addEventListener('click', function () {
+    var pool = investors.filter(function (inv) { return eligible(inv) && matchesFilters(inv) && !selected[inv.contactId]; });
+    if (currentTab === 'profile' || currentTab === 'message') {
+      var room = Math.max(currentCredits - selectedIds().length, 0);
+      var toSelect = pool.slice(0, room);
+      toSelect.forEach(function (inv) { selected[inv.contactId] = true; });
+      if (pool.length > room) setStatus(statusEl, 'Selected ' + toSelect.length + ' — only ' + currentCredits + ' credits available in total.', true);
+    } else {
+      pool.forEach(function (inv) { selected[inv.contactId] = true; });
+    }
+    renderList();
+    updateToolbar();
+  });
+
+  submitBtn.addEventListener('click', function () {
+    var ids = selectedIds().filter(function (id) {
+      var inv = investors.find(function (i) { return i.contactId === id; });
+      return inv && eligible(inv);
+    });
+    if (!ids.length) return;
+
+    if (currentTab === 'profile') { runProfile(ids); }
+    else if (currentTab === 'message') { runMessage(ids); }
+    else if (currentTab === 'track') { runTrack(ids, trackSelect.value); }
+    else if (currentTab === 'bulk') {
+      var bulkAction = bulkActionSelect.value;
+      if (bulkAction === 'stage') { runBulkStage(ids, bulkStageSelect.value); }
+      else if (bulkAction === 'tag') { runBulkTag(ids, bulkTagInput.value.trim()); }
+      else if (bulkAction === 'discovery') { runBulkDiscovery(ids); }
+    }
+  });
+
+  function runProfile(ids) {
+    submitBtn.disabled = true;
+    setStatus(statusEl, 'Profiling ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + '…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/profile-investors', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contact_ids: ids })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, "That run didn't go through — " + data.error, true); return; }
+        setStatus(statusEl, '', false);
+        renderBalance(data.credits_after, data.client);
+        ids.forEach(function (id) { justProfiled[id] = true; selected[id] = false; });
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Profiled ' + data.profiled + ' of ' + data.requested + ' requested.';
+        var parts = [];
+        if (data.skipped) parts.push(data.skipped + ' already had a fit score and were skipped free of charge.');
+        if (data.errors) parts.push(data.errors + ' could not be parsed and were not charged.');
+        resultsDetailEl.textContent = parts.join(' ');
+        loadInvestors();
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { updateToolbar(); });
+  }
+
+  function runMessage(ids) {
+    submitBtn.disabled = true;
+    setStatus(statusEl, 'Writing messages for ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + '…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/write-outreach-messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contact_ids: ids })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, "That run didn't go through — " + data.error, true); return; }
+        setStatus(statusEl, '', false);
+        renderBalance(data.credits_after, data.client);
+        (data.written_contacts || []).forEach(function (id) { justMessaged[id] = true; });
+        selected = {};
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Wrote messages for ' + data.written + ' of ' + data.requested + ' requested.';
+        var parts = [];
+        if (data.skipped) parts.push(data.skipped + ' already had messages and were skipped free of charge.');
+        if (data.not_profiled) parts.push(data.not_profiled + ' need profiling first and were skipped free of charge.');
+        if (data.errors) parts.push(data.errors + ' could not be parsed and were not charged.');
+        resultsDetailEl.textContent = parts.join(' ');
+        loadInvestors();
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { updateToolbar(); });
+  }
+
+  function runTrack(ids, track) {
+    if (!track) return;
+    submitBtn.disabled = true;
+    setStatus(statusEl, 'Assigning ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + ' to ' + track + '…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/select-engagement-track', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, track: track, contact_ids: ids })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, "That run didn't go through — " + (data.error || 'please try again.'), true); return; }
+        setStatus(statusEl, '', false);
+        (data.updated_contacts || []).forEach(function (id) {
+          justTracked[id] = true;
+          var inv = investors.find(function (i) { return i.contactId === id; });
+          if (inv) inv.engagementTrack = track;
+        });
+        selected = {};
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Assigned ' + data.updated + ' of ' + data.requested + ' to ' + data.track + '.';
+        resultsDetailEl.textContent = '';
+        renderList();
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { updateToolbar(); });
+  }
+
+  function runBulkStage(ids, stage) {
+    if (!stage) return;
+    submitBtn.disabled = true;
+    setStatus(statusEl, 'Moving ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + ' to ' + stage + '…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/bulk-update-stage', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contact_ids: ids, stage: stage })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, "That run didn't go through — " + (data.error || 'please try again.'), true); return; }
+        setStatus(statusEl, '', false);
+        (data.updated_contacts || []).forEach(function (id) { justBulked[id] = true; });
+        selected = {};
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Moved ' + data.updated + ' of ' + data.requested + ' to ' + data.stage + '.';
+        resultsDetailEl.textContent = '';
+        renderList();
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { updateToolbar(); });
+  }
+
+  function runBulkTag(ids, tag) {
+    if (!tag) return;
+    submitBtn.disabled = true;
+    setStatus(statusEl, 'Tagging ' + ids.length + ' investor' + (ids.length === 1 ? '' : 's') + ' with "' + tag + '"…', false);
+    resultsEl.style.display = 'none';
+
+    fetch(BASE_URL + '/bulk-add-tag', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contact_ids: ids, tag: tag })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(statusEl, "That run didn't go through — " + (data.error || 'please try again.'), true); return; }
+        setStatus(statusEl, '', false);
+        (data.tagged_contacts || []).forEach(function (id) { justBulked[id] = true; });
+        selected = {};
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Tagged ' + data.tagged + ' of ' + data.requested + ' with "' + data.tag + '".';
+        resultsDetailEl.textContent = '';
+        renderList();
+      })
+      .catch(function () { setStatus(statusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { updateToolbar(); });
+  }
+
+  function runBulkDiscovery(ids) {
+    submitBtn.disabled = true;
+    resultsEl.style.display = 'none';
+    var withLinkedin = ids.map(function (id) { return investors.find(function (i) { return i.contactId === id; }); })
+      .filter(function (inv) { return inv && inv.linkedinProfile; });
+    var skippedNoLinkedin = ids.length - withLinkedin.length;
+
+    if (!withLinkedin.length) {
+      setStatus(statusEl, 'None of the selected investors have a LinkedIn URL on file — nothing to scan.', true);
+      updateToolbar();
+      return;
+    }
+
+    setStatus(statusEl, 'Starting discovery for ' + withLinkedin.length + ' investor' + (withLinkedin.length === 1 ? '' : 's') + '…', false);
+    var accepted = 0, failed = 0, i = 0;
+
+    function next() {
+      if (i >= withLinkedin.length) {
+        setStatus(statusEl, '', false);
+        withLinkedin.forEach(function (inv) { justBulked[inv.contactId] = true; });
+        selected = {};
+        resultsEl.style.display = 'block';
+        resultsSummaryEl.textContent = 'Started discovery for ' + accepted + ' of ' + withLinkedin.length + ' investors.';
+        var parts = [];
+        if (failed) parts.push(failed + ' failed to start (insufficient credits or an error).');
+        if (skippedNoLinkedin) parts.push(skippedNoLinkedin + ' had no LinkedIn URL on file and were skipped.');
+        resultsDetailEl.textContent = parts.join(' ');
+        renderList();
+        updateToolbar();
+        return;
+      }
+      var inv = withLinkedin[i];
+      fetch(BASE_URL + '/intro-path-discover-connectors', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_name: clientName, investor_profile_url: inv.linkedinProfile, contactId: inv.contactId, target_investor: inv.name })
+      })
+        .then(function (r) { if (r.ok) { accepted++; } else { failed++; } })
+        .catch(function () { failed++; })
+        .finally(function () { i++; setTimeout(next, 1200); });
+    }
+    next();
+  }
+
+  // ---------- Pull tab ----------
+  pullSubmitBtn.addEventListener('click', function () {
+    var count = parseInt(pullCountInput.value, 10) || 0;
+    if (count <= 0) return;
+    if (count > currentCredits) {
+      setStatus(pullStatusEl, 'You only have ' + currentCredits + ' credits available.', true);
+      return;
+    }
+    pullSubmitBtn.disabled = true;
+    setStatus(pullStatusEl, 'Pulling ' + count + ' investors…', false);
+    pullResultsEl.style.display = 'none';
+
+    var selectedSectors = Array.prototype.map.call(pullSectorsSelect.selectedOptions, function (o) { return o.value; });
+    var selectedStages = Array.prototype.map.call(pullStagesSelect.selectedOptions, function (o) { return o.value; });
+    var GEO_EXPAND = {
+      'US': ['US-Northeast/NYC', 'US-Bay Area', 'US-LA', 'US-Other West Coast', 'US-Texas', 'US-Midwest', 'US-Southeast', 'US-Nationwide']
+    };
+    var selectedGeographies = Array.prototype.map.call(pullGeographiesSelect.selectedOptions, function (o) { return o.value; })
+      .reduce(function (acc, v) { return acc.concat(GEO_EXPAND[v] || [v]); }, []);
+
+    fetch(BASE_URL + '/credit-pull', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, requested_count: count, sectors: selectedSectors, stages: selectedStages, geographies: selectedGeographies })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { setStatus(pullStatusEl, "That run didn't go through — " + (data.error || 'please try again.'), true); return; }
+        setStatus(pullStatusEl, '', false);
+        renderBalance(data.credits_after, data.client);
+        pullResultsEl.style.display = 'block';
+        pullResultsEl.innerHTML = '';
+        (data.investors || []).forEach(function (inv) {
+          var item = document.createElement('div');
+          item.className = 'rhq-pull-row-item';
+          var name = document.createElement('div');
+          name.className = 'rhq-row-name';
+          name.style.color = 'var(--rhq-white)';
+          name.textContent = inv.name || 'Unnamed';
+          var email = document.createElement('div');
+          email.className = 'rhq-row-email';
+          email.textContent = inv.email || 'No email on file';
+          item.appendChild(name);
+          item.appendChild(email);
+          pullResultsEl.appendChild(item);
+        });
+        var summary = document.createElement('div');
+        summary.style.padding = '10px 16px';
+        summary.style.fontSize = '13px';
+        summary.style.color = 'var(--rhq-muted)';
+        summary.textContent = 'Pulled ' + data.pulled + ' of ' + data.requested + ' requested.';
+        pullResultsEl.insertBefore(summary, pullResultsEl.firstChild);
+        investorsLoaded = false;
+      })
+      .catch(function () { setStatus(pullStatusEl, 'Could not reach Raise HQ.', true); })
+      .finally(function () { pullSubmitBtn.disabled = false; });
+  });
+
+  // ---------- Intro Path tab ----------
+  ipSearchInput.addEventListener('input', function () {
+    ipSearchTerm = ipSearchInput.value.trim().toLowerCase();
+    renderIpInvestorList();
+  });
+
+  function renderIpInvestorList() {
+    ipInvListEl.innerHTML = '';
+    var visible = investors.filter(function (inv) {
+      if (!ipSearchTerm) return true;
+      var hay = (inv.name + ' ' + inv.email).toLowerCase();
+      return hay.indexOf(ipSearchTerm) !== -1;
+    });
+
+    if (!visible.length) {
+      var empty = document.createElement('div');
+      empty.className = 'rhq-empty';
+      empty.textContent = investors.length ? 'No investors match your search.' : 'No investors found for this client yet.';
+      ipInvListEl.appendChild(empty);
+      return;
+    }
+
+    visible.forEach(function (inv) {
+      var row = document.createElement('div');
+      row.className = 'rhq-ip-inv-row' + (inv.contactId === ipSelectedContactId ? ' rhq-ip-inv-active' : '');
+      var name = document.createElement('div');
+      name.className = 'rhq-ip-inv-name';
+      name.textContent = inv.name || 'Unnamed';
+      var status = document.createElement('div');
+      status.className = 'rhq-ip-inv-status';
+      status.textContent = inv.introPathStatus && inv.introPathStatus !== 'none' ? ('Intro path: ' + inv.introPathStatus) : 'No intro path yet';
+      row.appendChild(name);
+      row.appendChild(status);
+      row.addEventListener('click', function () { selectIpInvestor(inv.contactId); });
+      ipInvListEl.appendChild(row);
+    });
+  }
+
+  function selectIpInvestor(contactId) {
+    ipSelectedContactId = contactId;
+    ipConnectorsLoaded = false;
+    ipAddOpen = false;
+    renderIpInvestorList();
+    renderIpDetail();
+    loadIpConnectors(contactId);
+  }
+
+  function loadIpConnectors(contactId) {
+    fetch(BASE_URL + '/intro-path-list', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contactId: contactId })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) { ipConnectors = []; ipConnectorsLoaded = true; renderIpDetail('Could not load intro paths.'); return; }
+        ipConnectors = data.records || [];
+        ipConnectorsLoaded = true;
+        renderIpDetail();
+      })
+      .catch(function () { ipConnectors = []; ipConnectorsLoaded = true; renderIpDetail('Could not reach Raise HQ.'); });
+  }
+
+  function ipStrengthDots(n) {
+    var wrap = document.createElement('div');
+    wrap.className = 'rhq-ip-strength';
+    for (var i = 1; i <= 5; i++) {
+      var dot = document.createElement('span');
+      dot.className = 'rhq-ip-dot' + (n && i <= n ? ' rhq-ip-dot-on' : '');
+      wrap.appendChild(dot);
+    }
+    return wrap;
+  }
+
+  function ipStatusPill(status) {
+    var pill = document.createElement('span');
+    pill.className = 'rhq-ip-status-pill rhq-ip-s-' + (status || 'identified');
+    pill.textContent = status || 'identified';
+    return pill;
+  }
+
+  function renderIpDetail(errorMsg) {
+    ipDetailEl.innerHTML = '';
+    if (!ipSelectedContactId) {
+      var placeholder = document.createElement('div');
+      placeholder.className = 'rhq-ip-detail-placeholder';
+      placeholder.textContent = 'Select an investor to view or add intro paths.';
+      ipDetailEl.appendChild(placeholder);
+      return;
+    }
+    var inv = investors.find(function (i) { return i.contactId === ipSelectedContactId; });
+
+    var header = document.createElement('div');
+    header.className = 'rhq-ip-detail-header';
+    header.textContent = (inv && inv.name ? inv.name : 'Investor') + ' — Intro Paths';
+    ipDetailEl.appendChild(header);
+
+    if (errorMsg) {
+      var errEl = document.createElement('div');
+      errEl.className = 'rhq-status rhq-error';
+      errEl.textContent = errorMsg;
+      ipDetailEl.appendChild(errEl);
+      return;
+    }
+
+    ipDetailEl.appendChild(renderIpFindConnectorsPanel(inv));
+
+    if (!ipConnectorsLoaded) {
+      var loading = document.createElement('div');
+      loading.className = 'rhq-empty';
+      loading.textContent = 'Loading intro paths…';
+      ipDetailEl.appendChild(loading);
+      return;
+    }
+
+    var suggested = ipConnectors.filter(function (rec) { return rec.intro_status === 'suggested'; });
+    var confirmedConnectors = ipConnectors.filter(function (rec) { return rec.intro_status !== 'suggested'; });
+
+    if (suggested.length) {
+      var suggestedWrap = document.createElement('div');
+      suggestedWrap.className = 'rhq-ip-suggested-wrap';
+      var suggestedTitle = document.createElement('div');
+      suggestedTitle.className = 'rhq-ip-suggested-title';
+      suggestedTitle.textContent = 'Suggested — from LinkedIn Crossover Discovery';
+      suggestedWrap.appendChild(suggestedTitle);
+      var suggestedList = document.createElement('div');
+      suggestedList.className = 'rhq-ip-conn-list rhq-ip-suggested-list';
+      suggested.forEach(function (rec) { suggestedList.appendChild(renderIpSuggestedRow(rec)); });
+      suggestedWrap.appendChild(suggestedList);
+      ipDetailEl.appendChild(suggestedWrap);
+    }
+
+    var listWrap = document.createElement('div');
+    listWrap.className = 'rhq-ip-conn-list';
+    if (!confirmedConnectors.length) {
+      var empty = document.createElement('div');
+      empty.className = 'rhq-empty';
+      empty.textContent = 'No intro paths logged yet for this investor.';
+      listWrap.appendChild(empty);
+    } else {
+      confirmedConnectors.forEach(function (rec) { listWrap.appendChild(renderIpConnectorRow(rec)); });
+    }
+    ipDetailEl.appendChild(listWrap);
+
+    ipDetailEl.appendChild(renderIpAddPanel(inv));
+
+    var ipStatusEl = document.createElement('div');
+    ipStatusEl.className = 'rhq-status';
+    ipStatusEl.id = 'rhq-ip-status';
+    ipDetailEl.appendChild(ipStatusEl);
+  }
+
+  function renderIpFindConnectorsPanel(inv) {
+    var wrap = document.createElement('div');
+    wrap.className = 'rhq-ip-find-panel';
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'rhq-ip-action-btn';
+
+    var hint = document.createElement('div');
+    hint.className = 'rhq-ip-no-credit';
+
+    var DISCOVERY_CREDIT_COST = 2;
+    var canRun = !!(inv && inv.linkedinProfile) && linkedinAutomationStatus === 'connected';
+    if (!inv || !inv.linkedinProfile) {
+      hint.textContent = 'No LinkedIn profile on file for this investor — add one to their contact record to enable discovery.';
+      btn.disabled = true;
+    } else if (linkedinAutomationStatus !== 'connected') {
+      hint.textContent = 'Connect LinkedIn above before running discovery for this investor.';
+      btn.disabled = true;
+    } else if (currentCredits < DISCOVERY_CREDIT_COST) {
+      hint.textContent = 'Costs ' + DISCOVERY_CREDIT_COST + ' credits per scan — you have ' + currentCredits + ' available.';
+      btn.disabled = true;
+      canRun = false;
+    } else {
+      hint.textContent = 'Costs ' + DISCOVERY_CREDIT_COST + ' credits per scan. Scans your LinkedIn connections in common with this investor. Can take several minutes — feel free to navigate away, it keeps running in the background.';
+      btn.disabled = ipDiscoveryRunning;
+    }
+    btn.textContent = ipDiscoveryRunning ? 'Running discovery…' : 'Find Connectors via LinkedIn (' + DISCOVERY_CREDIT_COST + ' credits)';
+
+    wrap.appendChild(btn);
+    wrap.appendChild(hint);
+
+    var progressWrap = document.createElement('div');
+    progressWrap.className = 'rhq-ip-progress-wrap';
+    progressWrap.style.display = 'none';
+    var progressTrack = document.createElement('div');
+    progressTrack.className = 'rhq-ip-progress-track';
+    var progressFill = document.createElement('div');
+    progressFill.className = 'rhq-ip-progress-fill';
+    progressTrack.appendChild(progressFill);
+    var progressLabel = document.createElement('div');
+    progressLabel.className = 'rhq-ip-progress-label';
+    progressWrap.appendChild(progressTrack);
+    progressWrap.appendChild(progressLabel);
+    wrap.appendChild(progressWrap);
+
+    var statusEl = document.createElement('div');
+    statusEl.className = 'rhq-status';
+    if (inv && ipLastDiscoveryResult && ipLastDiscoveryResult.contactId === inv.contactId) {
+      setStatus(statusEl, ipLastDiscoveryResult.message, ipLastDiscoveryResult.isError);
+    }
+    wrap.appendChild(statusEl);
+
+    if (inv && ipActiveDiscoveryJob && ipActiveDiscoveryJob.contactId === inv.contactId) {
+      btn.disabled = true;
+      btn.textContent = 'Running discovery…';
+      progressWrap.style.display = 'block';
+      progressFill.style.width = ipActiveDiscoveryJob.lastPct + '%';
+      progressLabel.textContent = ipActiveDiscoveryJob.lastLabel || 'Working…';
+    }
+
+    if (canRun) {
+      btn.addEventListener('click', function () { runIpDiscoverConnectors(inv, btn, hint, statusEl, progressWrap, progressFill, progressLabel); });
+    }
+
+    return wrap;
+  }
+
+  var IP_DISCOVERY_STAGE_LABELS = {
+    queued: 'Queued…',
+    scraping: 'Scanning LinkedIn profile for mutual connections…',
+    searching: 'Searching your network for matches…',
+    done: 'Finishing up…'
+  };
+
+  function ipDiscoveryStagePct(stage, pollAttempt, maxAttempts) {
+    if (stage === 'scraping') return 10 + Math.min(35, ((pollAttempt || 0) / (maxAttempts || 1)) * 35);
+    if (stage === 'searching') return 50 + Math.min(40, ((pollAttempt || 0) / (maxAttempts || 1)) * 40);
+    if (stage === 'done') return 100;
+    return 5; // queued
+  }
+
+  function finishIpDiscoveryRun(inv, btn, progressWrap) {
+    ipDiscoveryRunning = false;
+    if (ipActiveDiscoveryJob && ipActiveDiscoveryJob.timer) clearInterval(ipActiveDiscoveryJob.timer);
+    ipActiveDiscoveryJob = null;
+    if (btn) { btn.disabled = false; btn.textContent = 'Find Connectors via LinkedIn (' + DISCOVERY_CREDIT_COST_GLOBAL + ' credits)'; }
+    if (progressWrap) progressWrap.style.display = 'none';
+  }
+
+  function handleIpDiscoveryResult(data, inv, statusEl) {
+    if (!data || !data.success) {
+      var errMsg;
+      if (data && data.error === 'insufficient_credits') {
+        errMsg = 'Not enough credits — this scan costs ' + (data.credits_required || DISCOVERY_CREDIT_COST_GLOBAL) + ' and you have ' + (data.credits_remaining != null ? data.credits_remaining : currentCredits) + '.';
+      } else if (data && data.message) {
+        errMsg = data.message;
+      } else {
+        errMsg = "Discovery didn't complete — " + ((data && data.error) || 'please try again.');
+      }
+      ipLastDiscoveryResult = { contactId: inv.contactId, message: errMsg, isError: true };
+      setStatus(statusEl, ipLastDiscoveryResult.message, true);
+      if (ipSelectedContactId === inv.contactId) renderIpDetail();
+      return;
+    }
+    if (typeof data.credits_after === 'number') renderBalance(data.credits_after, clientName);
+    var creditsNote = data.credit_deduction_failed
+      ? ' (credit balance could not be updated — please refresh)'
+      : (typeof data.credits_charged === 'number' ? ' — ' + data.credits_charged + ' credit' + (data.credits_charged === 1 ? '' : 's') + ' charged.' : '');
+    var summary = (data.candidates_discovered || 0) + ' candidate' + (data.candidates_discovered === 1 ? '' : 's') + ' found, ' +
+      (data.suggestions_created || 0) + ' suggested.' +
+      (data.candidates_discovered === 0 ? ' (No new mutual connections since the last scan — LinkedIn scraping tools skip profiles they\'ve already processed, so this can happen on repeat runs against the same investor.)' : '') +
+      creditsNote;
+    ipLastDiscoveryResult = { contactId: inv.contactId, message: summary, isError: false };
+    setStatus(statusEl, summary, false);
+    if (ipSelectedContactId === inv.contactId) loadIpConnectors(inv.contactId);
+  }
+
+  function pollIpDiscoveryStatus(jobId, inv, btn, statusEl, progressWrap, progressFill, progressLabel) {
+    var attempts = 0;
+    var maxPolls = 300; // ~15 min safety cap at 3s interval
+    var timer = setInterval(function () {
+      attempts++;
+      if (attempts > maxPolls) {
+        finishIpDiscoveryRun(inv, btn, progressWrap);
+        ipLastDiscoveryResult = { contactId: inv.contactId, message: 'Lost track of this scan — it may still be running in the background. Check back in a few minutes.', isError: true };
+        setStatus(statusEl, ipLastDiscoveryResult.message, true);
+        if (ipSelectedContactId === inv.contactId) renderIpDetail();
+        return;
+      }
+      fetch(BASE_URL + '/intro-path-discovery-status?job_id=' + encodeURIComponent(jobId))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data || !data.found) return; // row may not have landed yet — keep polling
+          var pct = Math.min(100, Math.round(ipDiscoveryStagePct(data.stage, data.poll_attempt, data.max_attempts)));
+          var label = (IP_DISCOVERY_STAGE_LABELS[data.stage] || 'Working…') + ' (' + pct + '%)';
+          if (progressFill) progressFill.style.width = pct + '%';
+          if (progressLabel) progressLabel.textContent = label;
+          if (ipActiveDiscoveryJob) { ipActiveDiscoveryJob.lastPct = pct; ipActiveDiscoveryJob.lastLabel = label; }
+          if (data.done) {
+            finishIpDiscoveryRun(inv, btn, progressWrap);
+            handleIpDiscoveryResult(data.result, inv, statusEl);
+          }
+        })
+        .catch(function () { /* transient poll failure — try again next tick */ });
+    }, 3000);
+    if (ipActiveDiscoveryJob) ipActiveDiscoveryJob.timer = timer;
+  }
+
+  var DISCOVERY_CREDIT_COST_GLOBAL = 2;
+
+  function runIpDiscoverConnectors(inv, btn, hint, statusEl, progressWrap, progressFill, progressLabel) {
+    ipDiscoveryRunning = true;
+    btn.disabled = true;
+    btn.textContent = 'Running discovery…';
+    if (ipLastDiscoveryResult && ipLastDiscoveryResult.contactId === inv.contactId) ipLastDiscoveryResult = null;
+    setStatus(statusEl, '', false);
+    progressWrap.style.display = 'block';
+    progressFill.style.width = '3%';
+    progressLabel.textContent = 'Starting scan…';
+    ipActiveDiscoveryJob = { contactId: inv.contactId, jobId: null, lastPct: 3, lastLabel: 'Starting scan…', timer: null };
+
+    fetch(BASE_URL + '/intro-path-discover-connectors', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_name: clientName,
+        investor_profile_url: inv.linkedinProfile,
+        contactId: inv.contactId,
+        target_investor: inv.name || ''
+      })
+    })
+      .then(function (r) { return r.json().then(function (data) { return { status: r.status, data: data }; }); })
+      .then(function (resp) {
+        var data = resp.data;
+        if (resp.status === 202 && data && data.job_id) {
+          if (ipActiveDiscoveryJob) ipActiveDiscoveryJob.jobId = data.job_id;
+          pollIpDiscoveryStatus(data.job_id, inv, btn, statusEl, progressWrap, progressFill, progressLabel);
+          return;
+        }
+        // Synchronous outcome (e.g. insufficient credits) — no job was started
+        finishIpDiscoveryRun(inv, btn, progressWrap);
+        handleIpDiscoveryResult(data, inv, statusEl);
+      })
+      .catch(function () {
+        finishIpDiscoveryRun(inv, btn, progressWrap);
+        ipLastDiscoveryResult = { contactId: inv.contactId, message: 'Could not reach Raise HQ — please try again.', isError: true };
+        setStatus(statusEl, ipLastDiscoveryResult.message, true);
+        if (ipSelectedContactId === inv.contactId) renderIpDetail();
+      });
+  }
+
+  function renderIpConnectorRow(rec) {
+    var row = document.createElement('div');
+    row.className = 'rhq-ip-conn-row';
+
+    var top = document.createElement('div');
+    top.className = 'rhq-ip-conn-top';
+    var left = document.createElement('div');
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-ip-conn-name';
+    nameEl.textContent = rec.connector_name || 'Unnamed connector';
+    left.appendChild(nameEl);
+    if (rec.connector_relationship) {
+      var relEl = document.createElement('div');
+      relEl.className = 'rhq-ip-conn-rel';
+      relEl.textContent = rec.connector_relationship;
+      left.appendChild(relEl);
+    }
+    if (rec.request_sent_date) {
+      var dateEl = document.createElement('div');
+      dateEl.className = 'rhq-ip-conn-date';
+      dateEl.textContent = 'Request sent ' + rec.request_sent_date;
+      left.appendChild(dateEl);
+    }
+    top.appendChild(left);
+
+    var right = document.createElement('div');
+    right.style.display = 'flex';
+    right.style.flexDirection = 'column';
+    right.style.alignItems = 'flex-end';
+    right.style.gap = '8px';
+    right.appendChild(ipStatusPill(rec.intro_status));
+    right.appendChild(ipStrengthDots(rec.connector_strength));
+    top.appendChild(right);
+    row.appendChild(top);
+
+    var actions = document.createElement('div');
+    actions.className = 'rhq-ip-conn-actions';
+    var transitions = [
+      { status: 'requested', label: 'Request Sent' },
+      { status: 'made', label: 'Mark Made' },
+      { status: 'declined', label: 'Mark Declined' }
+    ];
+    transitions.forEach(function (t) {
+      if (rec.intro_status === t.status) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'rhq-ip-action-btn';
+      btn.textContent = t.label;
+      btn.addEventListener('click', function () { runIpUpdateStatus(rec.recordId, t.status, btn); });
+      actions.appendChild(btn);
+    });
+    row.appendChild(actions);
+
+    return row;
+  }
+
+  function renderIpSuggestedRow(rec) {
+    var row = document.createElement('div');
+    row.className = 'rhq-ip-conn-row rhq-ip-conn-row-suggested';
+
+    var top = document.createElement('div');
+    top.className = 'rhq-ip-conn-top';
+    var left = document.createElement('div');
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-ip-conn-name';
+    nameEl.textContent = rec.connector_name || 'Unnamed connector';
+    left.appendChild(nameEl);
+    if (rec.connector_relationship) {
+      var relEl = document.createElement('div');
+      relEl.className = 'rhq-ip-conn-rel';
+      relEl.textContent = rec.connector_relationship;
+      left.appendChild(relEl);
+    }
+    top.appendChild(left);
+
+    var right = document.createElement('div');
+    right.style.display = 'flex';
+    right.style.flexDirection = 'column';
+    right.style.alignItems = 'flex-end';
+    right.style.gap = '8px';
+    right.appendChild(ipStatusPill('suggested'));
+    top.appendChild(right);
+    row.appendChild(top);
+
+    var actions = document.createElement('div');
+    actions.className = 'rhq-ip-conn-actions';
+
+    var confirmBtn = document.createElement('button');
+    confirmBtn.type = 'button';
+    confirmBtn.className = 'rhq-ip-action-btn rhq-ip-action-confirm';
+    confirmBtn.textContent = 'Confirm';
+    confirmBtn.addEventListener('click', function () { runIpConfirmSuggestion(rec.recordId, confirmBtn); });
+    actions.appendChild(confirmBtn);
+
+    var dismissBtn = document.createElement('button');
+    dismissBtn.type = 'button';
+    dismissBtn.className = 'rhq-ip-action-btn rhq-ip-action-dismiss';
+    dismissBtn.textContent = 'Dismiss';
+    dismissBtn.addEventListener('click', function () { runIpDismissSuggestion(rec.recordId, dismissBtn); });
+    actions.appendChild(dismissBtn);
+
+    row.appendChild(actions);
+    return row;
+  }
+
+  function runIpConfirmSuggestion(recordId, btn) {
+    if (btn) btn.disabled = true;
+    var st = ipDetailEl.querySelector('#rhq-ip-status');
+    if (st) setStatus(st, 'Confirming…', false);
+
+    fetch(BASE_URL + '/intro-path-confirm-suggestion', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contactId: ipSelectedContactId, recordId: recordId })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+          if (stEl) setStatus(stEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+          if (btn) btn.disabled = false;
+          return;
+        }
+        var inv = investors.find(function (i) { return i.contactId === ipSelectedContactId; });
+        if (inv) inv.introPathStatus = data.intro_path_status_rollup;
+        loadIpConnectors(ipSelectedContactId);
+        renderIpInvestorList();
+      })
+      .catch(function () {
+        var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+        if (stEl) setStatus(stEl, 'Could not reach Raise HQ.', true);
+        if (btn) btn.disabled = false;
+      });
+  }
+
+  function runIpDismissSuggestion(recordId, btn) {
+    if (btn) btn.disabled = true;
+    var st = ipDetailEl.querySelector('#rhq-ip-status');
+    if (st) setStatus(st, 'Dismissing…', false);
+
+    fetch(BASE_URL + '/intro-path-dismiss-suggestion', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, contactId: ipSelectedContactId, recordId: recordId })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+          if (stEl) setStatus(stEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+          if (btn) btn.disabled = false;
+          return;
+        }
+        loadIpConnectors(ipSelectedContactId);
+      })
+      .catch(function () {
+        var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+        if (stEl) setStatus(stEl, 'Could not reach Raise HQ.', true);
+        if (btn) btn.disabled = false;
+      });
+  }
+
+  function renderIpAddPanel(inv) {
+    var panel = document.createElement('div');
+    panel.className = 'rhq-ip-add-panel';
+
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'rhq-ip-add-toggle';
+    toggle.textContent = ipAddOpen ? '− Cancel' : '+ Add Intro Path';
+    panel.appendChild(toggle);
+
+    var noCredit = document.createElement('div');
+    noCredit.className = 'rhq-ip-no-credit';
+    noCredit.textContent = 'No credit cost — this is tracking, not AI generation.';
+    panel.appendChild(noCredit);
+
+    var fields = document.createElement('div');
+    fields.className = 'rhq-ip-add-fields' + (ipAddOpen ? ' rhq-ip-add-open' : '');
+
+    var nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.placeholder = 'Connector name';
+    fields.appendChild(nameInput);
+
+    var relInput = document.createElement('input');
+    relInput.type = 'text';
+    relInput.placeholder = 'Relationship (e.g. Former colleague at Acme)';
+    fields.appendChild(relInput);
+
+    var row2 = document.createElement('div');
+    row2.className = 'rhq-ip-add-row';
+    var strengthSelect = document.createElement('select');
+    [1, 2, 3, 4, 5].forEach(function (n) {
+      var opt = document.createElement('option');
+      opt.value = String(n);
+      opt.textContent = 'Strength ' + n + '/5';
+      if (n === 3) opt.selected = true;
+      strengthSelect.appendChild(opt);
+    });
+    row2.appendChild(strengthSelect);
+    var addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'rhq-submit';
+    addBtn.style.padding = '9px 18px';
+    addBtn.textContent = 'Add';
+    row2.appendChild(addBtn);
+    fields.appendChild(row2);
+
+    panel.appendChild(fields);
+
+    toggle.addEventListener('click', function () {
+      ipAddOpen = !ipAddOpen;
+      renderIpDetail();
+    });
+
+    addBtn.addEventListener('click', function () {
+      var connectorName = nameInput.value.trim();
+      if (!connectorName) {
+        var st = ipDetailEl.querySelector('#rhq-ip-status');
+        if (st) setStatus(st, 'Connector name is required.', true);
+        return;
+      }
+      runIpCreate(connectorName, relInput.value.trim(), parseInt(strengthSelect.value, 10), inv, addBtn);
+    });
+
+    return panel;
+  }
+
+  function runIpCreate(connectorName, relationship, strength, inv, btn) {
+    if (btn) btn.disabled = true;
+    var st = ipDetailEl.querySelector('#rhq-ip-status');
+    if (st) setStatus(st, 'Adding intro path…', false);
+
+    fetch(BASE_URL + '/intro-path-create', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_name: clientName,
+        contactId: ipSelectedContactId,
+        connector_name: connectorName,
+        connector_relationship: relationship,
+        connector_strength: strength,
+        target_investor: inv && inv.name ? inv.name : ''
+      })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+          if (stEl) setStatus(stEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+          if (btn) btn.disabled = false;
+          return;
+        }
+        ipAddOpen = false;
+        if (inv) inv.introPathStatus = data.intro_path_status_rollup;
+        loadIpConnectors(ipSelectedContactId);
+        renderIpInvestorList();
+      })
+      .catch(function () {
+        var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+        if (stEl) setStatus(stEl, 'Could not reach Raise HQ.', true);
+        if (btn) btn.disabled = false;
+      });
+  }
+
+  function runIpUpdateStatus(recordId, newStatus, btn) {
+    if (btn) btn.disabled = true;
+    var st = ipDetailEl.querySelector('#rhq-ip-status');
+    if (st) setStatus(st, 'Updating…', false);
+
+    fetch(BASE_URL + '/intro-path-update-status', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_name: clientName,
+        contactId: ipSelectedContactId,
+        recordId: recordId,
+        intro_status: newStatus
+      })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success) {
+          var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+          if (stEl) setStatus(stEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+          if (btn) btn.disabled = false;
+          return;
+        }
+        var inv = investors.find(function (i) { return i.contactId === ipSelectedContactId; });
+        if (inv) inv.introPathStatus = data.intro_path_status_rollup;
+        loadIpConnectors(ipSelectedContactId);
+        renderIpInvestorList();
+      })
+      .catch(function () {
+        var stEl = ipDetailEl.querySelector('#rhq-ip-status');
+        if (stEl) setStatus(stEl, 'Could not reach Raise HQ.', true);
+        if (btn) btn.disabled = false;
+      });
+  }
+
+  // ---------- Intro Path tab: Connections.csv upload ----------
+  function splitCsvLine(line) {
+    var result = [];
+    var cur = '';
+    var inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (line[i + 1] === '"') { cur += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          cur += ch;
+        }
+      } else {
+        if (ch === '"') inQuotes = true;
+        else if (ch === ',') { result.push(cur); cur = ''; }
+        else cur += ch;
+      }
+    }
+    result.push(cur);
+    return result;
+  }
+
+  function parseConnectionsCsv(text) {
+    var lines = String(text || '').split(/\r\n|\n|\r/).filter(function (l) { return l.length > 0; });
+    var headerIdx = -1;
+    for (var i = 0; i < lines.length; i++) {
+      if (/first name/i.test(lines[i]) && /last name/i.test(lines[i])) { headerIdx = i; break; }
+    }
+    if (headerIdx === -1) return [];
+
+    var headers = splitCsvLine(lines[headerIdx]).map(function (h) { return h.trim().toLowerCase(); });
+    var idx = {
+      first: headers.indexOf('first name'),
+      last: headers.indexOf('last name'),
+      url: headers.indexOf('url'),
+      company: headers.indexOf('company'),
+      position: headers.indexOf('position'),
+      connected: headers.indexOf('connected on')
+    };
+
+    var rows = [];
+    for (var j = headerIdx + 1; j < lines.length; j++) {
+      var cols = splitCsvLine(lines[j]);
+      if (!cols.length) continue;
+      var first = idx.first !== -1 ? (cols[idx.first] || '').trim() : '';
+      var last = idx.last !== -1 ? (cols[idx.last] || '').trim() : '';
+      var fullName = (first + ' ' + last).trim();
+      if (!fullName) continue;
+      rows.push({
+        full_name: fullName,
+        linkedin_url: idx.url !== -1 ? (cols[idx.url] || '').trim() : '',
+        company: idx.company !== -1 ? (cols[idx.company] || '').trim() : '',
+        position: idx.position !== -1 ? (cols[idx.position] || '').trim() : '',
+        connected_on: idx.connected !== -1 ? (cols[idx.connected] || '').trim() : ''
+      });
+    }
+    return rows;
+  }
+
+  ipCsvUploadBtn.addEventListener('click', function () {
+    var file = ipCsvInput.files && ipCsvInput.files[0];
+    if (!file) { setStatus(ipCsvStatusEl, 'Choose a Connections.csv file first.', true); return; }
+
+    ipCsvUploadBtn.disabled = true;
+    setStatus(ipCsvStatusEl, 'Reading file…', false);
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var rows = parseConnectionsCsv(e.target.result);
+      if (!rows.length) {
+        setStatus(ipCsvStatusEl, "Couldn't find any connections in that file — is it a LinkedIn Connections.csv export?", true);
+        ipCsvUploadBtn.disabled = false;
+        return;
+      }
+      setStatus(ipCsvStatusEl, 'Uploading ' + rows.length + ' connections…', false);
+      fetch(BASE_URL + '/intro-path-upload-connections', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_name: clientName, connections: rows })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          ipCsvUploadBtn.disabled = false;
+          if (!data.success) {
+            setStatus(ipCsvStatusEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+            return;
+          }
+          var created = (data.rows_created != null) ? data.rows_created : rows.length;
+          setStatus(ipCsvStatusEl, 'Uploaded ' + created + ' connections.', false);
+          ipCsvInput.value = '';
+        })
+        .catch(function () {
+          ipCsvUploadBtn.disabled = false;
+          setStatus(ipCsvStatusEl, 'Could not reach Raise HQ.', true);
+        });
+    };
+    reader.onerror = function () {
+      ipCsvUploadBtn.disabled = false;
+      setStatus(ipCsvStatusEl, 'Could not read that file.', true);
+    };
+    reader.readAsText(file);
+  });
+
+  // ---------- Intro Path tab: Connect LinkedIn ----------
+  function runIpLinkedInStatus(status) {
+    ipLiConnectedBtn.disabled = true;
+    ipLiExpiredBtn.disabled = true;
+    setStatus(ipLiStatusEl, 'Updating…', false);
+
+    fetch(BASE_URL + '/intro-path-connect-linkedin', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_name: clientName, status: status })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        ipLiConnectedBtn.disabled = false;
+        ipLiExpiredBtn.disabled = false;
+        if (!data.success) {
+          setStatus(ipLiStatusEl, "That didn't go through — " + (data.error || 'please try again.'), true);
+          return;
+        }
+        var newStatus = data.linkedin_automation_status || status;
+        linkedinAutomationStatus = newStatus;
+        ipLiStatusLabelEl.textContent = 'Status: ' + newStatus.replace(/_/g, ' ');
+        setStatus(ipLiStatusEl, 'Updated.', false);
+        if (ipSelectedContactId) renderIpDetail();
+      })
+      .catch(function () {
+        ipLiConnectedBtn.disabled = false;
+        ipLiExpiredBtn.disabled = false;
+        setStatus(ipLiStatusEl, 'Could not reach Raise HQ.', true);
+      });
+  }
+
+  ipLiConnectedBtn.addEventListener('click', function () { runIpLinkedInStatus('connected'); });
+  ipLiExpiredBtn.addEventListener('click', function () { runIpLinkedInStatus('session_expired'); });
+
+  loadBalance();
+  switchTab('pull');
+})();
+</script>
