@@ -8,6 +8,7 @@
       --rhq-muted: #A0A0A0;
       --rhq-white: #FFFFFF;
       --rhq-error: #FF4D4D;
+      --rhq-amber: #FFB020;
 
       font-family: 'Montserrat', sans-serif;
       background: var(--rhq-black);
@@ -151,6 +152,9 @@
     #raisehq-unified .rhq-badge.rhq-muted { color: var(--rhq-muted); border: 1px solid var(--rhq-muted); background: transparent; }
     #raisehq-unified .rhq-badge.rhq-outline { color: var(--rhq-green); border: 1px solid var(--rhq-green); background: transparent; }
     #raisehq-unified .rhq-badge.rhq-filled { color: var(--rhq-black); background: var(--rhq-green); border: 1px solid var(--rhq-green); }
+    #raisehq-unified .rhq-badge.rhq-score-good { color: var(--rhq-green); border: 1px solid var(--rhq-green); background: transparent; }
+    #raisehq-unified .rhq-badge.rhq-score-mid { color: var(--rhq-amber); border: 1px solid var(--rhq-amber); background: transparent; }
+    #raisehq-unified .rhq-badge.rhq-score-low { color: var(--rhq-error); border: 1px solid var(--rhq-error); background: transparent; }
 
     /* Profiled card (Profile tab) */
     #raisehq-unified .rhq-card { padding: 16px 18px; border-bottom: 1px solid var(--rhq-surface); }
@@ -2228,7 +2232,9 @@
         main.appendChild(n);
         row.appendChild(main);
         var badge = document.createElement('span');
-        badge.className = 'rhq-badge rhq-outline';
+        var dimScore = Number(dim.score);
+        var tierClass = dimScore > 8 ? 'rhq-score-good' : (dimScore >= 4 ? 'rhq-score-mid' : 'rhq-score-low');
+        badge.className = 'rhq-badge ' + tierClass;
         badge.textContent = dim.score + '/10';
         row.appendChild(badge);
         list.appendChild(row);
