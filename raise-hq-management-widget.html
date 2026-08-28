@@ -281,6 +281,10 @@
     #raisehq-unified .rhq-ip-find-panel .rhq-ip-no-credit { margin-top: 0; line-height: 1.5; }
     #raisehq-unified .rhq-ip-find-panel .rhq-status { margin-top: 2px; }
 
+    /* Deck Review tab */
+    #raisehq-unified .rhq-deck-dropzone-label { display: block; font-size: 13px; color: var(--rhq-muted); margin-bottom: 8px; }
+    #raisehq-unified .rhq-deck-existing-note { font-size: 12px; color: var(--rhq-muted); margin-top: 10px; line-height: 1.5; }
+
     @media (max-width: 480px) {
       #raisehq-unified .rhq-h1 { font-size: 20px; }
       #raisehq-unified .rhq-meter-figure { font-size: 30px; }
@@ -304,6 +308,7 @@
     <button type="button" class="rhq-tab" data-tab="track">Assign Track</button>
     <button type="button" class="rhq-tab" data-tab="intropath">Intro Path</button>
     <button type="button" class="rhq-tab" data-tab="bulk">Bulk Actions</button>
+    <button type="button" class="rhq-tab" data-tab="deck">Deck Review</button>
   </div>
 
   <div class="rhq-meter">
@@ -464,6 +469,24 @@
     </div>
   </div>
 
+  <!-- DECK REVIEW PANEL -->
+  <div id="rhq-panel-deck" style="display:none;">
+    <div class="rhq-pull-panel">
+      <label class="rhq-deck-dropzone-label" for="rhq-deck-file-input">Upload your pitch deck (PDF, up to 30 pages)</label>
+      <div class="rhq-pull-row">
+        <input type="file" id="rhq-deck-file-input" accept="application/pdf" class="rhq-ip-file-input" style="flex:1; min-width:220px;">
+        <button class="rhq-submit" id="rhq-deck-submit-btn" type="button" disabled>Analyse Deck</button>
+      </div>
+      <div class="rhq-deck-existing-note" id="rhq-deck-existing-note" style="display:none;"></div>
+    </div>
+    <div class="rhq-status" id="rhq-deck-status"></div>
+    <div class="rhq-ip-progress-wrap" id="rhq-deck-progress-wrap" style="display:none;">
+      <div class="rhq-ip-progress-track"><div class="rhq-ip-progress-fill" id="rhq-deck-progress-fill"></div></div>
+      <div class="rhq-ip-progress-label" id="rhq-deck-progress-label"></div>
+    </div>
+    <div id="rhq-deck-result" style="display:none;"></div>
+  </div>
+
   <p class="rhq-footer">Raise HQ is a Source Capital product.</p>
 </div>
 
@@ -549,13 +572,30 @@
   var ipCsvUploadBtn = ROOT.querySelector('#rhq-ip-csv-upload-btn');
   var ipCsvStatusEl = ROOT.querySelector('#rhq-ip-csv-status');
 
+  // Deck Review tab
+  var panelDeck = ROOT.querySelector('#rhq-panel-deck');
+  var deckFileInput = ROOT.querySelector('#rhq-deck-file-input');
+  var deckSubmitBtn = ROOT.querySelector('#rhq-deck-submit-btn');
+  var deckExistingNoteEl = ROOT.querySelector('#rhq-deck-existing-note');
+  var deckStatusEl = ROOT.querySelector('#rhq-deck-status');
+  var deckProgressWrap = ROOT.querySelector('#rhq-deck-progress-wrap');
+  var deckProgressFill = ROOT.querySelector('#rhq-deck-progress-fill');
+  var deckProgressLabel = ROOT.querySelector('#rhq-deck-progress-label');
+  var deckResultEl = ROOT.querySelector('#rhq-deck-result');
+  var deckHasResult = false;
+  var deckIsFirstFree = true;
+  var deckJobPoll = null;
+  var deckCurrentLoaded = false;
+  var DECK_RERUN_COST = 100;
+
   var TAB_META = {
     pull: { title: 'Pull Investors', cost: 'Central Investor Database' },
     profile: { title: 'Profile Investors', cost: '1 credit per investor profiled' },
     message: { title: 'Write Outreach Messages', cost: '1 credit per investor messaged' },
     track: { title: 'Select Engagement Track', cost: 'No credit cost — routing only' },
     intropath: { title: 'Intro Path', cost: 'Free to add and track — confirming a Made intro costs 1 credit' },
-    bulk: { title: 'Bulk Actions', cost: 'Stage change and tags are free — discovery scans use discovery credits' }
+    bulk: { title: 'Bulk Actions', cost: 'Stage change and tags are free — discovery scans use discovery credits' },
+    deck: { title: 'Deck Review', cost: 'First analysis included — re-runs cost ' + DECK_RERUN_COST + ' credits' }
   };
 
   var STATUS_OPTIONS = {
@@ -631,6 +671,7 @@
     panelPull.style.display = tab === 'pull' ? 'block' : 'none';
     panelList.style.display = (tab === 'profile' || tab === 'message' || tab === 'track' || tab === 'bulk') ? 'block' : 'none';
     panelIntroPath.style.display = tab === 'intropath' ? 'block' : 'none';
+    panelDeck.style.display = tab === 'deck' ? 'block' : 'none';
     trackBar.style.display = tab === 'track' ? 'flex' : 'none';
     bulkBar.style.display = tab === 'bulk' ? 'flex' : 'none';
 
@@ -651,6 +692,8 @@
       updateToolbar();
     } else if (tab === 'intropath') {
       if (!investorsLoaded) { loadInvestors(); } else { renderIpInvestorList(); }
+    } else if (tab === 'deck') {
+      loadDeckCurrent();
     }
   }
 
@@ -712,7 +755,7 @@
   function selectedIds() { return Object.keys(selected).filter(function (id) { return selected[id]; }); }
 
   function updateToolbar() {
-    if (currentTab === 'pull' || currentTab === 'intropath') return;
+    if (currentTab === 'pull' || currentTab === 'intropath' || currentTab === 'deck') return;
     var ids = selectedIds().filter(function (id) {
       var inv = investors.find(function (i) { return i.contactId === id; });
       return inv && eligible(inv);
@@ -1953,6 +1996,246 @@
 
   // "Connect LinkedIn" (PhantomBuster magic-link) UI removed 2026-08-25 — see
   // linkedin-crossover-connector-discovery-spec.md for why.
+
+  // ---------- Deck Review tab ----------
+  // Endpoints expected from Track 12 step 3 (n8n scoring workflow — not yet built
+  // as of this widget change):
+  //   GET  /deck-review-current?client_name=X
+  //        -> { success, has_result, is_first_free_available, score, verdict,
+  //              dimensions: [{name, score}], analysed_at }
+  //   POST /deck-review-submit  { client_name, filename, file_base64 }
+  //        -> 202 { job_id }  (accepted, async)
+  //        -> 200 { success:false, error }  (e.g. insufficient credits, sync rejection)
+  //   GET  /deck-review-status?job_id=X
+  //        -> { found, stage, done, result: { success, score, verdict, dimensions,
+  //              analysed_at, credits_after } }
+  // Mirrors the existing intro-path-discover-connectors job/poll pattern above.
+
+  deckFileInput.addEventListener('change', function () {
+    deckSubmitBtn.disabled = !(deckFileInput.files && deckFileInput.files.length);
+  });
+
+  function updateDeckSubmitLabel() {
+    deckSubmitBtn.textContent = (deckHasResult && !deckIsFirstFree)
+      ? 'Re-run Analysis (' + DECK_RERUN_COST + ' credits)'
+      : 'Analyse Deck';
+  }
+
+  function loadDeckCurrent() {
+    setStatus(deckStatusEl, deckCurrentLoaded ? '' : 'Loading…', false);
+    fetch(BASE_URL + '/deck-review-current?client_name=' + encodeURIComponent(clientName))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        deckCurrentLoaded = true;
+        setStatus(deckStatusEl, '', false);
+        if (!data || !data.success) { return; }
+        deckIsFirstFree = !!data.is_first_free_available;
+        if (data.has_result) {
+          deckHasResult = true;
+          renderDeckResult(data);
+          deckExistingNoteEl.style.display = 'block';
+          deckExistingNoteEl.textContent = deckIsFirstFree
+            ? 'You have a previous result below. Uploading a new deck will use your included first analysis.'
+            : 'You have a previous result below. Uploading a new deck will re-run analysis for ' + DECK_RERUN_COST + ' credits.';
+        } else {
+          deckHasResult = false;
+          deckResultEl.style.display = 'none';
+          deckExistingNoteEl.style.display = 'none';
+        }
+        updateDeckSubmitLabel();
+      })
+      .catch(function () { /* stay quiet on load — not critical to first paint */ });
+  }
+
+  function fileToBase64(file, cb) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var result = String(e.target.result || '');
+      var comma = result.indexOf(',');
+      cb(comma !== -1 ? result.slice(comma + 1) : null);
+    };
+    reader.onerror = function () { cb(null); };
+    reader.readAsDataURL(file);
+  }
+
+  deckSubmitBtn.addEventListener('click', function () {
+    var file = deckFileInput.files && deckFileInput.files[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      setStatus(deckStatusEl, 'Please choose a PDF file.', true);
+      return;
+    }
+    if (deckHasResult && !deckIsFirstFree && currentCredits < DECK_RERUN_COST) {
+      setStatus(deckStatusEl, 'Re-running costs ' + DECK_RERUN_COST + ' credits — you have ' + currentCredits + ' available.', true);
+      return;
+    }
+
+    deckSubmitBtn.disabled = true;
+    deckResultEl.style.display = 'none';
+    setStatus(deckStatusEl, 'Uploading deck…', false);
+
+    fileToBase64(file, function (base64) {
+      if (!base64) {
+        setStatus(deckStatusEl, 'Could not read that file.', true);
+        deckSubmitBtn.disabled = false;
+        return;
+      }
+      fetch(BASE_URL + '/deck-review-submit', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_name: clientName, filename: file.name, file_base64: base64 })
+      })
+        .then(function (r) { return r.json().then(function (data) { return { status: r.status, data: data }; }); })
+        .then(function (resp) {
+          var data = resp.data;
+          if (resp.status === 202 && data && data.job_id) {
+            setStatus(deckStatusEl, '', false);
+            deckProgressWrap.style.display = 'block';
+            deckProgressFill.style.width = '5%';
+            deckProgressLabel.textContent = 'Queued… (5%)';
+            pollDeckStatus(data.job_id);
+            return;
+          }
+          deckSubmitBtn.disabled = false;
+          setStatus(deckStatusEl, "That didn't go through — " + ((data && data.error) || 'please try again.'), true);
+        })
+        .catch(function () {
+          deckSubmitBtn.disabled = false;
+          setStatus(deckStatusEl, 'Could not reach Raise HQ.', true);
+        });
+    });
+  });
+
+  var DECK_STAGE_LABELS = {
+    queued: 'Queued…',
+    uploading: 'Storing your deck…',
+    analysing: 'Claude is reading your deck…',
+    saving: 'Saving results…',
+    done: 'Finishing up…'
+  };
+
+  function deckStagePct(stage) {
+    if (stage === 'uploading') return 15;
+    if (stage === 'analysing') return 55;
+    if (stage === 'saving') return 90;
+    if (stage === 'done') return 100;
+    return 5;
+  }
+
+  function pollDeckStatus(jobId) {
+    var attempts = 0;
+    var maxPolls = 120; // ~6 min at 3s interval — comfortably covers the 5-min analyse timeout
+    if (deckJobPoll) clearInterval(deckJobPoll);
+    deckJobPoll = setInterval(function () {
+      attempts++;
+      if (attempts > maxPolls) {
+        clearInterval(deckJobPoll);
+        deckJobPoll = null;
+        deckSubmitBtn.disabled = false;
+        deckProgressWrap.style.display = 'none';
+        setStatus(deckStatusEl, 'Lost track of this analysis — it may still be running. Check back shortly.', true);
+        return;
+      }
+      fetch(BASE_URL + '/deck-review-status?job_id=' + encodeURIComponent(jobId))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data || !data.found) return; // row may not have landed yet — keep polling
+          var pct = deckStagePct(data.stage);
+          deckProgressFill.style.width = pct + '%';
+          deckProgressLabel.textContent = (DECK_STAGE_LABELS[data.stage] || 'Working…') + ' (' + pct + '%)';
+          if (data.done) {
+            clearInterval(deckJobPoll);
+            deckJobPoll = null;
+            deckProgressWrap.style.display = 'none';
+            deckSubmitBtn.disabled = false;
+            if (!data.result || !data.result.success) {
+              setStatus(deckStatusEl, "Analysis didn't complete — " + ((data.result && data.result.error) || 'please try again.'), true);
+              return;
+            }
+            if (typeof data.result.credits_after === 'number') renderBalance(data.result.credits_after, clientName);
+            deckHasResult = true;
+            deckIsFirstFree = false;
+            renderDeckResult(data.result);
+            deckExistingNoteEl.style.display = 'block';
+            deckExistingNoteEl.textContent = 'You have a previous result below. Uploading a new deck will re-run analysis for ' + DECK_RERUN_COST + ' credits.';
+            deckFileInput.value = '';
+            deckSubmitBtn.disabled = true;
+            updateDeckSubmitLabel();
+          }
+        })
+        .catch(function () { /* transient — keep polling */ });
+    }, 3000);
+  }
+
+  var DECK_DIMENSION_ORDER = ['Problem', 'Solution', 'Market', 'Business Model', 'Traction', 'Team', 'Financials', 'Competition'];
+
+  function renderDeckResult(data) {
+    deckResultEl.innerHTML = '';
+    deckResultEl.style.display = 'block';
+
+    var card = document.createElement('div');
+    card.className = 'rhq-card';
+    var top = document.createElement('div');
+    top.className = 'rhq-card-top';
+    var left = document.createElement('div');
+    var nameEl = document.createElement('div');
+    nameEl.className = 'rhq-card-name';
+    nameEl.textContent = 'Deck Score';
+    left.appendChild(nameEl);
+    if (data.analysed_at) {
+      var dateEl = document.createElement('div');
+      dateEl.className = 'rhq-card-firmrole';
+      dateEl.textContent = 'Analysed ' + data.analysed_at;
+      left.appendChild(dateEl);
+    }
+    top.appendChild(left);
+
+    var scoreWrap = document.createElement('div');
+    scoreWrap.className = 'rhq-card-scorewrap';
+    var score = document.createElement('span');
+    score.className = 'rhq-card-score';
+    score.textContent = (data.score !== null && data.score !== undefined) ? data.score : '—';
+    var out = document.createElement('span');
+    out.className = 'rhq-card-score-out';
+    out.textContent = '/100';
+    scoreWrap.appendChild(score);
+    scoreWrap.appendChild(out);
+    top.appendChild(scoreWrap);
+    card.appendChild(top);
+
+    if (data.verdict) {
+      var verdictEl = document.createElement('div');
+      verdictEl.className = 'rhq-card-rationale';
+      verdictEl.textContent = data.verdict;
+      card.appendChild(verdictEl);
+    }
+    deckResultEl.appendChild(card);
+
+    var dims = data.dimensions || [];
+    if (dims.length) {
+      var list = document.createElement('div');
+      list.className = 'rhq-list';
+      list.style.marginTop = '12px';
+      DECK_DIMENSION_ORDER.forEach(function (name) {
+        var dim = dims.find(function (d) { return d.name === name; });
+        if (!dim) return;
+        var row = document.createElement('div');
+        row.className = 'rhq-row';
+        var main = document.createElement('div');
+        main.className = 'rhq-row-main';
+        var n = document.createElement('div');
+        n.className = 'rhq-row-name';
+        n.textContent = name;
+        main.appendChild(n);
+        row.appendChild(main);
+        var badge = document.createElement('span');
+        badge.className = 'rhq-badge rhq-outline';
+        badge.textContent = dim.score + '/10';
+        row.appendChild(badge);
+        list.appendChild(row);
+      });
+      deckResultEl.appendChild(list);
+    }
+  }
 
   loadBalance();
   switchTab('pull');
