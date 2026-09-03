@@ -211,11 +211,15 @@
   var ROOT = document.getElementById('raisehq-profile-investors');
   if (!ROOT) return;
 
-  var DEFAULT_CLIENT = 'Test Client Co';
+  // Each client's GHL embed URL must include ?location_id=<their GHL Location ID>,
+  // set once at onboarding (Custom Menu Link config). There is NO default client —
+  // an embed missing location_id shows an error rather than silently operating
+  // against another client's account. See Track 4 identity-spoofing fix, 3 Sep 2026.
   var BASE_URL = 'https://n8n.srv926257.hstgr.cloud/webhook';
 
   var params = new URLSearchParams(window.location.search);
-  var clientName = params.get('client') || DEFAULT_CLIENT;
+  var locationId = params.get('location_id');
+  var clientName = null; // resolved server-side from location_id — never trust a URL-supplied name
 
   var currentCredits = 0;
   var investors = [];
@@ -435,14 +439,20 @@
   }
 
   function loadBalance() {
-    fetch(BASE_URL + '/credit-balance?client_name=' + encodeURIComponent(clientName))
+    if (!locationId) {
+      setStatus('This widget is missing its location_id — contact Source Capital to fix the embed.', true);
+      return;
+    }
+    fetch(BASE_URL + '/credit-balance?location_id=' + encodeURIComponent(locationId))
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data.success) {
-          setStatus('No client found matching "' + clientName + '".', true);
+          setStatus('No client account found for this widget — contact Source Capital.', true);
           return;
         }
+        clientName = data.client;
         renderBalance(data.credits, data.client);
+        loadInvestors();
       })
       .catch(function () {
         setStatus('Could not reach Raise HQ. Check your connection and try again.', true);
@@ -520,6 +530,5 @@
   });
 
   loadBalance();
-  loadInvestors();
 })();
 </script>
